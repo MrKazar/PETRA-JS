@@ -17,6 +17,7 @@ import { HistoryScreen, SessionDetailScreen } from './screens/History'
 import { RecordsScreen } from './screens/Records'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
+import { checkOnLaunch } from './logic/updates'
 
 const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
   { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
@@ -53,6 +54,10 @@ export default function App() {
     if (s.length > 1) setStack(s.slice(0, -1))
     else if (s[0].name !== 'today') setStack([{ name: 'today' }])
     else if (Capacitor.isNativePlatform()) CapApp.minimizeApp()
+  }, [])
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) checkOnLaunch()
   }, [])
 
   useEffect(() => {

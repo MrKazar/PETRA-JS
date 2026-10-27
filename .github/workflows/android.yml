@@ -74,8 +74,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.apk.outputs.version }}
         run: |
+          # Sans la clé fixe, l'APK ne pourrait pas s'installer par-dessus : pas de release.
+          if [ -z "$PETRA_KEYSTORE" ]; then
+            echo "::warning::Secrets PETRA_KEYSTORE_BASE64 / PETRA_KEYSTORE_PASSWORD absents : APK construit mais pas publié."
+            exit 0
+          fi
+          # Une release par version : augmenter « version » dans package.json pour en publier une nouvelle.
           if gh release view "v$VERSION" >/dev/null 2>&1; then
-            gh release upload "v$VERSION" "out/PETRA-$VERSION.apk" --clobber
+            echo "La release v$VERSION existe déjà : rien à publier."
           else
-            gh release create "v$VERSION" "out/PETRA-$VERSION.apk" --title "PETRA $VERSION" --notes "APK Android de PETRA $VERSION. Télécharge PETRA-$VERSION.apk sur ton téléphone et ouvre-le pour l'installer."
+            gh release create "v$VERSION" "out/PETRA-$VERSION.apk" --title "PETRA $VERSION" --notes "APK Android de PETRA $VERSION. Depuis l'appli : Paramètres > Application > Installer. Sinon, télécharge PETRA-$VERSION.apk sur ton téléphone et ouvre-le."
           fi

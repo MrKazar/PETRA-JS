@@ -3,7 +3,7 @@ import { emptyData, getData, normalize, setData, update, useData } from '../data
 import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
-import { checkForUpdate, type UpdateInfo } from '../logic/updates'
+import { UpdateBody } from '../ui/UpdateCard'
 import { Header, LogoFull, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
 import { IconCheckList, IconChevron, IconHistory, IconTrophy } from '../ui/icons'
 
@@ -13,7 +13,6 @@ export function SettingsScreen() {
   const s = data.settings
   const [backup, setBackup] = useState<'export' | 'import' | null>(null)
   const [importText, setImportText] = useState('')
-  const [update_, setUpdate] = useState<UpdateInfo | 'checking' | 'none' | 'error'>()
 
   const exportText = backup === 'export' ? JSON.stringify(getData(), null, 1) : ''
   const totalSec = data.sessions.reduce((n, x) => n + ((x.endedAt ?? x.startedAt) - x.startedAt) / 1000, 0)
@@ -44,15 +43,6 @@ export function SettingsScreen() {
       toast('Sauvegarde restaurée')
     } catch {
       toast('Ce texte n’est pas une sauvegarde PETRA valide')
-    }
-  }
-
-  const check = async () => {
-    setUpdate('checking')
-    try {
-      setUpdate((await checkForUpdate()) ?? 'none')
-    } catch {
-      setUpdate('error')
     }
   }
 
@@ -134,20 +124,8 @@ export function SettingsScreen() {
         </div>
 
         <SectionTitle>Application</SectionTitle>
-        <div className="card stack">
-          <div className="row">
-            <div className="grow">
-              <div style={{ fontWeight: 600 }}>Version {__APP_VERSION__}</div>
-              <div className="small muted">
-                {update_ === 'checking' ? 'Recherche…' : update_ === 'none' ? 'Tu as la dernière version.' : update_ === 'error' ? 'Impossible de vérifier (pas de connexion ?).' : update_ ? `Version ${update_.version} disponible` : 'Mises à jour depuis GitHub'}
-              </div>
-            </div>
-            {update_ && typeof update_ === 'object' ? (
-              <a className="btn primary sm" href={update_.url}>Télécharger</a>
-            ) : (
-              <button className="btn sm" onClick={check} disabled={update_ === 'checking'}>Vérifier</button>
-            )}
-          </div>
+        <div className="card">
+          <UpdateBody />
         </div>
         <div className="center faint small">Plus fort aujourd’hui, plus utile demain.</div>
       </div>

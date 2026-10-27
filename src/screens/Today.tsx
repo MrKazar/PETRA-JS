@@ -9,6 +9,7 @@ import { addDays, dateKey, formatDay, formatDuration, uid, WEEKDAYS_SHORT, weekd
 import { Empty, Header, Progress, Ring, SectionTitle } from '../ui/kit'
 import { IconChevron, IconDumbbell, IconHistory, IconPlay, IconPlus } from '../ui/icons'
 import { RoutineEditor, TaskRow } from './Routines'
+import { UpdateBanner } from '../ui/UpdateCard'
 
 function greeting(name: string): string {
   const hello = new Date().getHours() >= 18 ? 'Bonsoir' : 'Bonjour'
@@ -48,6 +49,7 @@ export function TodayScreen() {
       <div className="screen-inner">
         <Header title="PETRA — Aujourd’hui" sub={formatDay(today).replace(/^./, (c) => c.toUpperCase())} />
         <div className="muted">{greeting(data.settings.name)}</div>
+        <UpdateBanner />
 
         <SectionTitle right={<button className="btn ghost sm" onClick={() => nav.reset({ name: 'programs' })}>Planning</button>}>Objectif sportif</SectionTitle>
         {data.active ? (
