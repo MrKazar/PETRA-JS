@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { IconBack, Helmet } from './icons'
+import { IconBack } from './icons'
 
 export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: () => void; right?: ReactNode }) {
   return (
@@ -15,14 +15,66 @@ export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: ()
   )
 }
 
-export function Brand() {
+const IMG = `${import.meta.env.BASE_URL}img/`
+
+export const Emblem = ({ size = 40 }: { size?: number }) => <img className="emblem" src={`${IMG}emblem.webp`} width={size} height={size} alt="" />
+export const LogoFull = () => <img className="logo-full" src={`${IMG}logo.webp`} alt="PETRA — Discipline, progrès, objectif" />
+
+export function Stripe({ width = 36 }: { width?: number }) {
   return (
-    <div className="brand">
-      <Helmet />
-      <div>
-        <div className="name">PETRA</div>
-        <div className="motto">Discipline · Progrès · Objectif</div>
+    <span className="stripe" style={{ width }}>
+      <i />
+      <i />
+      <i />
+    </span>
+  )
+}
+
+/** En-tête d'écran PETRA : emblème + titre en capitales + liseré tricolore + sous-titre. */
+export function Header({ title, sub, right }: { title: ReactNode; sub?: ReactNode; right?: ReactNode }) {
+  return (
+    <div className="header">
+      <Emblem />
+      <div className="grow">
+        <h1 className="ellipsis">{title}</h1>
+        <Stripe />
+        {sub && <div className="sub">{sub}</div>}
       </div>
+      {right}
+    </div>
+  )
+}
+
+export function SectionTitle({ children, right }: { children: ReactNode; right?: ReactNode }) {
+  return (
+    <div className="section-title">
+      <span className="grow">{children}</span>
+      {right}
+    </div>
+  )
+}
+
+/** Anneau de progression. */
+export function Ring({ value, size = 76 }: { value: number; size?: number }) {
+  const r = 32
+  const c = 2 * Math.PI * r
+  const v = Math.max(0, Math.min(1, value))
+  return (
+    <div className="ring" style={{ width: size, height: size }}>
+      <svg viewBox="0 0 76 76">
+        <circle cx="38" cy="38" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="7" />
+        <circle cx="38" cy="38" r={r} fill="none" stroke={v >= 1 ? 'var(--success)' : 'var(--olive-light)'} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${c * v} ${c}`} />
+      </svg>
+      <span>{Math.round(v * 100)} %</span>
+    </div>
+  )
+}
+
+export function Progress({ value }: { value: number }) {
+  const v = Math.max(0, Math.min(1, value))
+  return (
+    <div className={`progress${v >= 1 ? ' full' : ''}`}>
+      <div style={{ width: `${v * 100}%` }} />
     </div>
   )
 }
@@ -81,11 +133,12 @@ function parse(t: string): number | undefined {
   return Number.isFinite(n) ? n : undefined
 }
 
-export function Empty({ icon, children }: { icon?: ReactNode; children: ReactNode }) {
+export function Empty({ icon, title, children }: { icon?: ReactNode; title?: ReactNode; children?: ReactNode }) {
   return (
     <div className="empty">
       {icon}
-      <div>{children}</div>
+      {title && <div className="t">{title}</div>}
+      {children && <div className="small">{children}</div>}
     </div>
   )
 }

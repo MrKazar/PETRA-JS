@@ -4,29 +4,30 @@ import { Capacitor } from '@capacitor/core'
 import { NavContext, type Nav, type Route, type Tab } from './nav'
 import { useData } from './data/store'
 import { ToastHost } from './ui/kit'
-import { IconCalendar, IconCheckList, IconDumbbell, IconHome, IconUser } from './ui/icons'
-import { HomeScreen } from './screens/Home'
-import { PlanScreen } from './screens/Plan'
+import { IconBook, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
+import { TodayScreen } from './screens/Today'
 import { ProgramsScreen } from './screens/Programs'
 import { ProgramDetailScreen } from './screens/ProgramDetail'
 import { RoutinesScreen } from './screens/Routines'
-import { ProfileScreen } from './screens/Profile'
+import { ExercisesScreen } from './screens/Exercises'
+import { FinishersScreen } from './screens/Finishers'
+import { SettingsScreen } from './screens/Settings'
 import { WorkoutScreen } from './screens/Workout'
 import { HistoryScreen, SessionDetailScreen } from './screens/History'
 import { RecordsScreen } from './screens/Records'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 
-const TABS: { tab: Tab; label: string; Icon: typeof IconHome }[] = [
-  { tab: 'home', label: 'Accueil', Icon: IconHome },
-  { tab: 'plan', label: 'Plan', Icon: IconCalendar },
+const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
+  { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
   { tab: 'programs', label: 'Programmes', Icon: IconDumbbell },
-  { tab: 'routines', label: 'Routines', Icon: IconCheckList },
-  { tab: 'profile', label: 'Profil', Icon: IconUser },
+  { tab: 'exercises', label: 'Exercices', Icon: IconBook },
+  { tab: 'finishers', label: 'Finishers', Icon: IconFlame },
+  { tab: 'settings', label: 'Paramètres', Icon: IconSettings },
 ]
 
 export default function App() {
-  const [stack, setStack] = useState<Route[]>([{ name: 'home' }])
+  const [stack, setStack] = useState<Route[]>([{ name: 'today' }])
   const stackRef = useRef(stack)
   useEffect(() => {
     stackRef.current = stack
@@ -50,7 +51,7 @@ export default function App() {
     if (ev.defaultPrevented) return
     const s = stackRef.current
     if (s.length > 1) setStack(s.slice(0, -1))
-    else if (s[0].name !== 'home') setStack([{ name: 'home' }])
+    else if (s[0].name !== 'today') setStack([{ name: 'today' }])
     else if (Capacitor.isNativePlatform()) CapApp.minimizeApp()
   }, [])
 
@@ -63,7 +64,7 @@ export default function App() {
   }, [handleBack])
 
   const route = nav.route
-  const rootTab: Tab = (stack[0].name as Tab) ?? 'home'
+  const rootTab = stack[0].name as Tab
   const showTabs = route.name !== 'workout'
 
   return (
@@ -103,18 +104,20 @@ function LiveBanner({ name, startedAt, restEnd, onOpen }: { name: string; starte
 
 function Screen({ route }: { route: Route }) {
   switch (route.name) {
-    case 'home':
-      return <HomeScreen />
-    case 'plan':
-      return <PlanScreen />
+    case 'today':
+      return <TodayScreen />
     case 'programs':
       return <ProgramsScreen />
     case 'program':
       return <ProgramDetailScreen id={route.id} />
+    case 'exercises':
+      return <ExercisesScreen />
+    case 'finishers':
+      return <FinishersScreen />
+    case 'settings':
+      return <SettingsScreen />
     case 'routines':
       return <RoutinesScreen />
-    case 'profile':
-      return <ProfileScreen />
     case 'workout':
       return <WorkoutScreen />
     case 'history':

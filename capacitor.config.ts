@@ -4,11 +4,11 @@ const config: CapacitorConfig = {
   appId: 'fr.mrkazar.petra',
   appName: 'PETRA',
   webDir: 'dist',
-  backgroundColor: '#16130f',
+  backgroundColor: '#0D0F0E',
   plugins: {
     LocalNotifications: {
       smallIcon: 'ic_stat_petra',
-      iconColor: '#c9a24b',
+      iconColor: '#68764D',
     },
   },
 }

@@ -16,7 +16,7 @@ export function RecordsScreen() {
         <div className="list">
           {prs.map((r) => (
             <div key={r.name} className="list-item">
-              <IconTrophy style={{ width: 22, color: 'var(--gold)', flex: 'none' }} />
+              <IconTrophy style={{ width: 22, color: 'var(--khaki)', flex: 'none' }} />
               <div className="grow">
                 <div style={{ fontWeight: 600 }}>{r.name}</div>
                 <div className="small muted">

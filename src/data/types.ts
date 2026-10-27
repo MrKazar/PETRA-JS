@@ -1,7 +1,7 @@
 export type Phase = 'chauffe' | 'travail' | 'hypertrophie' | 'effort' | 'retour'
 
 export const PHASE_LABEL: Record<Phase, string> = {
-  chauffe: 'Échauffement',
+  chauffe: 'Chauffe',
   travail: 'Travail',
   hypertrophie: 'Hypertrophie',
   effort: 'Effort',
@@ -14,6 +14,10 @@ export interface PlannedSet {
   reps?: number
   weight?: number
   durationSec?: number
+  /** Charge en % de la charge de travail (chauffe, hypertrophie). Les séries de travail sont à 100 %. */
+  pct?: number
+  /** Repos après la série ; à défaut, celui de l'exercice. */
+  restSec?: number
 }
 
 export interface ProgramExercise {
@@ -22,6 +26,10 @@ export interface ProgramExercise {
   name: string
   group: string
   parCote: boolean
+  /** Faux pour un exercice au poids du corps (lest facultatif). */
+  usesLoad?: boolean
+  /** Charge des séries de travail, en kg ; les autres séries en découlent. */
+  workLoad?: number
   restSec: number
   sets: PlannedSet[]
   note?: string
@@ -91,6 +99,10 @@ export type FinisherType = 'abdos' | 'dos' | 'pecs' | 'jambes' | 'epaules_bras'
 
 export interface Settings {
   defaultRestSec: number
+  /** Alternance semaine A / semaine B. */
+  abWeeks: boolean
+  /** Un lundi (AAAA-MM-JJ) d'une semaine A : les semaines alternent à partir de là. */
+  weekAAnchor: string
   finishersEnabled: boolean
   vibrate: boolean
   keepAwake: boolean
@@ -105,8 +117,10 @@ export interface AppData {
   routines: Routine[]
   /** date (AAAA-MM-JJ) → id de routine → statut */
   routineLog: Record<string, Record<string, TaskStatus>>
-  /** jour de la semaine (0 = lundi) → id de programme */
+  /** jour de la semaine (0 = lundi) → id de programme, pour la semaine A */
   weekPlan: Record<number, string | undefined>
+  /** Idem pour la semaine B (utilisée seulement si l'alternance A/B est activée). */
+  weekPlanB: Record<number, string | undefined>
   /** date → id de programme, ou null pour « repos » ce jour-là */
   planOverrides: Record<string, string | null>
   lastFinisher: Partial<Record<FinisherType, string>>

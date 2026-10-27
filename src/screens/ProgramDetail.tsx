@@ -4,7 +4,7 @@ import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
 import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
-import { groupLabel } from '../data/catalog'
+import { groupLabel, setLabels, withWorkLoad } from '../data/catalog'
 import { uid } from '../logic/util'
 import { describeSet } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
@@ -84,12 +84,19 @@ export function ProgramDetailScreen({ id }: { id: string }) {
               <div key={e.id} className="card tight">
                 <div className="row">
                   <div className="grow" onClick={() => setEditingEx(e.id)} style={{ cursor: 'pointer' }}>
-                    <div style={{ fontWeight: 700 }}>{e.name}</div>
+                    <div style={{ fontWeight: 600 }}>{e.name}</div>
                     <div className="small muted">
                       {groupLabel(e.group)} · {e.sets.length} série{e.sets.length > 1 ? 's' : ''}
-                      {e.restSec ? ` · repos ${e.restSec} s` : ''}
+                      {e.usesLoad === false ? ' · poids du corps' : ''}
                     </div>
                     <div className="small faint" style={{ marginTop: 4 }}>{summarize(e)}</div>
+                    {hasLoad(e) && (
+                      <div className="row" style={{ marginTop: 8, gap: 6 }} onClick={(ev) => ev.stopPropagation()}>
+                        <span className="small" style={{ color: 'var(--khaki)' }}>Charge de travail</span>
+                        <NumInput value={e.workLoad} placeholder="kg" width={70} onChange={(v) => setExercises(program.exercises.map((x) => (x.id === e.id ? withWorkLoad(x, v) : x)))} />
+                        <span className="small faint">kg</span>
+                      </div>
+                    )}
                   </div>
                   <div className="stack" style={{ gap: 0 }}>
                     <button className="icon-btn" style={{ height: 32 }} aria-label="Monter" disabled={i === 0} onClick={() => move(i, -1)}>
@@ -104,7 +111,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
             ))}
           </div>
         ) : (
-          <Empty icon={<IconDumbbell />}>Ajoute des exercices depuis le catalogue (plus de 100 exercices) ou crée les tiens.</Empty>
+          <Empty icon={<IconDumbbell />}>Ajoute des exercices depuis le catalogue (260 exercices) ou crée les tiens.</Empty>
         )}
 
         <button className="btn block" onClick={() => setPicking(true)}>
@@ -154,22 +161,11 @@ export function ProgramDetailScreen({ id }: { id: string }) {
   )
 }
 
+const hasLoad = (e: ProgramExercise) => e.usesLoad !== false && e.sets.some((s) => s.durationSec == null)
+
 function summarize(e: ProgramExercise): string {
-  const parts: string[] = []
-  let prev = ''
-  let count = 0
-  const flush = () => prev && parts.push(count > 1 ? `${count} × ${prev}` : prev)
-  for (const s of e.sets) {
-    const d = describeSet(s, e.parCote)
-    if (d === prev) count++
-    else {
-      flush()
-      prev = d
-      count = 1
-    }
-  }
-  flush()
-  return parts.join(' · ')
+  const labels = setLabels(e.sets)
+  return e.sets.map((s, i) => `${labels[i]} ${describeSet(s, e.parCote)}`).join(' · ')
 }
 
 function RenameSheet({ open, initial, onClose, onSave }: { open: boolean; initial: string; onClose: () => void; onSave: (n: string) => void }) {
@@ -207,21 +203,25 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
           <span>Nom</span>
           <input className="input" value={e.name} onChange={(ev) => onChange({ ...e, name: ev.target.value })} />
         </label>
-        <div className="row between">
-          <span className="small muted">Repos entre les séries</span>
-          <div className="row" style={{ gap: 6 }}>
-            <NumInput value={e.restSec} onChange={(v) => onChange({ ...e, restSec: Math.max(0, Math.round(v ?? 0)) })} />
-            <span className="small faint">s</span>
+        {hasLoad(e) && (
+          <div className="row between">
+            <div>
+              <div style={{ fontWeight: 600 }}>Charge de travail</div>
+              <div className="small muted">Recalcule les charges de chauffe et d’hypertrophie.</div>
+            </div>
+            <div className="row" style={{ gap: 6 }}>
+              <NumInput value={e.workLoad} placeholder="kg" width={70} onChange={(v) => onChange(withWorkLoad(e, v))} />
+              <span className="small faint">kg</span>
+            </div>
           </div>
-        </div>
+        )}
         <div className="row between">
-          <span className="small muted">Séries en {timed ? 'durée' : 'répétitions'}</span>
+          <span className="small muted">Séries en {timed ? 'durée' : 'répétitions'} · reps × kg · repos</span>
           <button className="btn sm" onClick={switchMode}>Passer en {timed ? 'répétitions' : 'durée'}</button>
         </div>
         <div>
           {e.sets.map((s, i) => (
             <div key={i} className="row" style={{ gap: 6, padding: '6px 0', borderTop: i ? '1px solid var(--line)' : undefined }}>
-              <span className="faint" style={{ width: 18, fontWeight: 700 }}>{i + 1}</span>
               <select className="input" style={{ minHeight: 40, padding: '6px 8px', flex: 1, minWidth: 0 }} value={s.phase} onChange={(ev) => setSet(i, { phase: ev.target.value as Phase })}>
                 {PHASES.map((p) => <option key={p} value={p}>{PHASE_LABEL[p]}</option>)}
               </select>
@@ -237,6 +237,8 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
                   <NumInput value={s.weight} onChange={(v) => setSet(i, { weight: v })} width={58} placeholder="kg" />
                 </>
               )}
+              <NumInput value={s.restSec ?? e.restSec} width={50} onChange={(v) => setSet(i, { restSec: Math.max(0, Math.round(v ?? 0)) })} />
+              <span className="small faint">s</span>
               <button className="icon-btn" style={{ width: 34 }} aria-label="Retirer la série" onClick={() => onChange({ ...e, sets: e.sets.filter((_, j) => j !== i) })}>
                 <IconX />
               </button>

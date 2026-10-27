@@ -1,10 +1,15 @@
 import { useSyncExternalStore } from 'react'
 import type { AppData, Settings } from './types'
+import { addDays, dateKey, weekday } from '../logic/util'
 
 const KEY = 'petra.data.v1'
 
+const thisMonday = () => addDays(dateKey(), -weekday(dateKey()))
+
 export const DEFAULT_SETTINGS: Settings = {
   defaultRestSec: 90,
+  abWeeks: false,
+  weekAAnchor: thisMonday(),
   finishersEnabled: false,
   vibrate: true,
   keepAwake: true,
@@ -19,6 +24,7 @@ export function emptyData(): AppData {
     routines: [],
     routineLog: {},
     weekPlan: {},
+    weekPlanB: {},
     planOverrides: {},
     lastFinisher: {},
     settings: { ...DEFAULT_SETTINGS },

@@ -4,10 +4,10 @@ import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
 import { checkForUpdate, type UpdateInfo } from '../logic/updates'
-import { Brand, NumInput, Sheet, Toggle, TopBar, confirmAction, toast } from '../ui/kit'
-import { IconChevron, IconHistory, IconTrophy } from '../ui/icons'
+import { Header, LogoFull, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
+import { IconCheckList, IconChevron, IconHistory, IconTrophy } from '../ui/icons'
 
-export function ProfileScreen() {
+export function SettingsScreen() {
   const data = useData()
   const nav = useNav()
   const s = data.settings
@@ -59,9 +59,9 @@ export function ProfileScreen() {
   return (
     <div className="screen">
       <div className="screen-inner">
-        <TopBar title="Profil" />
+        <Header title="Paramètres" />
         <div className="card">
-          <Brand />
+          <LogoFull />
           <div className="stat-grid" style={{ marginTop: 14 }}>
             <div className="stat"><div className="v">{data.sessions.length}</div><div className="l">Séances</div></div>
             <div className="stat"><div className="v">{Math.round(totalSec / 3600)} h</div><div className="l">Entraînement</div></div>
@@ -71,18 +71,23 @@ export function ProfileScreen() {
 
         <div className="list">
           <div className="list-item clickable" onClick={() => nav.push({ name: 'history' })}>
-            <IconHistory style={{ width: 22, color: 'var(--gold)' }} />
+            <div className="icon-box"><IconHistory /></div>
             <span className="grow" style={{ fontWeight: 600 }}>Historique des séances</span>
             <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
           </div>
           <div className="list-item clickable" onClick={() => nav.push({ name: 'records' })}>
-            <IconTrophy style={{ width: 22, color: 'var(--gold)' }} />
+            <div className="icon-box"><IconTrophy /></div>
             <span className="grow" style={{ fontWeight: 600 }}>Records personnels</span>
+            <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+          </div>
+          <div className="list-item clickable" onClick={() => nav.push({ name: 'routines' })}>
+            <div className="icon-box"><IconCheckList /></div>
+            <span className="grow" style={{ fontWeight: 600 }}>Routines et tâches</span>
             <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
           </div>
         </div>
 
-        <div className="section-title">Moi</div>
+        <SectionTitle>Moi</SectionTitle>
         <div className="card stack">
           <label className="field">
             <span>Prénom</span>
@@ -90,19 +95,12 @@ export function ProfileScreen() {
           </label>
         </div>
 
-        <div className="section-title">Séances</div>
+        <SectionTitle>Séances</SectionTitle>
         <div className="card stack">
           <div className="row">
             <div className="grow">
-              <div style={{ fontWeight: 600 }}>Finishers</div>
-              <div className="small muted">Propose une mini-séance au poids du corps quand tu termines.</div>
-            </div>
-            <Toggle on={s.finishersEnabled} onChange={(v) => saveSettings({ finishersEnabled: v })} label="Finishers" />
-          </div>
-          <div className="row">
-            <div className="grow">
               <div style={{ fontWeight: 600 }}>Repos par défaut</div>
-              <div className="small muted">Pour les nouveaux exercices et entre deux exercices.</div>
+              <div className="small muted">Minimum entre deux exercices et pour les exercices perso.</div>
             </div>
             <NumInput value={s.defaultRestSec} onChange={(v) => saveSettings({ defaultRestSec: Math.max(0, Math.round(v ?? 0)) })} />
             <span className="small faint">s</span>
@@ -121,7 +119,7 @@ export function ProfileScreen() {
           </div>
         </div>
 
-        <div className="section-title">Données</div>
+        <SectionTitle>Données</SectionTitle>
         <div className="card stack">
           <div className="small muted">Tout est stocké sur ton téléphone. Fais une sauvegarde de temps en temps.</div>
           <div className="row">
@@ -135,7 +133,7 @@ export function ProfileScreen() {
           </div>
         </div>
 
-        <div className="section-title">Application</div>
+        <SectionTitle>Application</SectionTitle>
         <div className="card stack">
           <div className="row">
             <div className="grow">
@@ -151,7 +149,7 @@ export function ProfileScreen() {
             )}
           </div>
         </div>
-        <div className="center faint small">Discipline · Progrès · Objectif</div>
+        <div className="center faint small">Plus fort aujourd’hui, plus utile demain.</div>
       </div>
 
       <Sheet open={backup === 'export'} onClose={() => setBackup(null)} title="Sauvegarde">

@@ -4,26 +4,49 @@ import type { Recurrence, Routine, TaskStatus } from '../data/types'
 import { setRoutineStatus } from '../logic/actions'
 import { describeRecurrence, routinesFor } from '../logic/planner'
 import { dateKey, formatShortDay, uid, WEEKDAYS } from '../logic/util'
-import { Empty, Sheet, TopBar, confirmAction } from '../ui/kit'
-import { IconCheck, IconCheckList, IconPlus, IconPostpone, IconTrash, IconX } from '../ui/icons'
+import { useNav } from '../nav'
+import { tap } from '../logic/native'
+import { Empty, SectionTitle, Sheet, TopBar, confirmAction } from '../ui/kit'
+import { IconCheck, IconCheckList, IconChevron, IconDots, IconPlus, IconTrash } from '../ui/icons'
 
-export function RoutineStatusButtons({ status, onChange }: { status?: TaskStatus; onChange: (s: TaskStatus | undefined) => void }) {
-  const b = (s: TaskStatus, label: string, icon: React.ReactNode) => (
-    <button className={`${s}${status === s ? ' on' : ''}`} aria-label={label} title={label} onClick={() => onChange(status === s ? undefined : s)}>
-      {icon}
-    </button>
-  )
+/** Ligne de tâche cochable en un appui ; le menu « ⋮ » donne Reporter / Sauter / Modifier. */
+export function TaskRow({ routine, status, carried, onStatus, onEdit }: { routine: Routine; status?: TaskStatus; carried?: boolean; onStatus: (s: TaskStatus | undefined) => void; onEdit: () => void }) {
+  const [menu, setMenu] = useState(false)
+  const inactive = status === 'saute' || status === 'reporte'
+  const extra = [status === 'saute' ? 'Sautée aujourd’hui' : status === 'reporte' ? 'Reportée à demain' : null, carried ? 'Reportée d’hier' : null, routine.time ?? null]
+    .filter(Boolean)
+    .join(' · ')
+  const pick = (s: TaskStatus | undefined) => {
+    setMenu(false)
+    onStatus(s)
+  }
   return (
-    <div className="status-btns">
-      {b('fait', 'Fait', <IconCheck />)}
-      {b('reporte', 'Reporter à demain', <IconPostpone />)}
-      {b('saute', 'Sauter', <IconX />)}
+    <div className={`task${status === 'fait' ? ' done' : ''}${inactive ? ' inactive' : ''}`} onClick={() => { tap(); onStatus(status === 'fait' ? undefined : 'fait') }}>
+      <span className="circle">{status === 'fait' && <IconCheck />}</span>
+      <div className="grow">
+        <div className="title">{routine.name}</div>
+        {extra && <div className="small muted">{extra}</div>}
+      </div>
+      <div style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+        <button className="icon-btn" aria-label="Options de la tâche" onClick={() => setMenu(!menu)}>
+          <IconDots />
+        </button>
+        {menu && (
+          <div className="menu">
+            {status && <button onClick={() => pick(undefined)}>Remettre à faire</button>}
+            <button onClick={() => pick('reporte')}>Reporter à demain</button>
+            <button onClick={() => pick('saute')}>Sauter aujourd’hui</button>
+            <button onClick={() => { setMenu(false); onEdit() }}>Modifier</button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
 export function RoutinesScreen() {
   const data = useData()
+  const nav = useNav()
   const today = dateKey()
   const todays = routinesFor(data, today)
   const [editing, setEditing] = useState<Routine | null>(null)
@@ -33,29 +56,19 @@ export function RoutinesScreen() {
   return (
     <div className="screen">
       <div className="screen-inner">
-        <TopBar title="Routines" />
-        <div className="section-title">Aujourd’hui</div>
-        {todays.length ? (
-          <div className="list">
-            {todays.map(({ routine, status, carried }) => (
-              <div className="list-item" key={routine.id}>
-                <div className="grow">
-                  <div style={{ fontWeight: 600, textDecoration: status === 'fait' ? 'line-through' : undefined }}>{routine.name}</div>
-                  <div className="small muted">
-                    {routine.time ?? 'Dans la journée'}
-                    {carried ? ' · reportée d’hier' : ''}
-                    {status === 'reporte' ? ' · reportée à demain' : status === 'saute' ? ' · sautée' : ''}
-                  </div>
-                </div>
-                <RoutineStatusButtons status={status} onChange={(s) => setRoutineStatus(today, routine.id, s)} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="muted small">Rien de prévu aujourd’hui.</div>
-        )}
+        <TopBar title="Routines et tâches" onBack={nav.pop} />
+        <div className="card">
+          <SectionTitle>Aujourd’hui</SectionTitle>
+          {todays.length ? (
+            todays.map(({ routine, status, carried }) => (
+              <TaskRow key={routine.id} routine={routine} status={status} carried={carried} onStatus={(s) => setRoutineStatus(today, routine.id, s)} onEdit={() => setEditing(routine)} />
+            ))
+          ) : (
+            <div className="muted small" style={{ paddingTop: 8 }}>Rien de prévu aujourd’hui.</div>
+          )}
+        </div>
 
-        <div className="section-title">Toutes mes routines</div>
+        <SectionTitle>Toutes mes routines</SectionTitle>
         {data.routines.length ? (
           <div className="list">
             {data.routines.map((r) => (
@@ -68,23 +81,26 @@ export function RoutinesScreen() {
                     {r.time ? ` · ${r.time}` : ''}
                   </div>
                 </div>
+                <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
               </div>
             ))}
           </div>
         ) : (
-          <Empty icon={<IconCheckList />}>Ajoute tes habitudes : étirements, eau, sommeil, marche…</Empty>
+          <div className="card">
+            <Empty icon={<IconCheckList />} title="Aucune routine">Ajoute tes habitudes : étirements, eau, sommeil, marche…</Empty>
+          </div>
         )}
         <div className="fab-space" />
       </div>
-      <button className="fab" aria-label="Nouvelle routine" onClick={() => setEditing(blank())}>
-        <IconPlus />
+      <button className="fab" onClick={() => setEditing(blank())}>
+        <IconPlus /> Routine
       </button>
       {editing && <RoutineEditor routine={editing} onClose={() => setEditing(null)} />}
     </div>
   )
 }
 
-function RoutineEditor({ routine, onClose }: { routine: Routine; onClose: () => void }) {
+export function RoutineEditor({ routine, onClose }: { routine: Routine; onClose: () => void }) {
   const data = useData()
   const exists = data.routines.some((r) => r.id === routine.id)
   const [name, setName] = useState(routine.name)
@@ -110,7 +126,7 @@ function RoutineEditor({ routine, onClose }: { routine: Routine; onClose: () => 
   }
 
   return (
-    <Sheet open onClose={onClose} title={exists ? 'Modifier la routine' : 'Nouvelle routine'}>
+    <Sheet open onClose={onClose} title={exists ? 'Modifier' : routine.recurrence.kind === 'once' ? 'Nouvelle tâche' : 'Nouvelle routine'}>
       <div className="stack">
         <label className="field">
           <span>Nom</span>

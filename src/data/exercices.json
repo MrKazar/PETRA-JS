@@ -1,1 +1,6600 @@
-{"version":"1.0","langue":"fr","legende":{"chauffe":"Séries d'échauffement spécifiques, charge progressive, sans aller à l'échec.","travail":"Série de travail orientée force (charges lourdes, moins de reps, repos long).","hypertrophie":"Série orientée prise de muscle (charge modérée, reps moyennes, proche de l'échec : 1-3 reps en réserve).","repos_sec":"Repos conseillé entre deux séries, en secondes.","par_cote":"Si true, les reps sont à faire de chaque côté (unilatéral).","note":"Valeurs indicatives issues des recommandations courantes en musculation : à ajuster selon ton niveau, ta récupération et tes sensations.","cardio":"Exercice de cardio : échauffement, effort puis retour au calme, durées en minutes. L'intensité est indicative."},"groupes_musculaires":["abdominaux","adducteurs","avant_bras","biceps","dos","epaules","fessiers","ischio_jambiers","lombaires","mollets","obliques","pectoraux","quadriceps","trapezes","triceps","cardio"],"exercices":[{"id":"dev_couche_barre","nom":"Développé couché à la barre","groupe_musculaire":"pectoraux","muscles_secondaires":["triceps","deltoides_anterieurs"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":3,"reps":"10-12 puis 5-6 en montant la charge","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"3-6","repos_sec":180},"hypertrophie":{"objectif":"masse","series":3,"reps":"6-10","repos_sec":120}},{"id":"dev_incline_barre","nom":"Développé incliné à la barre","groupe_musculaire":"pectoraux","muscles_secondaires":["deltoides_anterieurs","triceps"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_decline_barre","nom":"Développé décliné à la barre","groupe_musculaire":"pectoraux","muscles_secondaires":["triceps"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_couche_halteres","nom":"Développé couché aux haltères","groupe_musculaire":"pectoraux","muscles_secondaires":["triceps","deltoides_anterieurs"],"equipement":"haltères","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_incline_halteres","nom":"Développé incliné aux haltères","groupe_musculaire":"pectoraux","muscles_secondaires":["deltoides_anterieurs","triceps"],"equipement":"haltères","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_couche_smith","nom":"Développé couché à la Smith machine","groupe_musculaire":"pectoraux","muscles_secondaires":["triceps"],"equipement":"smith","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_incline_smith","nom":"Développé incliné à la Smith machine","groupe_musculaire":"pectoraux","muscles_secondaires":["deltoides_anterieurs"],"equipement":"smith","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_convergent","nom":"Développé machine convergente","groupe_musculaire":"pectoraux","muscles_secondaires":["triceps"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"dev_incline_machine","nom":"Développé incliné machine","groupe_musculaire":"pectoraux","muscles_secondaires":["deltoides_anterieurs"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"pec_deck","nom":"Pec deck (papillon)","groupe_musculaire":"pectoraux","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"ecartes_halteres","nom":"Écartés couché aux haltères","groupe_musculaire":"pectoraux","muscles_secondaires":[],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"ecartes_poulie","nom":"Écartés poulies vis-à-vis","groupe_musculaire":"pectoraux","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"ecartes_poulie_basse","nom":"Écartés poulie basse vers haut","groupe_musculaire":"pectoraux","muscles_secondaires":["deltoides_anterieurs"],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"pompes","nom":"Pompes","groupe_musculaire":"pectoraux","muscles_secondaires":["triceps","deltoides_anterieurs"],"equipement":"poids du corps","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"10-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"10-15","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-25","repos_sec":60}},{"id":"dips_pecs","nom":"Dips (buste penché, pectoraux)","groupe_musculaire":"pectoraux","muscles_secondaires":["triceps"],"equipement":"barres parallèles","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"5-8 (assisté si besoin)","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"4-6","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"pullover_haltere","nom":"Pull-over à l'haltère","groupe_musculaire":"pectoraux","muscles_secondaires":["grand_dorsal"],"equipement":"haltère","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"souleve_terre","nom":"Soulevé de terre","groupe_musculaire":"dos","muscles_secondaires":["fessiers","ischio_jambiers","lombaires","trapezes"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":3,"reps":"10-12 puis 5-6 en montant la charge","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"3-5","repos_sec":210},"hypertrophie":{"objectif":"masse","series":3,"reps":"6-8","repos_sec":150}},{"id":"souleve_terre_roumain","nom":"Soulevé de terre roumain","groupe_musculaire":"ischio_jambiers","muscles_secondaires":["fessiers","lombaires"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"souleve_terre_jambes_tendues","nom":"Soulevé de terre jambes tendues","groupe_musculaire":"ischio_jambiers","muscles_secondaires":["fessiers","lombaires"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"traction_pronation","nom":"Tractions pronation","groupe_musculaire":"dos","muscles_secondaires":["biceps","avant_bras"],"equipement":"barre de traction","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"5-8 (assisté si besoin)","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"4-6","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"traction_supination","nom":"Tractions supination (chin-up)","groupe_musculaire":"dos","muscles_secondaires":["biceps"],"equipement":"barre de traction","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"5-8 (assisté si besoin)","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"4-6","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"traction_assistee","nom":"Tractions machine assistée","groupe_musculaire":"dos","muscles_secondaires":["biceps"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"tirage_vertical_large","nom":"Tirage vertical poitrine prise large","groupe_musculaire":"dos","muscles_secondaires":["biceps"],"equipement":"poulie","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"tirage_vertical_serre","nom":"Tirage vertical prise neutre serrée","groupe_musculaire":"dos","muscles_secondaires":["biceps"],"equipement":"poulie","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"tirage_vertical_unilateral","nom":"Tirage vertical unilatéral","groupe_musculaire":"dos","muscles_secondaires":["biceps"],"equipement":"poulie","type":"polyarticulaire","par_cote":true,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"rowing_barre","nom":"Rowing barre penché","groupe_musculaire":"dos","muscles_secondaires":["biceps","lombaires","trapezes"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"rowing_haltere","nom":"Rowing haltère unilatéral","groupe_musculaire":"dos","muscles_secondaires":["biceps","trapezes"],"equipement":"haltère","type":"polyarticulaire","par_cote":true,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"rowing_tbar","nom":"Rowing T-bar","groupe_musculaire":"dos","muscles_secondaires":["biceps","trapezes"],"equipement":"barre en T","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"rowing_machine","nom":"Rowing machine assis (poitrine appuyée)","groupe_musculaire":"dos","muscles_secondaires":["biceps","trapezes"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"tirage_horizontal","nom":"Tirage horizontal poulie basse","groupe_musculaire":"dos","muscles_secondaires":["biceps","trapezes"],"equipement":"poulie","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"pullover_poulie","nom":"Pull-over poulie haute","groupe_musculaire":"dos","muscles_secondaires":["triceps"],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"shrugs_halteres","nom":"Shrugs aux haltères","groupe_musculaire":"trapezes","muscles_secondaires":["avant_bras"],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"shrugs_barre","nom":"Shrugs à la barre","groupe_musculaire":"trapezes","muscles_secondaires":["avant_bras"],"equipement":"barre","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"extension_lombaires","nom":"Extensions lombaires (banc à 45°)","groupe_musculaire":"lombaires","muscles_secondaires":["fessiers","ischio_jambiers"],"equipement":"banc","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"good_morning","nom":"Good morning","groupe_musculaire":"lombaires","muscles_secondaires":["ischio_jambiers","fessiers"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_militaire_barre","nom":"Développé militaire à la barre","groupe_musculaire":"epaules","muscles_secondaires":["triceps","trapezes"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_halteres_assis","nom":"Développé haltères assis","groupe_musculaire":"epaules","muscles_secondaires":["triceps"],"equipement":"haltères","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_arnold","nom":"Développé Arnold","groupe_musculaire":"epaules","muscles_secondaires":["triceps"],"equipement":"haltères","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_epaules_machine","nom":"Développé épaules machine","groupe_musculaire":"epaules","muscles_secondaires":["triceps"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"dev_epaules_smith","nom":"Développé épaules Smith machine","groupe_musculaire":"epaules","muscles_secondaires":["triceps"],"equipement":"smith","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"elevations_laterales_halteres","nom":"Élévations latérales aux haltères","groupe_musculaire":"epaules","muscles_secondaires":[],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":4,"reps":"12-20","repos_sec":45}},{"id":"elevations_laterales_poulie","nom":"Élévations latérales à la poulie","groupe_musculaire":"epaules","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":true,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":4,"reps":"12-20","repos_sec":45}},{"id":"elevations_laterales_machine","nom":"Élévations latérales machine","groupe_musculaire":"epaules","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"elevations_frontales","nom":"Élévations frontales","groupe_musculaire":"epaules","muscles_secondaires":[],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"oiseau_halteres","nom":"Oiseau aux haltères (buste penché)","groupe_musculaire":"epaules","muscles_secondaires":["trapezes"],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"reverse_pec_deck","nom":"Pec deck inversé (arrière d'épaule)","groupe_musculaire":"epaules","muscles_secondaires":["trapezes"],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"face_pull","nom":"Face pull","groupe_musculaire":"epaules","muscles_secondaires":["trapezes"],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":60}},{"id":"tirage_menton","nom":"Tirage menton","groupe_musculaire":"epaules","muscles_secondaires":["trapezes"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"curl_barre","nom":"Curl barre droite","groupe_musculaire":"biceps","muscles_secondaires":["avant_bras"],"equipement":"barre","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_barre_ez","nom":"Curl barre EZ","groupe_musculaire":"biceps","muscles_secondaires":["avant_bras"],"equipement":"barre EZ","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_halteres","nom":"Curl haltères alterné","groupe_musculaire":"biceps","muscles_secondaires":["avant_bras"],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_marteau","nom":"Curl marteau","groupe_musculaire":"biceps","muscles_secondaires":["avant_bras"],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_incline","nom":"Curl incliné aux haltères","groupe_musculaire":"biceps","muscles_secondaires":[],"equipement":"haltères","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_pupitre","nom":"Curl pupitre (Larry Scott)","groupe_musculaire":"biceps","muscles_secondaires":[],"equipement":"barre EZ","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_poulie_basse","nom":"Curl poulie basse","groupe_musculaire":"biceps","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_concentre","nom":"Curl concentré","groupe_musculaire":"biceps","muscles_secondaires":[],"equipement":"haltère","type":"isolation","par_cote":true,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"curl_spider","nom":"Curl spider","groupe_musculaire":"biceps","muscles_secondaires":[],"equipement":"barre EZ","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"barre_front","nom":"Barre au front (skull crusher)","groupe_musculaire":"triceps","muscles_secondaires":[],"equipement":"barre EZ","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"pushdown_corde","nom":"Extension poulie haute à la corde","groupe_musculaire":"triceps","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"pushdown_barre","nom":"Extension poulie haute à la barre","groupe_musculaire":"triceps","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"extension_nuque_poulie","nom":"Extension triceps au-dessus de la tête (poulie)","groupe_musculaire":"triceps","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"extension_nuque_haltere","nom":"Extension nuque à l'haltère","groupe_musculaire":"triceps","muscles_secondaires":[],"equipement":"haltère","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"dips_triceps","nom":"Dips (buste droit, triceps)","groupe_musculaire":"triceps","muscles_secondaires":["pectoraux","epaules"],"equipement":"barres parallèles","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"5-8 (assisté si besoin)","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"4-6","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"dev_couche_serre","nom":"Développé couché prise serrée","groupe_musculaire":"triceps","muscles_secondaires":["pectoraux"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"kickback","nom":"Kickback triceps","groupe_musculaire":"triceps","muscles_secondaires":[],"equipement":"haltère","type":"isolation","par_cote":true,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"dips_machine","nom":"Dips machine","groupe_musculaire":"triceps","muscles_secondaires":["pectoraux"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"curl_poignets","nom":"Curl des poignets","groupe_musculaire":"avant_bras","muscles_secondaires":[],"equipement":"barre","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":45}},{"id":"curl_inverse","nom":"Curl inversé","groupe_musculaire":"avant_bras","muscles_secondaires":["biceps"],"equipement":"barre EZ","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"squat_barre","nom":"Squat barre (high bar)","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers","ischio_jambiers","lombaires"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":3,"reps":"10-12 puis 5-6 en montant la charge","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"3-6","repos_sec":180},"hypertrophie":{"objectif":"masse","series":3,"reps":"6-10","repos_sec":120}},{"id":"front_squat","nom":"Front squat","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers","abdominaux"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":3,"reps":"10-12 puis 5-6 en montant la charge","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"4-6","repos_sec":180},"hypertrophie":{"objectif":"masse","series":3,"reps":"6-10","repos_sec":120}},{"id":"squat_smith","nom":"Squat à la Smith machine","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers"],"equipement":"smith","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"goblet_squat","nom":"Goblet squat","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers"],"equipement":"haltère","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-15","repos_sec":90}},{"id":"presse_cuisses","nom":"Presse à cuisses","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers","ischio_jambiers"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-10","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"hack_squat","nom":"Hack squat","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"leg_extension","nom":"Leg extension","groupe_musculaire":"quadriceps","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"fentes_marchees","nom":"Fentes marchées","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers","ischio_jambiers"],"equipement":"haltères","type":"polyarticulaire","par_cote":true,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"fentes_bulgares","nom":"Fentes bulgares","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers"],"equipement":"haltères","type":"polyarticulaire","par_cote":true,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"6-8","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"fentes_arriere","nom":"Fentes arrière","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers"],"equipement":"haltères","type":"polyarticulaire","par_cote":true,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"step_up","nom":"Step-up","groupe_musculaire":"quadriceps","muscles_secondaires":["fessiers"],"equipement":"haltères","type":"polyarticulaire","par_cote":true,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"leg_curl_allonge","nom":"Leg curl allongé","groupe_musculaire":"ischio_jambiers","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"leg_curl_assis","nom":"Leg curl assis","groupe_musculaire":"ischio_jambiers","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"hip_thrust","nom":"Hip thrust","groupe_musculaire":"fessiers","muscles_secondaires":["ischio_jambiers"],"equipement":"barre","type":"polyarticulaire","par_cote":false,"chauffe":{"series":2,"reps":"10-12","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"6-8","repos_sec":150},"hypertrophie":{"objectif":"masse","series":3,"reps":"8-12","repos_sec":90}},{"id":"hip_thrust_machine","nom":"Hip thrust machine","groupe_musculaire":"fessiers","muscles_secondaires":["ischio_jambiers"],"equipement":"machine","type":"polyarticulaire","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-10","repos_sec":120},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-12","repos_sec":90}},{"id":"kickback_poulie","nom":"Kickback fessier à la poulie","groupe_musculaire":"fessiers","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":true,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"kickback_machine","nom":"Kickback fessier machine","groupe_musculaire":"fessiers","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":true,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"abducteurs","nom":"Abducteurs machine","groupe_musculaire":"fessiers","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":45}},{"id":"adducteurs","nom":"Adducteurs machine","groupe_musculaire":"adducteurs","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"12-15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"mollets_debout","nom":"Mollets debout machine","groupe_musculaire":"mollets","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":4,"reps":"12-20","repos_sec":60}},{"id":"mollets_assis","nom":"Mollets assis machine","groupe_musculaire":"mollets","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":4,"reps":"12-20","repos_sec":60}},{"id":"mollets_presse","nom":"Mollets à la presse","groupe_musculaire":"mollets","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"15","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":4,"reps":"8-12","repos_sec":90},"hypertrophie":{"objectif":"masse","series":4,"reps":"12-20","repos_sec":60}},{"id":"crunch","nom":"Crunch au sol","groupe_musculaire":"abdominaux","muscles_secondaires":[],"equipement":"poids du corps","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"10-15","repos_sec":60},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":45}},{"id":"crunch_poulie","nom":"Crunch poulie haute (à genoux)","groupe_musculaire":"abdominaux","muscles_secondaires":[],"equipement":"poulie","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":75},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"crunch_machine","nom":"Crunch machine","groupe_musculaire":"abdominaux","muscles_secondaires":[],"equipement":"machine","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"8-12","repos_sec":75},"hypertrophie":{"objectif":"masse","series":3,"reps":"12-15","repos_sec":60}},{"id":"releve_jambes_suspendu","nom":"Relevé de jambes suspendu","groupe_musculaire":"abdominaux","muscles_secondaires":["fléchisseurs_hanche"],"equipement":"barre de traction","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"10-15","repos_sec":60},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":45}},{"id":"releve_jambes_banc","nom":"Relevé de jambes au banc","groupe_musculaire":"abdominaux","muscles_secondaires":[],"equipement":"banc","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"10-15","repos_sec":60},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":45}},{"id":"roue_abdos","nom":"Roue abdominale","groupe_musculaire":"abdominaux","muscles_secondaires":["epaules"],"equipement":"roue","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"6-10","repos_sec":75},"hypertrophie":{"objectif":"masse","series":3,"reps":"10-15","repos_sec":60}},{"id":"russian_twist","nom":"Russian twist","groupe_musculaire":"abdominaux","muscles_secondaires":["obliques"],"equipement":"disque","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"10-15","repos_sec":60},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":45}},{"id":"pallof_press","nom":"Pallof press","groupe_musculaire":"abdominaux","muscles_secondaires":["obliques"],"equipement":"poulie","type":"isolation","par_cote":true,"chauffe":{"series":1,"reps":"10","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"10-15","repos_sec":60},"hypertrophie":{"objectif":"masse","series":3,"reps":"15-20","repos_sec":45}},{"id":"planche","nom":"Gainage planche","groupe_musculaire":"abdominaux","muscles_secondaires":["lombaires"],"equipement":"poids du corps","type":"isolation","par_cote":false,"chauffe":{"series":1,"reps":"20 s","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"30-45 s","repos_sec":60},"hypertrophie":{"objectif":"masse","series":3,"reps":"45-60 s","repos_sec":45}},{"id":"planche_laterale","nom":"Gainage latéral","groupe_musculaire":"obliques","muscles_secondaires":["abdominaux"],"equipement":"poids du corps","type":"isolation","par_cote":true,"chauffe":{"series":1,"reps":"20 s","charge":"40-60 % de la charge de travail"},"travail":{"objectif":"force","series":3,"reps":"30-45 s","repos_sec":60},"hypertrophie":{"objectif":"masse","series":3,"reps":"45-60 s","repos_sec":45}},{"id":"corde_a_sauter","nom":"Corde à sauter","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"corde","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":15,"retour_calme_min":5,"intensite":"élevée","consigne":"Fractionné : 30 s rapide / 30 s tranquille, en continu."}},{"id":"marche_rapide","nom":"Marche rapide (extérieur)","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"aucun","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":30,"retour_calme_min":5,"intensite":"modérée","consigne":"Allure soutenue : on peut parler, mais pas chanter."}},{"id":"marche_inclinee","nom":"Marche inclinée sur tapis","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"tapis de course","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":30,"retour_calme_min":5,"intensite":"modérée","consigne":"Inclinaison 8 à 12 %, vitesse 5 à 6 km/h, sans se tenir aux barres."}},{"id":"course_exterieur","nom":"Course à pied (extérieur)","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"aucun","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":25,"retour_calme_min":5,"intensite":"modérée","consigne":"Footing en aisance respiratoire."}},{"id":"course_tapis","nom":"Course sur tapis","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"tapis de course","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":20,"retour_calme_min":5,"intensite":"modérée","consigne":"Allure régulière, 1 % d'inclinaison pour compenser l'absence de vent."}},{"id":"course_fractionnee","nom":"Course fractionnée","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"aucun","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":16,"retour_calme_min":5,"intensite":"élevée","consigne":"8 × (1 min rapide / 1 min de récupération en trottinant)."}},{"id":"step","nom":"Step (montées de marche)","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"step","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":15,"retour_calme_min":5,"intensite":"modérée","consigne":"Montées et descentes alternées sur une marche ou un step, rythme régulier."}},{"id":"escalier_machine","nom":"Escalier (stairmaster)","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"machine","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":15,"retour_calme_min":5,"intensite":"élevée","consigne":"Rythme constant, buste droit, sans s'appuyer sur les poignées."}},{"id":"velo_elliptique","nom":"Vélo elliptique","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"machine","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":25,"retour_calme_min":5,"intensite":"modérée","consigne":"Résistance moyenne, cadence régulière."}},{"id":"velo_appartement","nom":"Vélo d'appartement","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"machine","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":30,"retour_calme_min":5,"intensite":"modérée","consigne":"Cadence 80 à 90 tours/min, résistance moyenne."}},{"id":"rameur","nom":"Rameur","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"machine","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":15,"retour_calme_min":5,"intensite":"élevée","consigne":"Poussée des jambes d'abord, puis tirage des bras ; 22 à 26 coups/min."}},{"id":"air_bike","nom":"Air bike (fractionné)","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"machine","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":10,"retour_calme_min":5,"intensite":"très élevée","consigne":"10 × (20 s à fond / 40 s tranquille)."}},{"id":"hiit_poids_corps","nom":"HIIT poids du corps (burpees, jumping jacks)","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"poids du corps","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":12,"retour_calme_min":5,"intensite":"très élevée","consigne":"Circuit : 40 s d'effort / 20 s de repos, en enchaînant les mouvements."}},{"id":"natation","nom":"Natation","groupe_musculaire":"cardio","muscles_secondaires":[],"equipement":"piscine","type":"cardio","par_cote":false,"cardio":{"echauffement_min":5,"effort_min":25,"retour_calme_min":5,"intensite":"modérée","consigne":"Nage libre à allure régulière, pauses courtes au bord si besoin."}}]}
+{
+ "version": "2.0",
+ "langue": "fr",
+ "legende": {
+  "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
+  "chauffe": "Série d'échauffement à charge légère (charge_pct % de la charge de travail), sans aller à l'échec.",
+  "travail": "Deux séries à la charge de travail, orientées force, 1 à 2 répétitions en réserve.",
+  "hypertrophie": "Dernière série plus légère (charge_pct % de la charge de travail) et plus longue, proche de l'échec.",
+  "repos_sec": "Repos conseillé après la série, en secondes.",
+  "charge": "Si false, l'exercice se fait au poids du corps (lest facultatif).",
+  "par_cote": "Si true, les répétitions se font de chaque côté.",
+  "cardio": "Exercice de cardio : échauffement, effort puis retour au calme, durées en minutes.",
+  "note": "Valeurs indicatives issues des recommandations courantes en musculation : à ajuster selon ton niveau et ta récupération."
+ },
+ "groupes_musculaires": [
+  "pectoraux",
+  "dos",
+  "epaules",
+  "biceps",
+  "triceps",
+  "avant_bras",
+  "trapezes",
+  "lombaires",
+  "quadriceps",
+  "ischio_jambiers",
+  "fessiers",
+  "adducteurs",
+  "mollets",
+  "abdominaux",
+  "obliques",
+  "corps_entier",
+  "cardio"
+ ],
+ "exercices": [
+  {
+   "id": "dev_couche_barre",
+   "nom": "Développé couché à la barre",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps",
+    "deltoides_anterieurs"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_incline_barre",
+   "nom": "Développé incliné à la barre",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "deltoides_anterieurs",
+    "triceps"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_decline_barre",
+   "nom": "Développé décliné à la barre",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_couche_halteres",
+   "nom": "Développé couché aux haltères",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps",
+    "deltoides_anterieurs"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_incline_halteres",
+   "nom": "Développé incliné aux haltères",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "deltoides_anterieurs",
+    "triceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_couche_smith",
+   "nom": "Développé couché à la Smith machine",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "smith",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_incline_smith",
+   "nom": "Développé incliné à la Smith machine",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "deltoides_anterieurs"
+   ],
+   "equipement": "smith",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_convergent",
+   "nom": "Développé machine convergente",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "dev_incline_machine",
+   "nom": "Développé incliné machine",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "deltoides_anterieurs"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pec_deck",
+   "nom": "Pec deck (papillon)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "ecartes_halteres",
+   "nom": "Écartés couché aux haltères",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "ecartes_poulie",
+   "nom": "Écartés poulies vis-à-vis",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "ecartes_poulie_basse",
+   "nom": "Écartés poulie basse vers haut",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "deltoides_anterieurs"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pompes",
+   "nom": "Pompes",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps",
+    "deltoides_anterieurs"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "dips_pecs",
+   "nom": "Dips (buste penché, pectoraux)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "barres parallèles",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "pullover_haltere",
+   "nom": "Pull-over à l'haltère",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "grand_dorsal"
+   ],
+   "equipement": "haltère",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pompes_inclinees",
+   "nom": "Pompes inclinées (mains surélevées)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "pompes_declinees",
+   "nom": "Pompes déclinées (pieds surélevés)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "epaules",
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "pompes_larges",
+   "nom": "Pompes prise large",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "pompes_archer",
+   "nom": "Pompes archer",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps",
+    "epaules"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "pompes_explosives",
+   "nom": "Pompes explosives (claquées)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "pompes_anneaux",
+   "nom": "Pompes aux anneaux",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps",
+    "abdominaux"
+   ],
+   "equipement": "anneaux",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "dev_couche_halteres_neutre",
+   "nom": "Développé couché haltères prise neutre",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_decline_halteres",
+   "nom": "Développé décliné aux haltères",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "floor_press",
+   "nom": "Floor press aux haltères",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_couche_machine",
+   "nom": "Développé couché machine",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps",
+    "epaules"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "dev_landmine",
+   "nom": "Développé landmine",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "epaules",
+    "triceps"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "ecartes_incline_halteres",
+   "nom": "Écartés inclinés aux haltères",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "ecartes_poulie_haute",
+   "nom": "Écartés poulie haute vers bas",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "ecartes_poulie_unilateral",
+   "nom": "Écarté unilatéral à la poulie",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "svend_press",
+   "nom": "Svend press (disque serré)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "dips_assistes",
+   "nom": "Dips machine assistée",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "souleve_terre",
+   "nom": "Soulevé de terre",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "fessiers",
+    "ischio_jambiers",
+    "lombaires",
+    "trapezes"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "traction_pronation",
+   "nom": "Tractions pronation",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "avant_bras"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "traction_supination",
+   "nom": "Tractions supination (chin-up)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "traction_assistee",
+   "nom": "Tractions machine assistée",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "tirage_vertical_large",
+   "nom": "Tirage vertical poitrine prise large",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "tirage_vertical_serre",
+   "nom": "Tirage vertical prise neutre serrée",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "tirage_vertical_unilateral",
+   "nom": "Tirage vertical unilatéral",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "rowing_barre",
+   "nom": "Rowing barre penché",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "lombaires",
+    "trapezes"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "rowing_haltere",
+   "nom": "Rowing haltère unilatéral",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "trapezes"
+   ],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "rowing_tbar",
+   "nom": "Rowing T-bar",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "trapezes"
+   ],
+   "equipement": "barre en T",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "rowing_machine",
+   "nom": "Rowing machine assis (poitrine appuyée)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "trapezes"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "tirage_horizontal",
+   "nom": "Tirage horizontal poulie basse",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "trapezes"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pullover_poulie",
+   "nom": "Pull-over poulie haute",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "rowing_pendlay",
+   "nom": "Rowing Pendlay",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "lombaires"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "rowing_yates",
+   "nom": "Rowing Yates (supination)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "rowing_seal",
+   "nom": "Rowing allongé sur banc (seal row)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "rowing_kroc",
+   "nom": "Rowing Kroc (haltère lourd)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "avant_bras"
+   ],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "meadows_row",
+   "nom": "Rowing Meadows (landmine)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "rowing_poulie_unilateral",
+   "nom": "Rowing poulie unilatéral",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "rowing_hammer",
+   "nom": "Rowing machine convergente unilatéral",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "machine",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "rowing_inverse",
+   "nom": "Rowing inversé (barre basse)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "traction_australienne",
+   "nom": "Tractions australiennes",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "traction_neutre",
+   "nom": "Tractions prise neutre",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "traction_lestee",
+   "nom": "Tractions lestées",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "tirage_vertical_supination",
+   "nom": "Tirage vertical supination",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "tirage_vertical_machine",
+   "nom": "Tirage vertical machine convergente",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "rack_pull",
+   "nom": "Rack pull (soulevé partiel)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "trapezes",
+    "fessiers"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "souleve_terre_sumo",
+   "nom": "Soulevé de terre sumo",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "fessiers",
+    "adducteurs",
+    "quadriceps"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "souleve_terre_trap_bar",
+   "nom": "Soulevé de terre trap bar",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "quadriceps",
+    "fessiers"
+   ],
+   "equipement": "trap bar",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "pullover_machine",
+   "nom": "Pull-over machine",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "pectoraux"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "dev_militaire_barre",
+   "nom": "Développé militaire à la barre",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps",
+    "trapezes"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_halteres_assis",
+   "nom": "Développé haltères assis",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_arnold",
+   "nom": "Développé Arnold",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_epaules_machine",
+   "nom": "Développé épaules machine",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "dev_epaules_smith",
+   "nom": "Développé épaules Smith machine",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "smith",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "elevations_laterales_halteres",
+   "nom": "Élévations latérales aux haltères",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "elevations_laterales_poulie",
+   "nom": "Élévations latérales à la poulie",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "elevations_laterales_machine",
+   "nom": "Élévations latérales machine",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "elevations_frontales",
+   "nom": "Élévations frontales",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "oiseau_halteres",
+   "nom": "Oiseau aux haltères (buste penché)",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "reverse_pec_deck",
+   "nom": "Pec deck inversé (arrière d'épaule)",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "face_pull",
+   "nom": "Face pull",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "tirage_menton",
+   "nom": "Tirage menton",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "dev_militaire_halteres_debout",
+   "nom": "Développé militaire haltères debout",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "push_press",
+   "nom": "Push press",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps",
+    "quadriceps"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "explosif",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "3-5",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "6-8",
+    "repos_sec": 120,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "dev_landmine_unilateral",
+   "nom": "Développé landmine unilatéral",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "pectoraux",
+    "triceps"
+   ],
+   "equipement": "barre",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "dev_kettlebell",
+   "nom": "Développé kettlebell unilatéral",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "kettlebell",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "elevations_laterales_unilaterale",
+   "nom": "Élévation latérale unilatérale à la poulie",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "elevations_laterales_penche",
+   "nom": "Élévations latérales penché sur banc",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "elevations_frontales_disque",
+   "nom": "Élévations frontales au disque",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "elevations_frontales_poulie",
+   "nom": "Élévations frontales à la poulie",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "oiseau_poulie",
+   "nom": "Oiseau à la poulie (croisé)",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "rotation_externe_poulie",
+   "nom": "Rotation externe à la poulie",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "tirage_menton_poulie",
+   "nom": "Tirage menton à la poulie",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pompes_piquees",
+   "nom": "Pompes piquées (pike push-up)",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "pompes_poirier",
+   "nom": "Pompes en équilibre contre le mur",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "mur",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "curl_barre",
+   "nom": "Curl barre droite",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_barre_ez",
+   "nom": "Curl barre EZ",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "barre EZ",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_halteres",
+   "nom": "Curl haltères alterné",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_marteau",
+   "nom": "Curl marteau",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_incline",
+   "nom": "Curl incliné aux haltères",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_pupitre",
+   "nom": "Curl pupitre (Larry Scott)",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "barre EZ",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_poulie_basse",
+   "nom": "Curl poulie basse",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_concentre",
+   "nom": "Curl concentré",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_spider",
+   "nom": "Curl spider",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "barre EZ",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_poulie_haute",
+   "nom": "Curl poulie haute (double biceps)",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_bayesian",
+   "nom": "Curl Bayesian (poulie dans le dos)",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_drag",
+   "nom": "Drag curl",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_zottman",
+   "nom": "Curl Zottman",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_machine",
+   "nom": "Curl machine",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_marteau_corde",
+   "nom": "Curl marteau à la corde",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_pupitre_haltere",
+   "nom": "Curl pupitre unilatéral à l'haltère",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_21",
+   "nom": "Curl 21 (barre EZ)",
+   "groupe_musculaire": "biceps",
+   "muscles_secondaires": [],
+   "equipement": "barre EZ",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "barre_front",
+   "nom": "Barre au front (skull crusher)",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "barre EZ",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pushdown_corde",
+   "nom": "Extension poulie haute à la corde",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pushdown_barre",
+   "nom": "Extension poulie haute à la barre",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "extension_nuque_poulie",
+   "nom": "Extension triceps au-dessus de la tête (poulie)",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "extension_nuque_haltere",
+   "nom": "Extension nuque à l'haltère",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "haltère",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "dips_triceps",
+   "nom": "Dips (buste droit, triceps)",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [
+    "pectoraux",
+    "epaules"
+   ],
+   "equipement": "barres parallèles",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "dev_couche_serre",
+   "nom": "Développé couché prise serrée",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [
+    "pectoraux"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "kickback",
+   "nom": "Kickback triceps",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "dips_machine",
+   "nom": "Dips machine",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [
+    "pectoraux"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pompes_diamant",
+   "nom": "Pompes diamant",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [
+    "pectoraux"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "dips_banc",
+   "nom": "Dips entre deux bancs",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [
+    "pectoraux"
+   ],
+   "equipement": "banc",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "jm_press",
+   "nom": "JM press",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [
+    "pectoraux"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "barre_front_halteres",
+   "nom": "Extension couché aux haltères",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "extension_nuque_ez",
+   "nom": "Extension nuque à la barre EZ",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "barre EZ",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "extension_triceps_machine",
+   "nom": "Extension triceps machine",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pushdown_unilateral",
+   "nom": "Extension unilatérale poulie haute (prise inversée)",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "kickback_poulie_triceps",
+   "nom": "Kickback triceps à la poulie",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "tate_press",
+   "nom": "Tate press",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_poignets",
+   "nom": "Curl des poignets",
+   "groupe_musculaire": "avant_bras",
+   "muscles_secondaires": [],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "curl_inverse",
+   "nom": "Curl inversé",
+   "groupe_musculaire": "avant_bras",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre EZ",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "curl_poignets_inverse",
+   "nom": "Curl des poignets inversé",
+   "groupe_musculaire": "avant_bras",
+   "muscles_secondaires": [],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "rouleau_poignets",
+   "nom": "Rouleau de poignets",
+   "groupe_musculaire": "avant_bras",
+   "muscles_secondaires": [],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "farmer_walk",
+   "nom": "Marche du fermier",
+   "groupe_musculaire": "avant_bras",
+   "muscles_secondaires": [
+    "trapezes",
+    "abdominaux"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "porte",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "40 s",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "suspension_barre",
+   "nom": "Suspension à la barre",
+   "groupe_musculaire": "avant_bras",
+   "muscles_secondaires": [
+    "dos"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "45 s",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "pinch_disques",
+   "nom": "Pince de disques",
+   "groupe_musculaire": "avant_bras",
+   "muscles_secondaires": [],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "porte",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "40 s",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "shrugs_halteres",
+   "nom": "Shrugs aux haltères",
+   "groupe_musculaire": "trapezes",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "shrugs_barre",
+   "nom": "Shrugs à la barre",
+   "groupe_musculaire": "trapezes",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "shrugs_smith",
+   "nom": "Shrugs à la Smith machine",
+   "groupe_musculaire": "trapezes",
+   "muscles_secondaires": [],
+   "equipement": "smith",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "shrugs_machine",
+   "nom": "Shrugs machine",
+   "groupe_musculaire": "trapezes",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "y_raise_incline",
+   "nom": "Élévations en Y sur banc incliné",
+   "groupe_musculaire": "trapezes",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "extension_lombaires",
+   "nom": "Extensions lombaires (banc à 45°)",
+   "groupe_musculaire": "lombaires",
+   "muscles_secondaires": [
+    "fessiers",
+    "ischio_jambiers"
+   ],
+   "equipement": "banc",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "good_morning",
+   "nom": "Good morning",
+   "groupe_musculaire": "lombaires",
+   "muscles_secondaires": [
+    "ischio_jambiers",
+    "fessiers"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "superman",
+   "nom": "Superman",
+   "groupe_musculaire": "lombaires",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "hyperextension_inverse",
+   "nom": "Hyperextension inversée",
+   "groupe_musculaire": "lombaires",
+   "muscles_secondaires": [
+    "fessiers",
+    "ischio_jambiers"
+   ],
+   "equipement": "banc",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "bird_dog",
+   "nom": "Bird dog",
+   "groupe_musculaire": "lombaires",
+   "muscles_secondaires": [
+    "abdominaux",
+    "fessiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "squat_barre",
+   "nom": "Squat barre (high bar)",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers",
+    "ischio_jambiers",
+    "lombaires"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "front_squat",
+   "nom": "Front squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers",
+    "abdominaux"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "squat_smith",
+   "nom": "Squat à la Smith machine",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "smith",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "goblet_squat",
+   "nom": "Goblet squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "haltère",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "presse_cuisses",
+   "nom": "Presse à cuisses",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers",
+    "ischio_jambiers"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "hack_squat",
+   "nom": "Hack squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "leg_extension",
+   "nom": "Leg extension",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "fentes_marchees",
+   "nom": "Fentes marchées",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers",
+    "ischio_jambiers"
+   ],
+   "equipement": "haltères",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "fentes_bulgares",
+   "nom": "Fentes bulgares",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "haltères",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "fentes_arriere",
+   "nom": "Fentes arrière",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "haltères",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "step_up",
+   "nom": "Step-up",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "haltères",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "squat_pause",
+   "nom": "Squat avec pause",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "box_squat",
+   "nom": "Box squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers",
+    "ischio_jambiers"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_lourd",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "4-6",
+    "repos_sec": 180
+   },
+   "hypertrophie": {
+    "reps": "8-10",
+    "repos_sec": 120,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "squat_zercher",
+   "nom": "Squat Zercher",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers",
+    "abdominaux"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "squat_talons_sureleves",
+   "nom": "Squat talons surélevés aux haltères",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "belt_squat",
+   "nom": "Belt squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pendulum_squat",
+   "nom": "Pendulum squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "presse_unilaterale",
+   "nom": "Presse à cuisses unilatérale",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "machine",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "fentes_avant",
+   "nom": "Fentes avant",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "haltères",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "fentes_laterales",
+   "nom": "Fentes latérales",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "adducteurs",
+    "fessiers"
+   ],
+   "equipement": "haltères",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "leg_extension_unilateral",
+   "nom": "Leg extension unilatéral",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "squat_poids_corps",
+   "nom": "Squat au poids du corps",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "squat_saute",
+   "nom": "Squats sautés",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers",
+    "mollets"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "pistol_squat",
+   "nom": "Pistol squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "sissy_squat",
+   "nom": "Sissy squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "chaise_murale",
+   "nom": "Chaise contre le mur",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "mur",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "45 s",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "souleve_terre_roumain",
+   "nom": "Soulevé de terre roumain",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [
+    "fessiers",
+    "lombaires"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "souleve_terre_jambes_tendues",
+   "nom": "Soulevé de terre jambes tendues",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [
+    "fessiers",
+    "lombaires"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "leg_curl_allonge",
+   "nom": "Leg curl allongé",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "leg_curl_assis",
+   "nom": "Leg curl assis",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "souleve_terre_roumain_halteres",
+   "nom": "Soulevé de terre roumain aux haltères",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [
+    "fessiers",
+    "lombaires"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "souleve_terre_unilateral",
+   "nom": "Soulevé de terre roumain unilatéral",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "leg_curl_debout",
+   "nom": "Leg curl debout unilatéral",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-12",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "nordic_curl",
+   "nom": "Nordic curl",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "glute_ham_raise",
+   "nom": "Glute ham raise",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "banc",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "leg_curl_ballon",
+   "nom": "Leg curl au ballon de gym",
+   "groupe_musculaire": "ischio_jambiers",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "hip_thrust",
+   "nom": "Hip thrust",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "ischio_jambiers"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "hip_thrust_machine",
+   "nom": "Hip thrust machine",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "ischio_jambiers"
+   ],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "kickback_poulie",
+   "nom": "Kickback fessier à la poulie",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "kickback_machine",
+   "nom": "Kickback fessier machine",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "abducteurs",
+   "nom": "Abducteurs machine",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "pont_fessier",
+   "nom": "Pont fessier",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "ischio_jambiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "pont_fessier_barre",
+   "nom": "Pont fessier à la barre",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "ischio_jambiers"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "hip_thrust_unilateral",
+   "nom": "Hip thrust unilatéral",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "ischio_jambiers"
+   ],
+   "equipement": "banc",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "kickback_sol",
+   "nom": "Kickback fessier au sol",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "abduction_poulie",
+   "nom": "Abduction de hanche à la poulie",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "fentes_croisees",
+   "nom": "Fentes croisées (curtsy)",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "quadriceps",
+    "adducteurs"
+   ],
+   "equipement": "haltères",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "frog_pump",
+   "nom": "Frog pump",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "kettlebell_swing",
+   "nom": "Kettlebell swing",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "ischio_jambiers",
+    "lombaires"
+   ],
+   "equipement": "kettlebell",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "explosif",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "3-5",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "6-8",
+    "repos_sec": 120,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "adducteurs",
+   "nom": "Adducteurs machine",
+   "groupe_musculaire": "adducteurs",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "adduction_poulie",
+   "nom": "Adduction de hanche à la poulie",
+   "groupe_musculaire": "adducteurs",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "squat_sumo_haltere",
+   "nom": "Squat sumo à l'haltère",
+   "groupe_musculaire": "adducteurs",
+   "muscles_secondaires": [
+    "quadriceps",
+    "fessiers"
+   ],
+   "equipement": "haltère",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "planche_copenhague",
+   "nom": "Planche Copenhague",
+   "groupe_musculaire": "adducteurs",
+   "muscles_secondaires": [
+    "obliques"
+   ],
+   "equipement": "banc",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "45 s",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "mollets_debout",
+   "nom": "Mollets debout machine",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "mollets_assis",
+   "nom": "Mollets assis machine",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "mollets_presse",
+   "nom": "Mollets à la presse",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "mollets_debout_halteres",
+   "nom": "Mollets debout aux haltères",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "mollets_unilateral",
+   "nom": "Mollets unilatéral sur marche",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "mollets_smith",
+   "nom": "Mollets à la Smith machine",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "smith",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "mollets_donkey",
+   "nom": "Mollets donkey (machine)",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "releves_pointes",
+   "nom": "Relevés de pointes (tibial)",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "crunch",
+   "nom": "Crunch au sol",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "crunch_poulie",
+   "nom": "Crunch poulie haute (à genoux)",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "crunch_machine",
+   "nom": "Crunch machine",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "releve_jambes_suspendu",
+   "nom": "Relevé de jambes suspendu",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "fléchisseurs_hanche"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "releve_jambes_banc",
+   "nom": "Relevé de jambes au banc",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "banc",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "roue_abdos",
+   "nom": "Roue abdominale",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "roue",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "russian_twist",
+   "nom": "Russian twist",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "obliques"
+   ],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "pallof_press",
+   "nom": "Pallof press",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "obliques"
+   ],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "planche",
+   "nom": "Gainage planche",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "lombaires"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "45 s",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "crunch_inverse",
+   "nom": "Crunch inversé",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "crunch_bicyclette",
+   "nom": "Crunch bicyclette",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "obliques"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "sit_up",
+   "nom": "Sit-up",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "v_ups",
+   "nom": "V-ups",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "dead_bug",
+   "nom": "Dead bug",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "lombaires"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "mountain_climbers",
+   "nom": "Mountain climbers",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "releve_jambes_chaise",
+   "nom": "Relevé de genoux à la chaise romaine",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "chaise romaine",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "toes_to_bar",
+   "nom": "Toes to bar",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "dos"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "dragon_flag",
+   "nom": "Dragon flag",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "lombaires"
+   ],
+   "equipement": "banc",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "crunch_decline_leste",
+   "nom": "Crunch décliné lesté",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "hollow_hold",
+   "nom": "Hollow hold",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "45 s",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "planche_toucher_epaules",
+   "nom": "Planche bras tendus avec toucher d'épaules",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "45 s",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "planche_laterale",
+   "nom": "Gainage latéral",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [
+    "abdominaux"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "45 s",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "crunch_oblique",
+   "nom": "Crunch oblique",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "essuie_glace",
+   "nom": "Essuie-glace au sol",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [
+    "abdominaux"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 30
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 45
+   }
+  },
+  {
+   "id": "woodchopper",
+   "nom": "Bûcheron à la poulie (woodchopper)",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [
+    "abdominaux"
+   ],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "flexion_laterale_haltere",
+   "nom": "Flexion latérale à l'haltère",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "rotation_landmine",
+   "nom": "Rotation landmine",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [
+    "epaules"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "abdos_charge",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 45,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "suitcase_carry",
+   "nom": "Marche valise (suitcase carry)",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [
+    "avant_bras"
+   ],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "porte",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "40 s",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "burpees",
+   "nom": "Burpees",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "pectoraux",
+    "quadriceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "chauffe": {
+    "reps": "10",
+    "repos_sec": 45
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60
+   }
+  },
+  {
+   "id": "thruster",
+   "nom": "Thruster",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "quadriceps",
+    "epaules"
+   ],
+   "equipement": "haltères",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "power_clean",
+   "nom": "Épaulé (power clean)",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "dos",
+    "trapezes",
+    "quadriceps"
+   ],
+   "equipement": "barre",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "explosif",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 90,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "3-5",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "6-8",
+    "repos_sec": 120,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "box_jump",
+   "nom": "Box jump",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "quadriceps",
+    "mollets"
+   ],
+   "equipement": "box",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "chauffe": {
+    "reps": "5",
+    "repos_sec": 60
+   },
+   "travail": {
+    "reps": "6-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "10-15",
+    "repos_sec": 90
+   }
+  },
+  {
+   "id": "wall_ball",
+   "nom": "Wall ball",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "quadriceps",
+    "epaules"
+   ],
+   "equipement": "médecine-ball",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly_guide",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "8-10",
+    "repos_sec": 120
+   },
+   "hypertrophie": {
+    "reps": "12-15",
+    "repos_sec": 90,
+    "charge_pct": 70
+   }
+  },
+  {
+   "id": "turkish_get_up",
+   "nom": "Turkish get-up",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "epaules",
+    "abdominaux"
+   ],
+   "equipement": "kettlebell",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "poly",
+   "chauffe": {
+    "reps": "12",
+    "repos_sec": 75,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "6-8",
+    "repos_sec": 150
+   },
+   "hypertrophie": {
+    "reps": "10-12",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "poussee_traineau",
+   "nom": "Poussée de traîneau",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "quadriceps",
+    "fessiers"
+   ],
+   "equipement": "traîneau",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": true,
+   "profil": "porte",
+   "chauffe": {
+    "reps": "20 s",
+    "repos_sec": 60,
+    "charge_pct": 50
+   },
+   "travail": {
+    "reps": "40 s",
+    "repos_sec": 90
+   },
+   "hypertrophie": {
+    "reps": "60 s",
+    "repos_sec": 90,
+    "charge_pct": 75
+   }
+  },
+  {
+   "id": "corde_a_sauter",
+   "nom": "Corde à sauter",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "corde",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 15,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "Fractionné : 30 s rapide / 30 s tranquille, en continu."
+   }
+  },
+  {
+   "id": "marche_rapide",
+   "nom": "Marche rapide (extérieur)",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "aucun",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 30,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Allure soutenue : on peut parler, mais pas chanter."
+   }
+  },
+  {
+   "id": "marche_inclinee",
+   "nom": "Marche inclinée sur tapis",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "tapis de course",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 30,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Inclinaison 8 à 12 %, vitesse 5 à 6 km/h, sans se tenir aux barres."
+   }
+  },
+  {
+   "id": "course_exterieur",
+   "nom": "Course à pied (extérieur)",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "aucun",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 25,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Footing en aisance respiratoire."
+   }
+  },
+  {
+   "id": "course_tapis",
+   "nom": "Course sur tapis",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "tapis de course",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 20,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Allure régulière, 1 % d'inclinaison pour compenser l'absence de vent."
+   }
+  },
+  {
+   "id": "course_fractionnee",
+   "nom": "Course fractionnée",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "aucun",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 16,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "8 × (1 min rapide / 1 min de récupération en trottinant)."
+   }
+  },
+  {
+   "id": "step",
+   "nom": "Step (montées de marche)",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "step",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 15,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Montées et descentes alternées sur une marche ou un step, rythme régulier."
+   }
+  },
+  {
+   "id": "escalier_machine",
+   "nom": "Escalier (stairmaster)",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 15,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "Rythme constant, buste droit, sans s'appuyer sur les poignées."
+   }
+  },
+  {
+   "id": "velo_elliptique",
+   "nom": "Vélo elliptique",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 25,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Résistance moyenne, cadence régulière."
+   }
+  },
+  {
+   "id": "velo_appartement",
+   "nom": "Vélo d'appartement",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 30,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Cadence 80 à 90 tours/min, résistance moyenne."
+   }
+  },
+  {
+   "id": "rameur",
+   "nom": "Rameur",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 15,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "Poussée des jambes d'abord, puis tirage des bras ; 22 à 26 coups/min."
+   }
+  },
+  {
+   "id": "air_bike",
+   "nom": "Air bike (fractionné)",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 10,
+    "retour_calme_min": 5,
+    "intensite": "très élevée",
+    "consigne": "10 × (20 s à fond / 40 s tranquille)."
+   }
+  },
+  {
+   "id": "hiit_poids_corps",
+   "nom": "HIIT poids du corps (burpees, jumping jacks)",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 12,
+    "retour_calme_min": 5,
+    "intensite": "très élevée",
+    "consigne": "Circuit : 40 s d'effort / 20 s de repos, en enchaînant les mouvements."
+   }
+  },
+  {
+   "id": "natation",
+   "nom": "Natation",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "piscine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 25,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Nage libre à allure régulière, pauses courtes au bord si besoin."
+   }
+  },
+  {
+   "id": "velo_exterieur",
+   "nom": "Vélo (extérieur)",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "vélo",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 40,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Allure où tu peux parler en phrases courtes (zone 2)."
+   }
+  },
+  {
+   "id": "randonnee",
+   "nom": "Randonnée",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "aucun",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 10,
+    "effort_min": 60,
+    "retour_calme_min": 10,
+    "intensite": "modérée",
+    "consigne": "Rythme régulier, plus lent dans les montées."
+   }
+  },
+  {
+   "id": "marche_nordique",
+   "nom": "Marche nordique",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "bâtons",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 40,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Pousse sur les bâtons à chaque pas, buste droit."
+   }
+  },
+  {
+   "id": "sprints_cote",
+   "nom": "Sprints en côte",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "aucun",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 10,
+    "effort_min": 12,
+    "retour_calme_min": 8,
+    "intensite": "élevée",
+    "consigne": "8 à 10 sprints de 10-15 s en montée, retour en marchant."
+   }
+  },
+  {
+   "id": "battle_ropes",
+   "nom": "Battle ropes",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "cordes",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 10,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "Fractionné : 30 s d'ondulations / 30 s de repos."
+   }
+  },
+  {
+   "id": "ski_erg",
+   "nom": "Ski erg",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 15,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "Fractionné : 1 min rapide / 1 min tranquille."
+   }
+  },
+  {
+   "id": "sac_frappe",
+   "nom": "Sac de frappe",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "sac",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 15,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "Rounds de 2 min, 1 min de récupération."
+   }
+  },
+  {
+   "id": "shadow_boxing",
+   "nom": "Shadow boxing",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "aucun",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 15,
+    "retour_calme_min": 5,
+    "intensite": "modérée",
+    "consigne": "Rounds de 3 min, garde haute, appuis mobiles."
+   }
+  },
+  {
+   "id": "velo_fractionne",
+   "nom": "Vélo d'appartement fractionné",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 20,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "Fractionné : 30 s à fond / 90 s tranquille."
+   }
+  },
+  {
+   "id": "rameur_fractionne",
+   "nom": "Rameur fractionné",
+   "groupe_musculaire": "cardio",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": false,
+   "type": "cardio",
+   "charge": false,
+   "cardio": {
+    "echauffement_min": 5,
+    "effort_min": 16,
+    "retour_calme_min": 5,
+    "intensite": "élevée",
+    "consigne": "8 × 250 m rapides, 1 min de récupération."
+   }
+  }
+ ]
+}

@@ -2,12 +2,10 @@ import raw from './exercices.json'
 import type { PlannedSet, ProgramExercise } from './types'
 import { uid } from '../logic/util'
 
-interface Bloc {
-  series: number
+interface Phase {
   reps: string
-  charge?: string
-  objectif?: string
-  repos_sec?: number
+  repos_sec: number
+  charge_pct?: number
 }
 
 export interface CatalogExercise {
@@ -18,9 +16,12 @@ export interface CatalogExercise {
   equipement: string
   type: string
   par_cote: boolean
-  chauffe?: Bloc
-  travail?: Bloc
-  hypertrophie?: Bloc
+  /** Faux : au poids du corps. */
+  charge: boolean
+  profil?: string
+  chauffe?: Phase
+  travail?: { reps: string; repos_sec: number }
+  hypertrophie?: Phase
   cardio?: {
     echauffement_min: number
     effort_min: number
@@ -30,7 +31,7 @@ export interface CatalogExercise {
   }
 }
 
-export const CATALOG: CatalogExercise[] = (raw as { exercices: CatalogExercise[] }).exercices
+export const CATALOG: CatalogExercise[] = (raw as unknown as { exercices: CatalogExercise[] }).exercices
 export const GROUPS: string[] = (raw as { groupes_musculaires: string[] }).groupes_musculaires
 
 export const GROUP_LABEL: Record<string, string> = {
@@ -49,60 +50,87 @@ export const GROUP_LABEL: Record<string, string> = {
   quadriceps: 'Quadriceps',
   trapezes: 'Trapèzes',
   triceps: 'Triceps',
+  corps_entier: 'Corps entier',
   cardio: 'Cardio',
   autre: 'Autre',
+  deltoides_anterieurs: 'Deltoïdes antérieurs',
 }
 
-export const groupLabel = (g: string) => GROUP_LABEL[g] ?? g
+export const groupLabel = (g: string) => GROUP_LABEL[g] ?? g.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
 
-/** « 10-12 puis 5-6 » → 12 ; « 3-6 » → 6 ; « 15 » → 15. */
-export function parseReps(text: string): number | undefined {
-  const m = text.match(/(\d+)(?:\s*-\s*(\d+))?/)
-  if (!m) return undefined
-  return Number(m[2] ?? m[1])
+/** Nombre retenu pour une fourchette : borne haute (« 6-8 » → 8 ; « 45 s » → 45 s). */
+export function parseReps(text: string): { reps?: number; durationSec?: number } {
+  const m = text.match(/(\d+)(?:\s*-\s*(\d+))?\s*(s\b)?/)
+  if (!m) return {}
+  const n = Number(m[2] ?? m[1])
+  return m[3] ? { durationSec: n } : { reps: n }
 }
 
-export type Cycle = 'force' | 'hypertrophie'
+/** Arrondi des charges au demi-kilo. */
+export const roundLoad = (kg: number) => Math.round(kg * 2) / 2
 
-/** Construit les séries d'un exercice du catalogue selon le cycle choisi. */
-export function buildSets(ex: CatalogExercise, cycle: Cycle, withWarmup = true): { sets: PlannedSet[]; restSec: number } {
+/** Cycle fixe : 1 chauffe, 2 travail, 1 hypertrophie (ou les 3 phases d'un cardio). */
+export function buildCycle(ex: CatalogExercise): PlannedSet[] {
   if (ex.cardio) {
     const c = ex.cardio
-    return {
-      restSec: 0,
-      sets: [
-        { phase: 'chauffe', durationSec: c.echauffement_min * 60 },
-        { phase: 'effort', durationSec: c.effort_min * 60 },
-        { phase: 'retour', durationSec: c.retour_calme_min * 60 },
-      ],
-    }
+    return [
+      { phase: 'chauffe', durationSec: c.echauffement_min * 60, restSec: 0 },
+      { phase: 'effort', durationSec: c.effort_min * 60, restSec: 0 },
+      { phase: 'retour', durationSec: c.retour_calme_min * 60, restSec: 0 },
+    ]
   }
   const sets: PlannedSet[] = []
-  if (withWarmup && ex.chauffe) {
-    const reps = parseReps(ex.chauffe.reps)
-    for (let i = 0; i < ex.chauffe.series; i++) sets.push({ phase: 'chauffe', reps })
+  if (ex.chauffe) sets.push({ phase: 'chauffe', ...parseReps(ex.chauffe.reps), pct: ex.chauffe.charge_pct, restSec: ex.chauffe.repos_sec })
+  if (ex.travail) {
+    const work = { phase: 'travail' as const, ...parseReps(ex.travail.reps), restSec: ex.travail.repos_sec }
+    sets.push({ ...work }, { ...work })
   }
-  const bloc = cycle === 'force' ? ex.travail : ex.hypertrophie
-  const phase = cycle === 'force' ? 'travail' : 'hypertrophie'
-  if (bloc) {
-    const reps = parseReps(bloc.reps)
-    for (let i = 0; i < bloc.series; i++) sets.push({ phase, reps })
-  }
-  return { sets, restSec: bloc?.repos_sec ?? 90 }
+  if (ex.hypertrophie) sets.push({ phase: 'hypertrophie', ...parseReps(ex.hypertrophie.reps), pct: ex.hypertrophie.charge_pct, restSec: ex.hypertrophie.repos_sec })
+  return sets
 }
 
-export function exerciseFromCatalog(ex: CatalogExercise, cycle: Cycle, withWarmup: boolean): ProgramExercise {
-  const { sets, restSec } = buildSets(ex, cycle, withWarmup)
+/** Charge d'une série d'après la charge de travail. */
+export function loadFor(set: PlannedSet, workLoad: number | undefined): number | undefined {
+  if (workLoad == null || workLoad <= 0) return undefined
+  if (set.phase === 'travail') return roundLoad(workLoad)
+  if (set.pct != null) return roundLoad((workLoad * set.pct) / 100)
+  return undefined
+}
+
+/** Recalcule les charges de toutes les séries quand la charge de travail change. */
+export function withWorkLoad(ex: ProgramExercise, workLoad: number | undefined): ProgramExercise {
   return {
+    ...ex,
+    workLoad,
+    sets: ex.sets.map((s) => (s.phase === 'travail' || s.pct != null ? { ...s, weight: loadFor(s, workLoad) } : s)),
+  }
+}
+
+export function exerciseFromCatalog(ex: CatalogExercise, workLoad?: number): ProgramExercise {
+  const base: ProgramExercise = {
     id: uid(),
     catalogId: ex.id,
     name: ex.nom,
     group: ex.groupe_musculaire,
     parCote: ex.par_cote,
-    restSec,
-    sets,
+    usesLoad: ex.charge,
+    restSec: ex.travail?.repos_sec ?? 0,
+    sets: buildCycle(ex),
     note: ex.cardio ? `${ex.cardio.consigne} Intensité ${ex.cardio.intensite}.` : undefined,
   }
+  return ex.charge ? withWorkLoad(base, workLoad) : base
 }
 
 export const findCatalog = (id?: string) => (id ? CATALOG.find((e) => e.id === id) : undefined)
+
+/** Libellé numéroté des séries (« Travail 1 », « Travail 2 »). */
+export function setLabels(sets: { phase: PlannedSet['phase'] }[]): string[] {
+  const seen: Record<string, number> = {}
+  const total: Record<string, number> = {}
+  for (const s of sets) total[s.phase] = (total[s.phase] ?? 0) + 1
+  return sets.map((s) => {
+    seen[s.phase] = (seen[s.phase] ?? 0) + 1
+    const label = { chauffe: 'Chauffe', travail: 'Travail', hypertrophie: 'Hypertrophie', effort: 'Effort', retour: 'Retour au calme' }[s.phase]
+    return total[s.phase] > 1 ? `${label} ${seen[s.phase]}` : label
+  })
+}

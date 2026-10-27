@@ -41,7 +41,7 @@ export function HistoryScreen() {
                         {st.volumeKg ? ` · ${Math.round(st.volumeKg)} kg` : ''}
                       </div>
                     </div>
-                    {s.finisher && <IconFlame style={{ width: 18, color: 'var(--gold)' }} />}
+                    {s.finisher && <IconFlame style={{ width: 18, color: 'var(--khaki)' }} />}
                     <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
                   </div>
                 )
@@ -92,7 +92,7 @@ export function SessionDetailScreen({ id }: { id: string }) {
         {s.finisher && (
           <div className="card accent">
             <div className="row">
-              <IconFlame style={{ width: 22, color: 'var(--gold)' }} />
+              <IconFlame style={{ width: 22, color: 'var(--khaki)' }} />
               <div className="grow">
                 <div className="eyebrow">Finisher · {finisherTypeLabel(s.finisher.type)}</div>
                 <h3>{s.finisher.name}</h3>
@@ -125,7 +125,7 @@ export function SessionDetailScreen({ id }: { id: string }) {
         )}
 
         <div className="row">
-          <button className="btn grow" onClick={() => nav.reset({ name: 'home' })}>Accueil</button>
+          <button className="btn grow" onClick={() => nav.reset({ name: 'today' })}>Aujourd’hui</button>
           <button className="btn danger" onClick={remove} aria-label="Supprimer">
             <IconTrash />
           </button>

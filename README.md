@@ -12,13 +12,15 @@ L'identifiant `fr.mrkazar.petra` est différent de l'appli Kotlin : les deux peu
 
 ## Fonctionnalités
 
-- **Programmes** : catalogue de plus de 100 exercices (cycles force ou hypertrophie, séries d'échauffement, cardio en durées) ou exercices perso. Séries, répétitions, charges, durées et repos modifiables.
-- **Séance en direct** : validation des séries, report automatique de la charge, minuteur de repos (+15 s, passer) qui continue en arrière-plan avec une notification à la fin, notification « séance en cours », écran maintenu allumé, séance libre, résumé de fin et historique.
-- **Plan** : semaine type (un programme par jour ou repos) et modifications ponctuelles sur les 14 prochains jours. L'accueil propose la séance du jour.
-- **Routines** : tâches quotidiennes, certains jours ou une fois, avec statut fait / reporté (réapparaît le lendemain) / sauté.
-- **Finishers** (désactivés par défaut, Profil > Séances) : au moment de terminer, on choisit le type (Abdos, Dos, Pecs, Jambes, Épaules / bras) et un finisher est tiré au hasard, jamais le même que la fois précédente pour ce type.
-- **Records** : meilleure charge et 1RM estimé par exercice.
-- **Données** : tout reste sur le téléphone. Sauvegarde et restauration par copier-coller dans Profil > Données.
+Cinq pages, avec le design de l'appli Kotlin (emblème, logo, fond topographique, olive et kaki, liseré tricolore) :
+
+- **Aujourd'hui** : séance prévue (avec la semaine A ou B), progression et tâches du jour (fait / reporté / sauté), bilan de la semaine, dernière séance.
+- **Programmes** : planning avec alternance semaine A / semaine B (ou une seule semaine type), modifications ponctuelles sur 14 jours, liste des programmes. Dans un programme, on indique la **charge de travail** de chaque exercice et les autres charges en découlent.
+- **Exercices** : catalogue de 260 exercices. Chaque exercice de musculation suit le cycle 1 série de chauffe, 2 séries de travail, 1 série d'hypertrophie, avec répétitions, pourcentages de charge et temps de repos préconisés selon le type d'exercice (voir `scripts/build_catalog.py`).
+- **Finishers** : activation, liste des 19 finishers, tirage au sort. En fin de séance, on choisit le type et le finisher est tiré au hasard, jamais le même que la fois précédente.
+- **Paramètres** : prénom, repos, vibration, écran allumé, sauvegarde / restauration, mises à jour, accès à l'historique, aux records et aux routines.
+
+La séance en cours valide les séries, lance le repos préconisé après chaque série (notification à la fin, même appli fermée) et enregistre l'historique.
 
 ## Développer
 
@@ -40,7 +42,6 @@ Pour que chaque nouvel APK s'installe par-dessus le précédent, il faut toujour
 
 Sans ces secrets, l'APK est signé avec une clé de debug temporaire : il s'installe, mais il faut désinstaller l'ancienne version avant chaque mise à jour (ce qui efface les données, pense à la sauvegarde).
 
-## Pas encore repris de l'appli Kotlin
+## Catalogue d'exercices
 
-- Le widget flottant par-dessus les autres applis (remplacé par la notification de séance et celle de fin de repos).
-- Les mesures corporelles (poids, objectifs).
+`src/data/exercices.json` est généré par `python3 scripts/build_catalog.py` : ajoute un exercice dans la liste `NEW` du script avec son profil (`poly_lourd`, `poly`, `poly_guide`, `iso`, `iso_petit`, `pdc`, `abdos`, `gainage`…), puis relance-le.

@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
 import type { ActiveSession, FinisherType, SessionExercise } from '../data/types'
-import { PHASE_LABEL } from '../data/types'
-import { groupLabel } from '../data/catalog'
+import { groupLabel, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
 import { addSet, completeSet, extendRest, nextPending, patchSet, removeSet, startRest, statsOf, toSessionExercise } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
-import { formatClock } from '../logic/util'
+import { formatClock, formatDuration } from '../logic/util'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { Empty, NumInput, Sheet, TopBar, confirmAction } from '../ui/kit'
 import { IconCheck, IconFlame, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
@@ -51,9 +50,8 @@ export function WorkoutScreen() {
       const up = nextPending(next)
       if (up) {
         const sameEx = up.exercise.id === ex.id
-        // Repos de l'exercice en cours ; entre deux exercices, celui du réglage par défaut s'il est plus long.
-        // Après une série d'échauffement, repos court (60 s max).
-        const base = set.phase === 'chauffe' ? Math.min(ex.restSec, 60) : ex.restSec
+        // Repos préconisé après cette série ; entre deux exercices, au moins le repos par défaut.
+        const base = set.restSec ?? ex.restSec
         const secs = sameEx ? base : Math.max(base, getData().settings.defaultRestSec)
         next = startRest(next, secs, `${up.exercise.name} · série ${up.index + 1}`)
       } else next = { ...next, rest: undefined }
@@ -163,7 +161,7 @@ function RestPanel({ rest, now, onAdd, onSkip }: { rest: NonNullable<ActiveSessi
     <div className={`rest${over ? ' over' : ''}`}>
       <div className="row">
         <div className="grow">
-          <div className="eyebrow" style={{ color: over ? 'var(--green)' : undefined }}>{over ? 'C’est reparti !' : 'Repos'}</div>
+          <div className="eyebrow" style={{ color: over ? 'var(--success)' : undefined }}>{over ? 'C’est reparti !' : 'Repos'}</div>
           <div className="clock">{over ? `+${formatClock(-left)}` : formatClock(Math.ceil(left))}</div>
           <div className="small muted ellipsis" style={{ marginTop: 4 }}>{rest.label}</div>
         </div>
@@ -206,17 +204,18 @@ function ExerciseCard({
 }) {
   const allDone = ex.sets.length > 0 && ex.sets.every((x) => x.done)
   const [editing, setEditing] = useState(false)
+  const labels = setLabels(ex.sets)
   return (
     <div className={`card${current >= 0 ? ' accent' : ''}`} style={{ opacity: allDone ? 0.75 : 1 }}>
       <div className="row" style={{ marginBottom: 6 }}>
         <div className="grow">
           <h3>
-            {ex.name} {allDone && <IconCheck style={{ width: 16, color: 'var(--green)', verticalAlign: -2 }} />}
+            {ex.name} {allDone && <IconCheck style={{ width: 16, color: 'var(--success)', verticalAlign: -2 }} />}
           </h3>
           <div className="small muted">
             {groupLabel(ex.group)}
             {ex.parCote ? ' · par côté' : ''}
-            {ex.restSec ? ` · repos ${ex.restSec} s` : ''}
+            {ex.usesLoad === false ? ' · poids du corps' : ex.workLoad ? ` · travail ${ex.workLoad} kg` : ''}
           </div>
         </div>
         <button className={`btn sm${editing ? ' primary' : ' ghost'}`} onClick={() => setEditing(!editing)}>{editing ? 'OK' : 'Modifier'}</button>
@@ -224,26 +223,37 @@ function ExerciseCard({
       {ex.note && <div className="small faint" style={{ marginBottom: 6 }}>{ex.note}</div>}
       {ex.sets.map((set, i) => {
         const timed = set.durationSec != null
+        const inSeconds = timed && set.durationSec! < 180
+        const rest = set.restSec ?? ex.restSec
         return (
-          <div key={i} className={`set-row${set.done ? ' done' : ''}`}>
-            <span className="idx" style={{ color: i === current ? 'var(--gold)' : undefined }}>{i + 1}</span>
-            <span className="small muted ellipsis">{PHASE_LABEL[set.phase]}</span>
+          <div key={i} className={`set-row${set.done ? ' done' : ''}${i === current ? ' current' : ''}`}>
+            <div style={{ minWidth: 0 }}>
+              <div className="lbl ellipsis">{labels[i]}</div>
+              <div className="hint ellipsis">
+                {set.pct != null && ex.usesLoad !== false ? `${set.pct} % · ` : ''}
+                {rest ? `repos ${formatDuration(rest)}` : ''}
+              </div>
+            </div>
             {timed ? (
               <span className="row" style={{ gap: 2 }}>
-                <NumInput value={set.durationSec! / 60} width={56} onChange={(v) => onPatch(i, { durationSec: Math.round((v ?? 0) * 60) })} />
-                <span className="unit">min</span>
+                <NumInput
+                  value={inSeconds ? set.durationSec : set.durationSec! / 60}
+                  width={56}
+                  onChange={(v) => onPatch(i, { durationSec: Math.round((v ?? 0) * (inSeconds ? 1 : 60)) })}
+                />
+                <span className="unit">{inSeconds ? 's' : 'min'}</span>
               </span>
             ) : (
               <span className="row" style={{ gap: 2 }}>
                 <NumInput value={set.reps} width={48} placeholder="—" onChange={(v) => onPatch(i, { reps: v })} />
-                <span className="unit">×</span>
+                <span className="unit">{ex.parCote ? '/côté' : 'rép'}</span>
               </span>
             )}
-            {timed ? (
+            {timed && ex.usesLoad === false ? (
               <span />
             ) : (
               <span className="row" style={{ gap: 2 }}>
-                <NumInput value={set.weight} width={58} placeholder="—" onChange={(v) => onPatch(i, { weight: v })} />
+                <NumInput value={set.weight} width={58} placeholder={ex.usesLoad === false ? 'PDC' : '—'} onChange={(v) => onPatch(i, { weight: v })} />
                 <span className="unit">kg</span>
               </span>
             )}
@@ -284,7 +294,7 @@ function FinisherSheet({ lastByType, onClose, onDone }: { lastByType: Partial<Re
           <div className="list">
             {FINISHER_TYPES.map((t) => (
               <button key={t.type} className="list-item clickable" style={{ cursor: 'pointer' }} onClick={() => setDrawn(drawFinisher(t.type, lastByType[t.type]))}>
-                <IconFlame style={{ width: 22, color: 'var(--gold)' }} />
+                <IconFlame style={{ width: 22, color: 'var(--khaki)' }} />
                 <span className="grow" style={{ textAlign: 'left', fontWeight: 600 }}>{t.label}</span>
               </button>
             ))}

@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { FINISHERS, drawFinisher } from '../../data/finishers'
-import { CATALOG, buildSets, parseReps } from '../../data/catalog'
-import { programFor, recursOn, routinesFor } from '../planner'
+import { CATALOG, buildCycle, exerciseFromCatalog, parseReps, setLabels, withWorkLoad } from '../../data/catalog'
+import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
 import { addSet, completeSet, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
 import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
 import type { Program, Routine } from '../../data/types'
+import { DEFAULT_SETTINGS } from '../../data/store'
 
 const program: Program = {
   id: 'p1',
@@ -37,25 +38,38 @@ describe('finishers', () => {
 })
 
 describe('catalogue', () => {
-  it('se charge', () => {
-    expect(CATALOG.length).toBeGreaterThan(100)
+  it('se charge, sans doublon, avec beaucoup plus d’exercices', () => {
+    expect(CATALOG.length).toBeGreaterThanOrEqual(250)
+    expect(new Set(CATALOG.map((e) => e.id)).size).toBe(CATALOG.length)
   })
-  it('lit les fourchettes de répétitions', () => {
-    expect(parseReps('3-6')).toBe(6)
-    expect(parseReps('10-12 puis 5-6 en montant la charge')).toBe(12)
-    expect(parseReps('15')).toBe(15)
-    expect(parseReps('max')).toBeUndefined()
+  it('lit les fourchettes de répétitions et les durées', () => {
+    expect(parseReps('3-6')).toEqual({ reps: 6 })
+    expect(parseReps('15')).toEqual({ reps: 15 })
+    expect(parseReps('45 s')).toEqual({ durationSec: 45 })
+    expect(parseReps('max')).toEqual({})
   })
-  it('construit échauffement + travail', () => {
+  it('suit le cycle 1 chauffe, 2 travail, 1 hypertrophie pour toute la musculation', () => {
+    for (const e of CATALOG.filter((x) => !x.cardio)) {
+      expect(buildCycle(e).map((s) => s.phase)).toEqual(['chauffe', 'travail', 'travail', 'hypertrophie'])
+      expect(buildCycle(e).every((s) => (s.restSec ?? 0) > 0)).toBe(true)
+    }
+  })
+  it('calcule les charges depuis la charge de travail', () => {
     const bench = CATALOG.find((e) => e.id === 'dev_couche_barre')!
-    const { sets, restSec } = buildSets(bench, 'force', true)
-    expect(sets.filter((s) => s.phase === 'chauffe')).toHaveLength(3)
-    expect(sets.filter((s) => s.phase === 'travail')).toHaveLength(4)
-    expect(restSec).toBe(180)
+    const ex = exerciseFromCatalog(bench, 81)
+    expect(ex.sets.map((s) => s.weight)).toEqual([40.5, 81, 81, 61])
+    expect(ex.sets.map((s) => s.reps)).toEqual([10, 6, 6, 10])
+    expect(ex.sets.map((s) => s.restSec)).toEqual([90, 180, 180, 120])
+    expect(withWorkLoad(ex, 100).sets.map((s) => s.weight)).toEqual([50, 100, 100, 75])
+    expect(setLabels(ex.sets)).toEqual(['Chauffe', 'Travail 1', 'Travail 2', 'Hypertrophie'])
+  })
+  it('ne met pas de charge sur le poids du corps', () => {
+    const pushups = CATALOG.find((e) => e.id === 'pompes')!
+    expect(exerciseFromCatalog(pushups, 50).sets.every((s) => s.weight == null)).toBe(true)
   })
   it('construit les phases de cardio en durée', () => {
     const rope = CATALOG.find((e) => e.id === 'corde_a_sauter')!
-    const { sets } = buildSets(rope, 'force', true)
+    const sets = buildCycle(rope)
     expect(sets.map((s) => s.phase)).toEqual(['chauffe', 'effort', 'retour'])
     expect(sets[1].durationSec).toBe(15 * 60)
   })
@@ -79,10 +93,29 @@ describe('planning', () => {
     expect(routinesFor(data, '2026-10-29')).toEqual([])
   })
   it('donne la priorité aux exceptions datées', () => {
-    const data = { programs: [program], weekPlan: { 0: 'p1' }, planOverrides: { '2026-11-02': null } }
+    const settings = { ...DEFAULT_SETTINGS, abWeeks: false, weekAAnchor: '2026-10-26' }
+    const data = { programs: [program], weekPlan: { 0: 'p1' }, weekPlanB: {}, planOverrides: { '2026-11-02': null }, settings }
     expect(programFor(data, '2026-10-26')?.id).toBe('p1')
     expect(programFor(data, '2026-11-02')).toBeNull()
     expect(programFor(data, '2026-10-27')).toBeNull()
+  })
+})
+
+describe('semaines A / B', () => {
+  const settings = { ...DEFAULT_SETTINGS, abWeeks: true, weekAAnchor: '2026-10-26' }
+  it('alterne à partir du lundi de référence', () => {
+    expect(weekLetter(settings, '2026-10-26')).toBe('A')
+    expect(weekLetter(settings, '2026-11-01')).toBe('A')
+    expect(weekLetter(settings, '2026-11-02')).toBe('B')
+    expect(weekLetter(settings, '2026-11-09')).toBe('A')
+    expect(weekLetter(settings, '2026-10-19')).toBe('B')
+    expect(weekLetter({ ...settings, abWeeks: false }, '2026-11-02')).toBe('A')
+  })
+  it('prend le programme de la bonne semaine', () => {
+    const b: Program = { ...program, id: 'p2', name: 'Haut du corps' }
+    const data = { programs: [program, b], weekPlan: { 0: 'p1' }, weekPlanB: { 0: 'p2' }, planOverrides: {}, settings }
+    expect(programFor(data, '2026-10-26')?.id).toBe('p1')
+    expect(programFor(data, '2026-11-02')?.id).toBe('p2')
   })
 })
 
