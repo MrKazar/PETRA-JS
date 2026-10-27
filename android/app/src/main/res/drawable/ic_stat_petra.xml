@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icône de notification : casque PETRA en silhouette blanche. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M32,2c5,0 9,2.4 11,6H21c2,-3.6 6,-6 11,-6zM32,10c-10.5,0 -18,7.6 -18,18v11l7,4v9h7V36h-5v-6h18v6h-5v16h7v-9l7,-4V28C50,17.6 42.5,10 32,10z" />
+</vector>

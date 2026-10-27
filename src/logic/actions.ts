@@ -1,0 +1,88 @@
+import { getData, update } from '../data/store'
+import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
+import { cancelRestEnd, hideOngoing, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
+import { describeSet, finalize, nextPending, startFrom, statsOf } from './session'
+
+export function saveSettings(patch: Partial<Settings>) {
+  update((d) => ({ ...d, settings: { ...d.settings, ...patch } }))
+}
+
+export function saveProgram(p: Program) {
+  update((d) => {
+    const exists = d.programs.some((x) => x.id === p.id)
+    return { ...d, programs: exists ? d.programs.map((x) => (x.id === p.id ? p : x)) : [...d.programs, p] }
+  })
+}
+
+export function deleteProgram(id: string) {
+  update((d) => {
+    const weekPlan = { ...d.weekPlan }
+    for (const k of Object.keys(weekPlan)) if (weekPlan[+k] === id) delete weekPlan[+k]
+    const planOverrides = { ...d.planOverrides }
+    for (const k of Object.keys(planOverrides)) if (planOverrides[k] === id) delete planOverrides[k]
+    return { ...d, programs: d.programs.filter((p) => p.id !== id), weekPlan, planOverrides }
+  })
+}
+
+export function setRoutineStatus(date: string, routineId: string, status: TaskStatus | undefined) {
+  update((d) => {
+    const day = { ...(d.routineLog[date] ?? {}) }
+    if (status) day[routineId] = status
+    else delete day[routineId]
+    return { ...d, routineLog: { ...d.routineLog, [date]: day } }
+  })
+}
+
+/* ---------- Séance active ---------- */
+
+export function beginSession(program: Program | null) {
+  const s = startFrom(program)
+  update((d) => ({ ...d, active: s }))
+  if (getData().settings.keepAwake) setKeepAwake(true)
+  refreshOngoing(s)
+}
+
+/** Remplace la séance active et synchronise les notifications avec son état. */
+export function setActive(next: ActiveSession, prev?: ActiveSession) {
+  update((d) => ({ ...d, active: next }))
+  const restChanged = prev?.rest?.endsAt !== next.rest?.endsAt
+  if (restChanged) {
+    if (next.rest && next.rest.endsAt > Date.now()) {
+      const up = nextPending(next)
+      scheduleRestEnd(next.rest.endsAt, up ? `À toi : ${up.exercise.name} · ${describeSet(up.exercise.sets[up.index], up.exercise.parCote)}` : 'Série suivante !')
+    } else cancelRestEnd()
+  }
+  refreshOngoing(next)
+}
+
+function refreshOngoing(s: ActiveSession) {
+  const st = statsOf(s)
+  const up = nextPending(s)
+  const body = up ? `Suivant : ${up.exercise.name} (série ${up.index + 1}/${up.exercise.sets.length})` : 'Toutes les séries sont faites'
+  showOngoing(`${s.programName} · ${st.setsDone}/${st.setsTotal} séries`, body)
+}
+
+export function finishSession(finisher?: DoneFinisher): string | undefined {
+  const d = getData()
+  if (!d.active) return
+  const done = finalize({ ...d.active, finisher })
+  update((x) => ({
+    ...x,
+    active: undefined,
+    sessions: [done, ...x.sessions],
+    lastFinisher: finisher ? { ...x.lastFinisher, [finisher.type]: finisher.id } : x.lastFinisher,
+  }))
+  hideOngoing()
+  setKeepAwake(false)
+  return done.id
+}
+
+export function abandonSession() {
+  update((d) => ({ ...d, active: undefined }))
+  hideOngoing()
+  setKeepAwake(false)
+}
+
+export function deleteSession(id: string) {
+  update((d) => ({ ...d, sessions: d.sessions.filter((s) => s.id !== id) }))
+}

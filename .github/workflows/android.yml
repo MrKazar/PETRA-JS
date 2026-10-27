@@ -1,0 +1,82 @@
+name: APK Android
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Tests
+        run: npm test
+
+      - name: Construire l'appli web et synchroniser Android
+        run: npm run android:sync
+
+      # Clé de signature facultative (secrets du dépôt). Sans elle, l'APK est signé avec une clé
+      # de debug qui change à chaque build : il faut alors désinstaller avant chaque mise à jour.
+      - name: Préparer la clé de signature
+        env:
+          KEYSTORE_BASE64: ${{ secrets.PETRA_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/petra.keystore"
+            echo "PETRA_KEYSTORE=$RUNNER_TEMP/petra.keystore" >> "$GITHUB_ENV"
+          fi
+
+      - name: Construire l'APK
+        working-directory: android
+        env:
+          PETRA_KEYSTORE_PASSWORD: ${{ secrets.PETRA_KEYSTORE_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+
+      - name: Renommer l'APK
+        id: apk
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          mkdir -p out
+          cp android/app/build/outputs/apk/release/app-release.apk "out/PETRA-$VERSION.apk"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PETRA-${{ steps.apk.outputs.version }}
+          path: out/*.apk
+
+      # Une release par version de package.json : c'est elle que l'appli consulte pour se mettre à jour.
+      - name: Publier la release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.apk.outputs.version }}
+        run: |
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            gh release upload "v$VERSION" "out/PETRA-$VERSION.apk" --clobber
+          else
+            gh release create "v$VERSION" "out/PETRA-$VERSION.apk" --title "PETRA $VERSION" --notes "APK Android de PETRA $VERSION. Télécharge PETRA-$VERSION.apk sur ton téléphone et ouvre-le pour l'installer."
+          fi
