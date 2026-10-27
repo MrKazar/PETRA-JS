@@ -1,4 +1,4 @@
-const REPO = 'MrKazar/petra-js'
+const REPO = 'MrKazar/PETRA-JS'
 
 export interface UpdateInfo {
   version: string
