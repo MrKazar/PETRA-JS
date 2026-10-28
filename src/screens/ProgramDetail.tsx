@@ -4,7 +4,7 @@ import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
 import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
-import { CATALOG, exerciseFromCatalog, cardioPlanOf, cardioSets, cardioSummary, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, pdcSummary, setLabels, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
+import { cardioPlanOf, cardioSets, cardioSummary, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, pdcSummary, setLabels, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
 import { describeSet } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
@@ -203,14 +203,6 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
     const last = e.sets[e.sets.length - 1] ?? { phase: 'travail', reps: 10 }
     onChange({ ...e, sets: [...e.sets, { ...last }] })
   }
-  const catalog = e.catalogId ? CATALOG.find((c) => c.id === e.catalogId) : undefined
-  /** Remet les séries du catalogue (reps, % de charge, repos) en gardant la charge de travail. */
-  const resetSets = () => {
-    if (!catalog) return
-    const fresh = exerciseFromCatalog(catalog, e.workLoad)
-    onChange({ ...e, sets: fresh.sets, restSec: fresh.restSec })
-    toast('Séries conseillées appliquées')
-  }
   const switchMode = () =>
     onChange({
       ...e,
@@ -275,11 +267,6 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
         <button className="btn block" onClick={addSet}>
           <IconPlus /> Ajouter une série
         </button>
-        {catalog && (
-          <button className="btn block" onClick={resetSets}>
-            Séries conseillées
-          </button>
-        )}
           </>
         )}
         {e.note && <p className="small muted">{e.note}</p>}
