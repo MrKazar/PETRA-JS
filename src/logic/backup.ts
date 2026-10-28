@@ -2,6 +2,7 @@ import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
 import { getData, normalize, setData, update } from '../data/store'
 import type { AppData } from '../data/types'
 import { writeCloudFile } from './cloud'
+import { googleToken, uploadDriveBackup } from './gdrive'
 
 /** Dossier des sauvegardes : Documents/PETRA sur le téléphone (il reste après une désinstallation). */
 export const BACKUP_DIR = 'PETRA'
@@ -46,6 +47,19 @@ export async function writeBackup(): Promise<{ local: boolean; cloud?: boolean }
     }
     update((d) => (d.settings.cloudBackup?.uri === cloudFile.uri ? { ...d, settings: { ...d.settings, cloudBackup: { ...cloudFile, ...(cloud ? { lastAt: at.getTime(), failed: false } : { failed: true }) } } } : d))
   }
+  const g = getData().settings.google
+  if (g) {
+    let ok = false
+    let fileId = g.fileId
+    try {
+      fileId = await uploadDriveBackup(await googleToken(false), json, g.fileId)
+      ok = true
+    } catch {
+      ok = false
+    }
+    update((d) => (d.settings.google ? { ...d, settings: { ...d.settings, google: { ...d.settings.google, fileId, ...(ok ? { lastAt: at.getTime(), failed: false } : { failed: true }) } } } : d))
+    cloud = cloud === false ? false : ok
+  }
   const local = await writeLocal(at, json)
   return { local, cloud }
 }
@@ -78,6 +92,6 @@ async function writeLocal(at: Date, json: string): Promise<boolean> {
 
 /** Remplace toutes les données par une sauvegarde, en gardant l'état des sauvegardes de ce téléphone. */
 export function restoreBackup(data: AppData) {
-  const { lastBackupAt, cloudBackup } = getData().settings
-  setData({ ...data, settings: { ...data.settings, lastBackupAt, cloudBackup } })
+  const { lastBackupAt, cloudBackup, google } = getData().settings
+  setData({ ...data, settings: { ...data.settings, lastBackupAt, cloudBackup, google } })
 }
