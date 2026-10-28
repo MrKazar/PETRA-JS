@@ -1,5 +1,5 @@
 {
- "version": "2.2",
+ "version": "2.3",
  "langue": "fr",
  "legende": {
   "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
@@ -52,11 +52,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "5",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "10",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -75,16 +75,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "6",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -102,16 +102,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "6",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -632,16 +632,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "6",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -693,11 +693,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -797,11 +797,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -965,16 +965,16 @@
    "charge": true,
    "profil": "poly_lourd",
    "chauffe": {
-    "reps": "10",
+    "reps": "8",
     "repos_sec": 90,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "5",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "8",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -1174,11 +1174,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -1367,11 +1367,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -1390,16 +1390,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "15",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "20",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -1422,11 +1422,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -1555,16 +1555,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "8",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "6",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -1637,16 +1637,16 @@
    "charge": true,
    "profil": "poly_lourd",
    "chauffe": {
-    "reps": "10",
+    "reps": "8",
     "repos_sec": 90,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "5",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "8",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -1666,16 +1666,16 @@
    "charge": true,
    "profil": "poly_lourd",
    "chauffe": {
-    "reps": "10",
+    "reps": "8",
     "repos_sec": 90,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "5",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "8",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -1694,16 +1694,16 @@
    "charge": true,
    "profil": "poly_lourd",
    "chauffe": {
-    "reps": "10",
+    "reps": "8",
     "repos_sec": 90,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "6",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "10",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -1884,16 +1884,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "6",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -1943,11 +1943,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -2022,11 +2022,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -2097,11 +2097,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "15",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -2124,11 +2124,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -2288,11 +2288,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -2365,11 +2365,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -2390,11 +2390,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "15",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -2574,16 +2574,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "8",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2601,16 +2601,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2628,16 +2628,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2655,16 +2655,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2680,16 +2680,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "15",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2705,16 +2705,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2855,16 +2855,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2882,16 +2882,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -2984,16 +2984,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "10",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "21",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "21",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -3009,16 +3009,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -3156,16 +3156,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "6",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -3186,11 +3186,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -3273,16 +3273,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "8",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -3298,16 +3298,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -3323,16 +3323,16 @@
    "charge": true,
    "profil": "iso",
    "chauffe": {
-    "reps": "15",
+    "reps": "12",
     "repos_sec": 45,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-12",
+    "reps": "10",
     "repos_sec": 90
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -3484,16 +3484,16 @@
    "charge": true,
    "profil": "iso_petit",
    "chauffe": {
-    "reps": "15",
+    "reps": "20",
     "repos_sec": 45,
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -3536,16 +3536,16 @@
    "charge": true,
    "profil": "iso_petit",
    "chauffe": {
-    "reps": "15",
+    "reps": "20",
     "repos_sec": 45,
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -3664,11 +3664,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -3691,11 +3691,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "15",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -3768,11 +3768,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "15",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -3811,16 +3811,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "8",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -3904,11 +3904,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "5",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "8",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -3932,11 +3932,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "5",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "8",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -4094,11 +4094,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4121,11 +4121,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "8",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4148,11 +4148,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4175,11 +4175,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4202,11 +4202,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "4",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "8",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -4230,11 +4230,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "4-6",
+    "reps": "5",
     "repos_sec": 180
    },
    "hypertrophie": {
-    "reps": "8-10",
+    "reps": "8",
     "repos_sec": 120,
     "charge_pct": 75
    }
@@ -4253,16 +4253,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "6",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4283,11 +4283,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4391,11 +4391,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4419,11 +4419,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4748,11 +4748,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4775,11 +4775,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -4882,11 +4882,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -5030,11 +5030,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "12",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -5119,11 +5119,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -5159,16 +5159,16 @@
    "charge": true,
    "profil": "explosif",
    "chauffe": {
-    "reps": "5",
+    "reps": "10",
     "repos_sec": 90,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "3-5",
+    "reps": "15",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "6-8",
+    "reps": "20",
     "repos_sec": 120,
     "charge_pct": 70
    }
@@ -5261,11 +5261,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "10",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -5380,11 +5380,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "15",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "20",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -5405,11 +5405,11 @@
     "charge_pct": 40
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "15",
     "repos_sec": 60,
     "charge_pct": 65
    }
@@ -5638,11 +5638,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "20",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "30",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -6155,11 +6155,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "15",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -6182,11 +6182,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "10-12",
+    "reps": "10",
     "repos_sec": 75
    },
    "hypertrophie": {
-    "reps": "15-20",
+    "reps": "12",
     "repos_sec": 60,
     "charge_pct": 70
    }
@@ -6305,16 +6305,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "10",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "8",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "12",
     "repos_sec": 90,
     "charge_pct": 75
    }
@@ -6339,11 +6339,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "3-5",
+    "reps": "3",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "6-8",
+    "reps": "5",
     "repos_sec": 120,
     "charge_pct": 70
    }
@@ -6387,11 +6387,11 @@
     "charge_pct": 50
    },
    "travail": {
-    "reps": "8-10",
+    "reps": "15",
     "repos_sec": 120
    },
    "hypertrophie": {
-    "reps": "12-15",
+    "reps": "20",
     "repos_sec": 90,
     "charge_pct": 70
    }
@@ -6410,16 +6410,16 @@
    "charge": true,
    "profil": "poly",
    "chauffe": {
-    "reps": "12",
+    "reps": "2",
     "repos_sec": 75,
     "charge_pct": 50
    },
    "travail": {
-    "reps": "6-8",
+    "reps": "3",
     "repos_sec": 150
    },
    "hypertrophie": {
-    "reps": "10-12",
+    "reps": "5",
     "repos_sec": 90,
     "charge_pct": 75
    }

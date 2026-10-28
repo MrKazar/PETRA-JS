@@ -74,7 +74,7 @@ describe('catalogue', () => {
     const bench = CATALOG.find((e) => e.id === 'dev_couche_barre')!
     const ex = exerciseFromCatalog(bench, 81)
     expect(ex.sets.map((s) => s.weight)).toEqual([40.5, 81, 81, 61])
-    expect(ex.sets.map((s) => s.reps)).toEqual([10, 6, 6, 10])
+    expect(ex.sets.map((s) => s.reps)).toEqual([10, 5, 5, 10])
     expect(ex.sets.map((s) => s.restSec)).toEqual([90, 180, 180, 120])
     expect(withWorkLoad(ex, 100).sets.map((s) => s.weight)).toEqual([50, 100, 100, 75])
     expect(setLabels(ex.sets)).toEqual(['Chauffe', 'Travail 1', 'Travail 2', 'Hypertrophie'])

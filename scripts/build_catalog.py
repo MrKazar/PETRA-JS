@@ -373,6 +373,84 @@ def pdc(id_, profile):
     return out
 
 
+# Répétitions adaptées à chaque exercice en charge libre (1.3.3) : (chauffe, travail, hypertrophie).
+# Les % de charge et les repos restent ceux du profil ; seules les répétitions changent.
+LOAD_REPS = {
+    "dev_couche_barre": (10, 5, 10),
+    "dev_incline_barre": (10, 6, 10),
+    "dev_decline_barre": (10, 6, 10),
+    "floor_press": (10, 6, 10),
+    "dev_landmine": (12, 10, 15),
+    "svend_press": (15, 15, 20),
+    "souleve_terre": (8, 5, 8),
+    "rowing_haltere": (12, 10, 15),
+    "rowing_seal": (12, 10, 12),
+    "rowing_kroc": (10, 15, 20),
+    "meadows_row": (12, 10, 12),
+    "traction_lestee": (8, 6, 10),
+    "rack_pull": (8, 5, 8),
+    "souleve_terre_sumo": (8, 5, 8),
+    "souleve_terre_trap_bar": (8, 6, 10),
+    "dev_militaire_barre": (10, 6, 10),
+    "dev_arnold": (12, 10, 12),
+    "elevations_laterales_halteres": (15, 15, 20),
+    "elevations_frontales": (15, 12, 15),
+    "oiseau_halteres": (15, 15, 20),
+    "dev_landmine_unilateral": (12, 10, 12),
+    "elevations_laterales_penche": (15, 15, 20),
+    "elevations_frontales_disque": (15, 12, 15),
+    "curl_barre": (12, 8, 12),
+    "curl_barre_ez": (12, 10, 12),
+    "curl_halteres": (12, 10, 12),
+    "curl_marteau": (12, 10, 12),
+    "curl_incline": (12, 10, 15),
+    "curl_pupitre": (12, 10, 12),
+    "curl_drag": (12, 10, 12),
+    "curl_zottman": (12, 10, 12),
+    "curl_21": (10, 21, 21),
+    "barre_front": (12, 10, 12),
+    "dev_couche_serre": (10, 6, 10),
+    "kickback": (15, 15, 20),
+    "jm_press": (10, 8, 10),
+    "barre_front_halteres": (12, 10, 12),
+    "extension_nuque_ez": (12, 10, 12),
+    "curl_poignets": (20, 15, 20),
+    "curl_poignets_inverse": (20, 15, 20),
+    "shrugs_halteres": (15, 15, 20),
+    "shrugs_barre": (15, 12, 15),
+    "y_raise_incline": (15, 12, 15),
+    "good_morning": (10, 8, 12),
+    "squat_barre": (10, 5, 8),
+    "front_squat": (10, 5, 8),
+    "fentes_marchees": (12, 10, 12),
+    "fentes_bulgares": (12, 8, 12),
+    "fentes_arriere": (12, 10, 12),
+    "step_up": (12, 10, 12),
+    "squat_pause": (10, 4, 8),
+    "box_squat": (10, 5, 8),
+    "squat_zercher": (10, 6, 10),
+    "squat_talons_sureleves": (12, 10, 15),
+    "fentes_avant": (12, 10, 12),
+    "fentes_laterales": (12, 10, 12),
+    "souleve_terre_roumain_halteres": (12, 10, 12),
+    "souleve_terre_unilateral": (12, 10, 12),
+    "hip_thrust": (12, 10, 15),
+    "pont_fessier_barre": (12, 12, 15),
+    "fentes_croisees": (12, 10, 12),
+    "kettlebell_swing": (10, 15, 20),
+    "squat_sumo_haltere": (12, 10, 15),
+    "mollets_debout_halteres": (15, 15, 20),
+    "mollets_unilateral": (15, 12, 15),
+    "russian_twist": (12, 20, 30),
+    "flexion_laterale_haltere": (12, 12, 15),
+    "rotation_landmine": (12, 10, 12),
+    "thruster": (10, 8, 12),
+    "power_clean": (5, 3, 5),
+    "wall_ball": (12, 15, 20),
+    "turkish_get_up": (2, 3, 5),
+}
+
+
 def strength(e, profile):
     warm, work, hyp, kind = PROFILES[profile]
     out = dict(e)
@@ -393,6 +471,9 @@ def strength(e, profile):
     out["chauffe"] = phase(*warm)
     out["travail"] = {"reps": work[0], "repos_sec": work[1]}
     out["hypertrophie"] = phase(*hyp)
+    if e["id"] in LOAD_REPS:
+        c, w, h = LOAD_REPS[e["id"]]
+        out["chauffe"]["reps"], out["travail"]["reps"], out["hypertrophie"]["reps"] = str(c), str(w), str(h)
     return out
 
 
@@ -424,7 +505,7 @@ def main():
     exercises.sort(key=lambda e: order[e["groupe_musculaire"]])
 
     catalog = {
-        "version": "2.2",
+        "version": "2.3",
         "langue": "fr",
         "legende": {
             "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
