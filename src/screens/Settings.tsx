@@ -6,12 +6,137 @@ import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
 import { UpdateBody } from '../ui/UpdateCard'
 import { activeTheme } from '../ui/theme'
-import { Header, LogoFull, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
-import { IconCheckList, IconChevron, IconHistory, IconTrophy } from '../ui/icons'
+import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
+import { IconBook, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser } from '../ui/icons'
+
+const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
 export function SettingsScreen() {
   const data = useData()
   const nav = useNav()
+  const s = data.settings
+  const totalSec = data.sessions.reduce((n, x) => n + ((x.endedAt ?? x.startedAt) - x.startedAt) / 1000, 0)
+  const row = (label: string, sub: string, icon: React.ReactNode, onClick: () => void) => (
+    <div className="list-item clickable" onClick={onClick}>
+      <div className="icon-box">{icon}</div>
+      <div className="grow">
+        <div style={{ fontWeight: 600 }}>{label}</div>
+        <div className="small muted">{sub}</div>
+      </div>
+      <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+    </div>
+  )
+
+  return (
+    <div className="screen">
+      <div className="screen-inner">
+        <Header title="Paramètres" />
+        <div className="card">
+          <LogoFull />
+          <div className="stat-grid" style={{ marginTop: 14 }}>
+            <div className="stat"><div className="v">{data.sessions.length}</div><div className="l">Séances</div></div>
+            <div className="stat"><div className="v">{Math.round(totalSec / 3600)} h</div><div className="l">Entraînement</div></div>
+            <div className="stat"><div className="v">{personalRecords(data.sessions).length}</div><div className="l">Records</div></div>
+          </div>
+        </div>
+
+        <button className="list-item clickable" style={{ width: '100%', textAlign: 'left' }} onClick={() => nav.push({ name: 'appearance' })}>
+          <img src={imgUrl(activeTheme(s).emblem)} alt="" style={{ width: 40, height: 40, objectFit: 'contain' }} />
+          <div className="grow">
+            <div style={{ fontWeight: 600 }}>Apparence</div>
+            <div className="small muted">Thème {activeTheme(s).label}</div>
+          </div>
+          <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+        </button>
+
+        <div className="list">
+          {row('Utilisateur', s.name ? s.name : 'Prénom pour l’accueil', <IconUser />, () => nav.push({ name: 'settingsSection', section: 'user' }))}
+          {row('Séances', `Repos ${s.defaultRestSec} s${s.vibrate ? ' · vibration' : ''}${s.keepAwake ? ' · écran allumé' : ''}`, <IconClock />, () => nav.push({ name: 'settingsSection', section: 'sessions' }))}
+          {row('Données', s.lastBackupAt ? `Dernière sauvegarde : ${when(s.lastBackupAt)}` : 'Sauvegarde et restauration', <IconBook />, () => nav.push({ name: 'settingsSection', section: 'data' }))}
+        </div>
+
+        <div className="list">
+          <div className="list-item clickable" onClick={() => nav.push({ name: 'history' })}>
+            <div className="icon-box"><IconHistory /></div>
+            <span className="grow" style={{ fontWeight: 600 }}>Historique des séances</span>
+            <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+          </div>
+          <div className="list-item clickable" onClick={() => nav.push({ name: 'records' })}>
+            <div className="icon-box"><IconTrophy /></div>
+            <span className="grow" style={{ fontWeight: 600 }}>Records personnels</span>
+            <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+          </div>
+          <div className="list-item clickable" onClick={() => nav.push({ name: 'routines' })}>
+            <div className="icon-box"><IconCheckList /></div>
+            <span className="grow" style={{ fontWeight: 600 }}>Routines et tâches</span>
+            <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+          </div>
+        </div>
+
+        <SectionTitle>Application</SectionTitle>
+        <div className="card">
+          <UpdateBody />
+        </div>
+        <div className="center faint small">Plus fort aujourd’hui, plus utile demain.</div>
+      </div>
+
+    </div>
+  )
+}
+
+export type SettingsSection = 'user' | 'sessions' | 'data'
+
+const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', data: 'Données' }
+
+/** Sous-pages de Paramètres. */
+export function SettingsSectionScreen({ section }: { section: SettingsSection }) {
+  const data = useData()
+  const nav = useNav()
+  const s = data.settings
+  return (
+    <div className="screen">
+      <div className="screen-inner">
+        <TopBar title={TITLES[section]} onBack={nav.pop} />
+        {section === 'user' && (
+        <div className="card stack">
+          <label className="field">
+            <span>Prénom</span>
+            <input className="input" value={s.name} placeholder="Pour l’accueil" onChange={(e) => saveSettings({ name: e.target.value })} />
+          </label>
+        </div>
+        )}
+        {section === 'sessions' && (
+        <div className="card stack">
+          <div className="row">
+            <div className="grow">
+              <div style={{ fontWeight: 600 }}>Repos par défaut</div>
+              <div className="small muted">Minimum entre deux exercices et pour les exercices perso.</div>
+            </div>
+            <NumInput value={s.defaultRestSec} onChange={(v) => saveSettings({ defaultRestSec: Math.max(0, Math.round(v ?? 0)) })} />
+            <span className="small faint">s</span>
+          </div>
+          <div className="row">
+            <div className="grow">
+              <div style={{ fontWeight: 600 }}>Vibrer à la fin du repos</div>
+            </div>
+            <Toggle on={s.vibrate} onChange={(v) => saveSettings({ vibrate: v })} label="Vibration" />
+          </div>
+          <div className="row">
+            <div className="grow">
+              <div style={{ fontWeight: 600 }}>Écran allumé pendant la séance</div>
+            </div>
+            <Toggle on={s.keepAwake} onChange={(v) => saveSettings({ keepAwake: v })} label="Écran allumé" />
+          </div>
+        </div>
+        )}
+        {section === 'data' && <DataSection />}
+      </div>
+    </div>
+  )
+}
+
+function DataSection() {
+  const data = useData()
   const s = data.settings
   const [backup, setBackup] = useState<'export' | 'import' | null>(null)
   const [importText, setImportText] = useState('')
@@ -19,7 +144,6 @@ export function SettingsScreen() {
   const fileInput = useRef<HTMLInputElement>(null)
 
   const exportText = backup === 'export' ? JSON.stringify(getData(), null, 1) : ''
-  const totalSec = data.sessions.reduce((n, x) => n + ((x.endedAt ?? x.startedAt) - x.startedAt) / 1000, 0)
 
   const copy = async () => {
     try {
@@ -60,81 +184,9 @@ export function SettingsScreen() {
     setSaving(false)
     toast(r.local ? 'Sauvegarde enregistrée dans Documents/PETRA' : 'Sauvegarde impossible sur ce téléphone')
   }
-  const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
   return (
-    <div className="screen">
-      <div className="screen-inner">
-        <Header title="Paramètres" />
-        <div className="card">
-          <LogoFull />
-          <div className="stat-grid" style={{ marginTop: 14 }}>
-            <div className="stat"><div className="v">{data.sessions.length}</div><div className="l">Séances</div></div>
-            <div className="stat"><div className="v">{Math.round(totalSec / 3600)} h</div><div className="l">Entraînement</div></div>
-            <div className="stat"><div className="v">{personalRecords(data.sessions).length}</div><div className="l">Records</div></div>
-          </div>
-        </div>
-
-        <button className="list-item clickable" style={{ width: '100%', textAlign: 'left' }} onClick={() => nav.push({ name: 'appearance' })}>
-          <img src={imgUrl(activeTheme(s).emblem)} alt="" style={{ width: 40, height: 40, objectFit: 'contain' }} />
-          <div className="grow">
-            <div style={{ fontWeight: 600 }}>Apparence</div>
-            <div className="small muted">Thème {activeTheme(s).label}</div>
-          </div>
-          <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
-        </button>
-
-        <div className="list">
-          <div className="list-item clickable" onClick={() => nav.push({ name: 'history' })}>
-            <div className="icon-box"><IconHistory /></div>
-            <span className="grow" style={{ fontWeight: 600 }}>Historique des séances</span>
-            <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
-          </div>
-          <div className="list-item clickable" onClick={() => nav.push({ name: 'records' })}>
-            <div className="icon-box"><IconTrophy /></div>
-            <span className="grow" style={{ fontWeight: 600 }}>Records personnels</span>
-            <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
-          </div>
-          <div className="list-item clickable" onClick={() => nav.push({ name: 'routines' })}>
-            <div className="icon-box"><IconCheckList /></div>
-            <span className="grow" style={{ fontWeight: 600 }}>Routines et tâches</span>
-            <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
-          </div>
-        </div>
-
-        <SectionTitle>Moi</SectionTitle>
-        <div className="card stack">
-          <label className="field">
-            <span>Prénom</span>
-            <input className="input" value={s.name} placeholder="Pour l’accueil" onChange={(e) => saveSettings({ name: e.target.value })} />
-          </label>
-        </div>
-
-        <SectionTitle>Séances</SectionTitle>
-        <div className="card stack">
-          <div className="row">
-            <div className="grow">
-              <div style={{ fontWeight: 600 }}>Repos par défaut</div>
-              <div className="small muted">Minimum entre deux exercices et pour les exercices perso.</div>
-            </div>
-            <NumInput value={s.defaultRestSec} onChange={(v) => saveSettings({ defaultRestSec: Math.max(0, Math.round(v ?? 0)) })} />
-            <span className="small faint">s</span>
-          </div>
-          <div className="row">
-            <div className="grow">
-              <div style={{ fontWeight: 600 }}>Vibrer à la fin du repos</div>
-            </div>
-            <Toggle on={s.vibrate} onChange={(v) => saveSettings({ vibrate: v })} label="Vibration" />
-          </div>
-          <div className="row">
-            <div className="grow">
-              <div style={{ fontWeight: 600 }}>Écran allumé pendant la séance</div>
-            </div>
-            <Toggle on={s.keepAwake} onChange={(v) => saveSettings({ keepAwake: v })} label="Écran allumé" />
-          </div>
-        </div>
-
-        <SectionTitle>Données</SectionTitle>
+    <>
         <div className="card stack">
           <div>
             <div style={{ fontWeight: 600 }}>Sauvegarde automatique</div>
@@ -160,14 +212,6 @@ export function SettingsScreen() {
             <button className="btn danger sm" onClick={() => confirmAction('Tout effacer et repartir de zéro ?') && setData(emptyData())}>Tout effacer</button>
           </div>
         </div>
-
-        <SectionTitle>Application</SectionTitle>
-        <div className="card">
-          <UpdateBody />
-        </div>
-        <div className="center faint small">Plus fort aujourd’hui, plus utile demain.</div>
-      </div>
-
       <Sheet open={backup === 'export'} onClose={() => setBackup(null)} title="Sauvegarde">
         <div className="stack">
           <p className="small muted" style={{ margin: 0 }}>Copie ce texte et garde-le (notes, mail à toi-même…). Il contient tous tes programmes, séances et routines.</p>
@@ -184,6 +228,6 @@ export function SettingsScreen() {
           <button className="btn primary block" disabled={!importText.trim()} onClick={doImport}>Restaurer</button>
         </div>
       </Sheet>
-    </div>
+    </>
   )
 }
