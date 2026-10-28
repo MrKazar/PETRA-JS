@@ -8,16 +8,19 @@ import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSe
 import { formatDuration, uid } from '../logic/util'
 import { estimateDuration, formatEstimate } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
+import { ShareSheet } from '../ui/Share'
+import { shareProgram } from '../logic/share'
 import { overloadSuggestion } from '../logic/progress'
 import { OverloadCard } from '../ui/Overload'
 import { Empty, NumInput, Sheet, TopBar, confirmAction, toast } from '../ui/kit'
-import { IconCopy, IconDown, IconDumbbell, IconEdit, IconHistory, IconPlay, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
+import { IconQr, IconCopy, IconDown, IconDumbbell, IconEdit, IconHistory, IconPlay, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
 
 export function ProgramDetailScreen({ id }: { id: string }) {
   const data = useData()
   const nav = useNav()
   const program = data.programs.find((p) => p.id === id)
   const [picking, setPicking] = useState(false)
+  const [sharing, setSharing] = useState(false)
   const [editingEx, setEditingEx] = useState<string | null>(null)
   const [renaming, setRenaming] = useState(false)
 
@@ -138,6 +141,11 @@ export function ProgramDetailScreen({ id }: { id: string }) {
           <textarea className="input" placeholder="Objectif, consignes…" value={program.notes ?? ''} onChange={(e) => save({ notes: e.target.value })} />
         </label>
 
+        {program.exercises.length > 0 && (
+          <button className="btn block" onClick={() => setSharing(true)}>
+            <IconQr /> Partager cette séance (QR code)
+          </button>
+        )}
         <div className="row">
           <button className="btn grow" onClick={duplicate}>
             <IconCopy /> Dupliquer
@@ -171,6 +179,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
         />
       )}
 
+      {sharing && <ShareSheet payload={shareProgram(program)} title={`Partager « ${program.name} »`} onClose={() => setSharing(false)} />}
       <RenameSheet open={renaming} initial={program.name} onClose={() => setRenaming(false)} onSave={(name) => save({ name })} />
     </div>
   )

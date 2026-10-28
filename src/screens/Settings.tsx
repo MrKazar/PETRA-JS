@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import { emptyData, getData, setData, update, useData } from '../data/store'
 import { BACKUP_KEEP, parseBackup, restoreBackup, writeBackup } from '../logic/backup'
-import { downloadDriveBackup, findDriveBackup, googleAvailable, googleEmail, googleError, googleToken, revokeGoogle } from '../logic/gdrive'
 import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
@@ -17,7 +16,6 @@ export function SettingsScreen() {
   const [backup, setBackup] = useState<'export' | 'import' | null>(null)
   const [importText, setImportText] = useState('')
   const [saving, setSaving] = useState(false)
-  const [busy, setBusy] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
 
   const exportText = backup === 'export' ? JSON.stringify(getData(), null, 1) : ''
@@ -60,43 +58,7 @@ export function SettingsScreen() {
     setSaving(true)
     const r = await writeBackup()
     setSaving(false)
-    if (r.cloud === false) toast('Envoi vers Google Drive impossible : vérifie le réseau, ou reconnecte-toi')
-    else if (r.cloud) toast('Sauvegarde enregistrée sur le téléphone et sur Google Drive')
-    else toast(r.local ? 'Sauvegarde enregistrée dans Documents/PETRA' : 'Sauvegarde impossible sur ce téléphone')
-  }
-  const connectGoogle = async () => {
-    setBusy(true)
-    try {
-      const token = await googleToken(true)
-      const email = await googleEmail(token).catch(() => undefined)
-      saveSettings({ google: { email } })
-      // Une sauvegarde existe déjà dans ce Drive et ce téléphone est vide : on propose de la récupérer.
-      const existing = getData().sessions.length === 0 ? await findDriveBackup(token).catch(() => undefined) : undefined
-      setBusy(false)
-      if (existing && confirmAction('Une sauvegarde PETRA existe dans ce Drive. La restaurer sur ce téléphone ?')) return restoreGoogle()
-      await backupNow()
-    } catch (e) {
-      setBusy(false)
-      toast(googleError(e))
-    }
-  }
-  const restoreGoogle = async () => {
-    setBusy(true)
-    try {
-      const text = await downloadDriveBackup(await googleToken(true))
-      setBusy(false)
-      if (!text) return toast('Aucune sauvegarde PETRA dans ce Drive')
-      restoreFrom(text, 'fichier')
-    } catch (e) {
-      setBusy(false)
-      toast(googleError(e))
-    }
-  }
-  const disconnectGoogle = async () => {
-    if (!confirmAction('Déconnecter le compte Google ? La sauvegarde déjà envoyée reste dans ton Drive.')) return
-    const token = await googleToken(false).catch(() => undefined)
-    if (token) await revokeGoogle(token)
-    saveSettings({ google: undefined })
+    toast(r.local ? 'Sauvegarde enregistrée dans Documents/PETRA' : 'Sauvegarde impossible sur ce téléphone')
   }
   const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
@@ -188,29 +150,6 @@ export function SettingsScreen() {
             <button className="btn grow" onClick={() => fileInput.current?.click()}>Restaurer un fichier</button>
             <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => { pickFile(e.target.files?.[0]); e.target.value = '' }} />
           </div>
-          {googleAvailable() && (
-            <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
-              <div style={{ fontWeight: 600 }}>Google Drive</div>
-              {s.google ? (
-                <>
-                  <div className="small muted">Connecté{s.google.email ? ` : ${s.google.email}` : ''}. La sauvegarde est envoyée dans ton Drive après chaque séance.</div>
-                  <div className="small" style={{ marginTop: 6, color: s.google.failed ? 'var(--error)' : 'var(--khaki)' }}>
-                    {s.google.failed ? 'Le dernier envoi a échoué (pas de réseau ou connexion à refaire).' : s.google.lastAt ? `Dernier envoi : ${when(s.google.lastAt)}` : 'Pas encore envoyé'}
-                  </div>
-                  <div className="row" style={{ marginTop: 8 }}>
-                    <button className="btn sm grow" disabled={busy} onClick={restoreGoogle}>Restaurer depuis le Drive</button>
-                    <button className="btn sm ghost grow" onClick={disconnectGoogle}>Déconnecter</button>
-                  </div>
-                  {s.google.failed && <button className="btn sm block" style={{ marginTop: 6 }} disabled={busy} onClick={connectGoogle}>Se reconnecter</button>}
-                </>
-              ) : (
-                <>
-                  <div className="small muted">Relie ton compte Google : PETRA enverra la sauvegarde dans ton Drive après chaque séance, et tu pourras tout récupérer sur un nouveau téléphone.</div>
-                  <button className="btn primary block" style={{ marginTop: 8 }} disabled={busy} onClick={connectGoogle}>Se connecter avec Google</button>
-                </>
-              )}
-            </div>
-          )}
           <div className="row">
             <button className="btn ghost sm grow" onClick={() => setBackup('export')}>Copier en texte</button>
             <button className="btn ghost sm grow" onClick={() => setBackup('import')}>Coller un texte</button>

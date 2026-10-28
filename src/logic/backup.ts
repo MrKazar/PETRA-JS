@@ -1,7 +1,6 @@
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
 import { getData, normalize, setData, update } from '../data/store'
 import type { AppData } from '../data/types'
-import { googleToken, uploadDriveBackup } from './gdrive'
 
 /** Dossier des sauvegardes : Documents/PETRA sur le téléphone (il reste après une désinstallation). */
 export const BACKUP_DIR = 'PETRA'
@@ -29,28 +28,12 @@ export function parseBackup(text: string): AppData {
 }
 
 /**
- * Sauvegarde : une copie dans Documents/PETRA (les plus anciennes sont supprimées), et si un compte Google
- * est relié, envoi dans son Drive. Renvoie ce qui a réussi.
+ * Sauvegarde : une copie dans Documents/PETRA (les plus anciennes sont supprimées). Renvoie ce qui a réussi.
  */
-export async function writeBackup(): Promise<{ local: boolean; cloud?: boolean }> {
+export async function writeBackup(): Promise<{ local: boolean }> {
   const at = new Date()
   const json = JSON.stringify({ ...getData(), backupAt: at.getTime() })
-  let cloud: boolean | undefined
-  const g = getData().settings.google
-  if (g) {
-    let ok = false
-    let fileId = g.fileId
-    try {
-      fileId = await uploadDriveBackup(await googleToken(false), json, g.fileId)
-      ok = true
-    } catch {
-      ok = false
-    }
-    update((d) => (d.settings.google ? { ...d, settings: { ...d.settings, google: { ...d.settings.google, fileId, ...(ok ? { lastAt: at.getTime(), failed: false } : { failed: true }) } } } : d))
-    cloud = ok
-  }
-  const local = await writeLocal(at, json)
-  return { local, cloud }
+  return { local: await writeLocal(at, json) }
 }
 
 async function writeLocal(at: Date, json: string): Promise<boolean> {
@@ -81,6 +64,6 @@ async function writeLocal(at: Date, json: string): Promise<boolean> {
 
 /** Remplace toutes les données par une sauvegarde, en gardant l'état des sauvegardes de ce téléphone. */
 export function restoreBackup(data: AppData) {
-  const { lastBackupAt, google } = getData().settings
-  setData({ ...data, settings: { ...data.settings, lastBackupAt, google } })
+  const { lastBackupAt } = getData().settings
+  setData({ ...data, settings: { ...data.settings, lastBackupAt } })
 }

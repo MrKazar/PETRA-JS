@@ -11,6 +11,9 @@ import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS } from '../../data/store'
 import { backupName, backupsToPrune, parseBackup } from '../backup'
+import { MAX_QR_CHARS, applyShare, decodeShare, encodeShare, shareProgram, shareWeeksAB } from '../share'
+import { emptyData } from '../../data/store'
+const DATA0 = () => emptyData()
 
 const program: Program = {
   id: 'p1',
@@ -308,5 +311,32 @@ describe('sauvegarde automatique', () => {
   it('refuse un fichier qui n’est pas une sauvegarde', () => {
     expect(() => parseBackup('{"a":1}')).toThrow()
     expect(parseBackup('{"programs":[]}').programs).toEqual([])
+  })
+})
+
+describe('partage par QR code', () => {
+  const prog = (name: string, from: number): Program => ({
+    id: name, name, createdAt: 0,
+    exercises: CATALOG.filter((c) => c.charge && !c.cardio).slice(from, from + 8).map((c) => exerciseFromCatalog(c, 60)),
+  })
+  it('retrouve une séance après encodage', async () => {
+    const p = prog('Push', 0)
+    const back = await decodeShare(await encodeShare(shareProgram(p)))
+    const { data } = applyShare({ ...DATA0(), programs: [] }, back)
+    expect(data.programs[0].name).toBe('Push')
+    expect(data.programs[0].exercises.map((e) => [e.name, e.sets])).toEqual(p.exercises.map((e) => [e.name, e.sets]))
+  })
+  it('tient dans un QR code pour 6 séances de 8 exercices en semaines A / B', async () => {
+    const programs = [0, 8, 16, 24, 32, 40].map((n, i) => prog(`S${i}`, n))
+    const d = { ...DATA0(), programs, weekPlan: { 0: 'S0', 2: 'S1', 4: 'S2' }, weekPlanB: { 0: 'S3', 2: 'S4', 4: 'S5' } }
+    const text = await encodeShare(shareWeeksAB(d))
+    expect(text.length).toBeLessThan(MAX_QR_CHARS)
+    const { data } = applyShare({ ...DATA0(), programs: [] }, await decodeShare(text))
+    expect(data.settings.abWeeks).toBe(true)
+    expect(data.programs.find((x) => x.id === data.weekPlanB[2])?.name).toBe('S4')
+    expect(data.weekPlan[1]).toBeUndefined()
+  })
+  it('refuse un QR code étranger', async () => {
+    await expect(decodeShare('https://exemple.fr')).rejects.toThrow()
   })
 })

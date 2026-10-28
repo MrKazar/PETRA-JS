@@ -122,8 +122,6 @@ export interface Settings {
   theme: ThemeId
   /** Date de la dernière sauvegarde automatique (fichier dans Documents/PETRA). */
   lastBackupAt?: number
-  /** Compte Google relié : la sauvegarde est envoyée dans son Drive après chaque séance. */
-  google?: { email?: string; fileId?: string; lastAt?: number; failed?: boolean }
 }
 
 export interface AppData {

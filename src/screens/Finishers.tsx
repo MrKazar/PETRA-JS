@@ -1,17 +1,20 @@
 import { useState } from 'react'
+import { ScanSheet, ShareSheet } from '../ui/Share'
+import { shareFinisher } from '../logic/share'
 import { useData } from '../data/store'
 import type { FinisherType } from '../data/types'
 import { DEFAULT_FINISHERS, FINISHER_EXERCISES, FINISHER_TYPES, drawFinisher, finisherTypeLabel, finishersOf, formatItem, type Finisher, type FinisherItem } from '../data/finishers'
 import { deleteFinisher, resetFinishers, saveFinisher, saveSettings } from '../logic/actions'
 import { uid } from '../logic/util'
 import { Header, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
-import { IconCopy, IconDown, IconFlame, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
+import { IconQr, IconCopy, IconDown, IconFlame, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
 
 export function FinishersScreen() {
   const data = useData()
   const finishers = finishersOf(data)
   const [preview, setPreview] = useState<Finisher>()
   const [editing, setEditing] = useState<Finisher>()
+  const [scanning, setScanning] = useState(false)
   const done = data.sessions.filter((s) => s.finisher)
   const countById = new Map<string, number>()
   for (const s of done) countById.set(s.finisher!.id, (countById.get(s.finisher!.id) ?? 0) + 1)
@@ -39,7 +42,8 @@ export function FinishersScreen() {
             <div className="stat"><div className="v">{finishers.length}</div><div className="l">Finishers</div></div>
             <div className="stat"><div className="v">{done.length}</div><div className="l">Réalisés</div></div>
           </div>
-          <div className="small muted">Touche un finisher pour changer ses exercices et ses répétitions.</div>
+          <div className="small muted">Touche un finisher pour changer ses exercices et ses répétitions, ou pour le partager.</div>
+          <button className="btn sm" style={{ alignSelf: 'flex-start' }} onClick={() => setScanning(true)}><IconQr style={{ width: 16 }} /> Scanner un QR code</button>
           {data.finishers && (
             <button
               className="btn sm ghost"
@@ -100,6 +104,7 @@ export function FinishersScreen() {
         )}
       </Sheet>
 
+      {scanning && <ScanSheet onClose={() => setScanning(false)} />}
       {editing && (
         <FinisherEditor
           key={editing.id}
@@ -122,6 +127,7 @@ const KINDS: { kind: FinisherItem['kind']; label: string }[] = [
 function FinisherEditor({ initial, isNew, onClose, onDuplicate }: { initial: Finisher; isNew: boolean; onClose: () => void; onDuplicate: (f: Finisher) => void }) {
   const [f, setF] = useState<Finisher>(initial)
   const [picking, setPicking] = useState(initial.items.length === 0)
+  const [sharing, setSharing] = useState(false)
   const setItem = (i: number, patch: Partial<FinisherItem>) => setF({ ...f, items: f.items.map((it, j) => (j === i ? { ...it, ...patch } : it)) })
   const move = (i: number, d: number) => {
     const items = [...f.items]
@@ -193,6 +199,7 @@ function FinisherEditor({ initial, isNew, onClose, onDuplicate }: { initial: Fin
         <button className="btn primary block" disabled={!valid} onClick={save}>Enregistrer</button>
         {!isNew && (
           <div className="row">
+            <button className="btn grow" onClick={() => setSharing(true)}><IconQr /> Partager</button>
             <button className="btn grow" onClick={() => onDuplicate(f)}><IconCopy /> Dupliquer</button>
             <button
               className="btn danger grow"
@@ -206,6 +213,7 @@ function FinisherEditor({ initial, isNew, onClose, onDuplicate }: { initial: Fin
             </button>
           </div>
         )}
+        {sharing && <ShareSheet payload={shareFinisher(f)} title={`Partager « ${f.name} »`} onClose={() => setSharing(false)} />}
       </div>
     </Sheet>
   )

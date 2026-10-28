@@ -5,9 +5,11 @@ import { saveProgram, saveSettings } from '../logic/actions'
 import { weekLetter, type WeekLetter } from '../logic/planner'
 import { addDays, dateKey, uid, WEEKDAYS, weekday } from '../logic/util'
 import { groupLabel } from '../data/catalog'
+import { ScanSheet, ShareSheet } from '../ui/Share'
+import { shareWeek, shareWeeksAB } from '../logic/share'
 import { estimateDuration, formatEstimate } from '../logic/session'
 import { Empty, Header, SectionTitle, Sheet, Toggle } from '../ui/kit'
-import { IconChevron, IconDumbbell, IconHistory, IconPlus, IconTrophy } from '../ui/icons'
+import { IconQr, IconChevron, IconDumbbell, IconHistory, IconPlus, IconTrophy } from '../ui/icons'
 
 export function ProgramsScreen() {
   const data = useData()
@@ -18,6 +20,9 @@ export function ProgramsScreen() {
   const [editWeek, setEditWeek] = useState<WeekLetter>(current)
   const [pickDay, setPickDay] = useState<number | null>(null)
   const [creating, setCreating] = useState(false)
+  const [sharing, setSharing] = useState(false)
+  const [scanning, setScanning] = useState(false)
+  const planned = Object.values(data.weekPlan).some(Boolean) || (s.abWeeks && Object.values(data.weekPlanB).some(Boolean))
   const [name, setName] = useState('')
 
   const shownWeek: WeekLetter = s.abWeeks ? editWeek : 'A'
@@ -81,7 +86,16 @@ export function ProgramsScreen() {
               )
             })}
           </div>
+          {planned && (
+            <button className="btn block" onClick={() => setSharing(true)}>
+              <IconQr /> Partager {s.abWeeks ? 'les semaines A / B' : 'la semaine'} (QR code)
+            </button>
+          )}
         </div>
+
+        <button className="btn block" onClick={() => setScanning(true)}>
+          <IconQr /> Scanner un QR code
+        </button>
 
         <SectionTitle>Mes programmes</SectionTitle>
         {data.programs.length ? (
@@ -147,6 +161,8 @@ export function ProgramsScreen() {
           }}
         />
       </Sheet>
+      {sharing && <ShareSheet payload={s.abWeeks ? shareWeeksAB(data) : shareWeek(data)} title={s.abWeeks ? 'Partager les semaines A / B' : 'Partager la semaine'} onClose={() => setSharing(false)} />}
+      {scanning && <ScanSheet onClose={() => setScanning(false)} />}
     </div>
   )
 }
