@@ -332,6 +332,19 @@ textarea.input { min-height: 90px; resize: vertical; }
   --bg-image: none;
 }
 :root[data-theme='vantablack'] .card { border-color: #111111; }
+:root[data-theme='pompier'] {
+  --bg: #120d0c; --surface: #1d1412; --surface-2: #271b18; --line: #3d2a25;
+  --text: #f1e8e2; --muted: #b5a199; --faint: #7a655d;
+  --olive: #9e1c1c; --olive-light: #d0412a; --olive-dark: #5a1010;
+  --khaki: #d4a24c; --khaki-soft: rgba(212, 162, 76, 0.13);
+  --success: #e0a64a; --success-soft: rgba(224, 166, 74, 0.15);
+  --on-primary: #fff4ec;
+  --radius: 8px;
+  --font-body: 'Barlow', Roboto, system-ui, sans-serif;
+  --font-head: 'Oswald', 'Barlow Condensed', Roboto, sans-serif;
+  --head-weight: 600;
+  --bg-image: radial-gradient(ellipse at 50% 115%, rgba(208, 65, 42, 0.22), transparent 60%);
+}
 :root[data-theme='minimal'] .stripe { box-shadow: 0 0 0 1px var(--line); } /* blanc du drapeau visible sur fond clair */
 
 /* Progression */

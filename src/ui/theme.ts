@@ -63,6 +63,14 @@ export const THEMES: Theme[] = [
     swatches: ['#000000', '#050505', '#161616', '#d9d9d9'],
     statusBar: '#000000',
   },
+  {
+    id: 'pompier',
+    label: 'Pompier',
+    description: 'Rouge feu et laiton, médaillon aux flammes et haches croisées.',
+    emblem: 'emblem-pompier.webp',
+    swatches: ['#120d0c', '#1d1412', '#9e1c1c', '#d4a24c'],
+    statusBar: '#120D0C',
+  },
 ]
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]

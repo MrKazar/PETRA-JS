@@ -20,6 +20,7 @@ THEMES = {
     "forces": ("emblem-forces.webp", (18, 19, 18), 0.86),
     "minimal": ("emblem-minimal.webp", (255, 255, 255), 0.70),
     "vantablack": ("emblem-vantablack.webp", (0, 0, 0), 0.74),
+    "pompier": ("emblem-pompier.webp", (24, 16, 14), 0.86),
 }
 
 ADAPTIVE = """<?xml version="1.0" encoding="utf-8"?>

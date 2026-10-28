@@ -13,7 +13,7 @@ import { UpdateBanner } from '../ui/UpdateCard'
 
 function greeting(name: string): string {
   const hello = new Date().getHours() >= 18 ? 'Bonsoir' : 'Bonjour'
-  return `${hello}${name ? ` ${name}` : ''}. Une action après l’autre.`
+  return `${hello}${name ? ` ${name}` : ''}. Plus fort aujourd’hui, plus utile demain.`
 }
 
 export function TodayScreen() {

@@ -222,7 +222,7 @@ describe('mises à jour', () => {
 
 describe('thèmes', () => {
   it('propose 6 thèmes, militaire par défaut', () => {
-    expect(THEMES.map((t) => t.id)).toEqual(['militaire', 'police', 'gendarmerie', 'forces', 'minimal', 'vantablack'])
+    expect(THEMES.map((t) => t.id)).toEqual(['militaire', 'police', 'gendarmerie', 'forces', 'minimal', 'vantablack', 'pompier'])
     expect(themeOf(undefined).id).toBe('militaire')
     expect(themeOf('forces').emblem).toBe('emblem-forces.webp')
   })

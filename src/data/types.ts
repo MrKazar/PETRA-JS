@@ -106,7 +106,7 @@ export type TaskStatus = 'fait' | 'reporte' | 'saute'
 
 export type FinisherType = 'abdos' | 'dos' | 'pecs' | 'jambes' | 'epaules_bras'
 
-export type ThemeId = 'militaire' | 'police' | 'gendarmerie' | 'forces' | 'minimal' | 'vantablack'
+export type ThemeId = 'militaire' | 'police' | 'gendarmerie' | 'forces' | 'minimal' | 'vantablack' | 'pompier'
 
 export interface Settings {
   defaultRestSec: number

@@ -9,6 +9,7 @@ import '@fontsource/cinzel/latin-600.css'
 import '@fontsource/rajdhani/latin-500.css'
 import '@fontsource/rajdhani/latin-700.css'
 import '@fontsource/saira-stencil-one/latin-400.css'
+import '@fontsource/oswald/latin-600.css'
 import './index.css'
 import App from './App.tsx'
 

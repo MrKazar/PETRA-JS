@@ -109,6 +109,49 @@ def forces_speciales(src):
     return img
 
 
+def pompier(src):
+    """Médaillon rouge cerclé de laiton, couronne de flammes au sommet, deux haches croisées derrière l'emblème."""
+    c = canvas()
+    d = ImageDraw.Draw(c)
+    s = SS
+    # Flammes : langues ondulées en éventail au-dessus du médaillon (rouge, orange, jaune)
+    def flame(angle, length, width, lean):
+        a = math.radians(angle)
+        ux, uy = math.cos(a), math.sin(a)
+        nx, ny = -uy, ux
+        left, right = [], []
+        for k in range(21):
+            t = k / 20
+            w = width * math.sin(math.pi * min(1, t * 1.15)) ** 0.8 * (1 - t) ** 0.9
+            bend = lean * length * (t ** 2) * 0.35 + math.sin(t * math.pi * 2) * width * 0.15
+            r = 150 + t * length
+            px, py = 256 + r * ux + bend * nx, 270 + r * uy + bend * ny
+            left.append((px + nx * w, py + ny * w))
+            right.append((px - nx * w, py - ny * w))
+        return left + right[::-1]
+    for col, k in (((178, 40, 24, 255), 1.0), ((226, 108, 34, 255), 0.78), ((246, 186, 70, 255), 0.52)):
+        for i in range(13):
+            ang = -174 + i * 14
+            length = (150 if i % 2 == 0 else 110) * k
+            lean = 1 if ang < -90 else -1
+            d.polygon([(x * s, y * s) for x, y in flame(ang, length, 26 * (0.55 + 0.45 * k), lean * 0.7)], fill=col)
+    # Haches croisées (manches et fers) derrière le médaillon
+    wood = (120, 78, 44, 255)
+    steel = (196, 200, 206, 255)
+    for side in (-1, 1):
+        x0, x1 = 256 - side * 196, 256 + side * 196
+        d.line([(x0 * s, 470 * s), (x1 * s, 92 * s)], fill=wood, width=18 * s)
+        hx, hy = x1, 92
+        d.polygon([(x * s, y * s) for x, y in [(hx, hy - 16), (hx + side * 48, hy - 34), (hx + side * 58, hy + 18), (hx, hy + 22)]], fill=steel)
+    # Médaillon
+    d.ellipse([86 * s, 100 * s, 426 * s, 440 * s], fill=(212, 162, 76, 255))
+    d.ellipse([100 * s, 114 * s, 412 * s, 426 * s], fill=(122, 20, 20, 255))
+    d.ellipse([116 * s, 130 * s, 396 * s, 410 * s], outline=(232, 190, 110, 255), width=3 * s)
+    img = finish(c)
+    paste_center(img, recolor(src, (60, 18, 14), (246, 214, 150), 1.25), 236, dy=14)
+    return img
+
+
 def minimal(src):
     """Emblème seul, à plat, noir sur fond clair."""
     img = Image.new("RGBA", (N, N), (0, 0, 0, 0))
@@ -134,7 +177,7 @@ def vantablack(src):
 
 def main():
     src = Image.open(IMG / "emblem.webp").convert("RGBA")
-    for name, fn in (("police", police), ("gendarmerie", gendarmerie), ("forces", forces_speciales), ("minimal", minimal), ("vantablack", vantablack)):
+    for name, fn in (("police", police), ("gendarmerie", gendarmerie), ("forces", forces_speciales), ("minimal", minimal), ("vantablack", vantablack), ("pompier", pompier)):
         out = IMG / f"emblem-{name}.webp"
         fn(src).save(out, "WEBP", quality=90, method=6)
         print("écrit", out.relative_to(ROOT))
