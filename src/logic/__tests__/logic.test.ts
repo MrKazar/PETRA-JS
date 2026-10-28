@@ -7,6 +7,7 @@ import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, overloadIncrement, overloadSuggestion } from '../progress'
 import { THEMES, themeOf } from '../../ui/theme'
+import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS } from '../../data/store'
 
@@ -251,5 +252,29 @@ describe('progression', () => {
   it('augmente de 2,5 kg le haut du corps et 5 kg les jambes', () => {
     expect(overloadIncrement(bench)).toBe(2.5)
     expect(overloadIncrement(squat)).toBe(5)
+  })
+})
+
+describe('recherche par muscle', () => {
+  const byName = (n: string) => CATALOG.find((e) => e.nom === n)!
+  it('range chaque exercice dans un muscle d’une zone', () => {
+    const ids = new Set(ZONES.flatMap((z) => z.muscles.map((m) => m.id)))
+    for (const e of CATALOG) expect(ids.has(muscleOf(e) ?? '')).toBe(true)
+  })
+  it('distingue les parties d’un muscle', () => {
+    expect(muscleOf(byName('Développé incliné à la barre'))).toBe('pec_haut')
+    expect(muscleOf(byName('Développé couché à la barre'))).toBe('pec_milieu')
+    expect(muscleOf(byName('Pompes inclinées (mains surélevées)'))).toBe('pec_bas')
+    expect(muscleOf(byName('Tractions pronation'))).toBe('dos_largeur')
+    expect(muscleOf(byName('Rowing barre penché'))).toBe('dos_epaisseur')
+    expect(muscleOf(byName('Soulevé de terre'))).toBe('dos_chaine')
+    expect(muscleOf(byName('Face pull'))).toBe('epaule_arriere')
+    expect(muscleOf(byName('Élévations latérales à la poulie'))).toBe('epaule_cote')
+    expect(muscleOf(byName('Gainage planche'))).toBe('gainage')
+  })
+  it('classe le matériel', () => {
+    expect(kindOf(byName('Développé couché à la barre'))).toBe('libre')
+    expect(kindOf(byName('Presse à cuisses'))).toBe('machine')
+    expect(kindOf(byName('Tractions pronation'))).toBe('pdc')
   })
 })

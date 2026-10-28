@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CATALOG, type CatalogExercise } from '../data/catalog'
 import { getData, useData } from '../data/store'
 import { saveProgram } from '../logic/actions'
-import { CatalogDetail, CatalogFilters, CatalogRow, useCatalogSearch } from '../ui/ExercisePicker'
+import { CatalogBrowse, CatalogDetail, CatalogFilters, CatalogResults, useCatalogSearch } from '../ui/ExercisePicker'
 import { Empty, Header, Sheet, toast } from '../ui/kit'
 import { IconBook } from '../ui/icons'
 
@@ -12,17 +12,28 @@ export function ExercisesScreen() {
   const [detail, setDetail] = useState<CatalogExercise>()
   const [programId, setProgramId] = useState<string>('')
   const target = data.programs.find((p) => p.id === programId) ?? data.programs[0]
+  const { muscle, zone, setMuscle, setZone } = search
+
+  // Retour Android : remonte d'un cran (muscle → zone → toutes les zones) avant de quitter l'écran.
+  useEffect(() => {
+    if (detail || (!muscle && !zone)) return
+    const onBack = (ev: Event) => {
+      ev.preventDefault()
+      if (muscle) setMuscle(undefined)
+      else setZone(undefined)
+    }
+    window.addEventListener('petra:back', onBack)
+    return () => window.removeEventListener('petra:back', onBack)
+  }, [detail, muscle, zone, setMuscle, setZone])
 
   return (
     <div className="screen">
       <div className="screen-inner">
         <Header title="Exercices" sub={`${CATALOG.length} exercices · ${CATALOG.filter((e) => e.pdc).length} au poids du corps`} />
         <CatalogFilters {...search} />
-        <div className="small muted">{search.results.length} résultat{search.results.length > 1 ? 's' : ''}</div>
-        <div className="list">
-          {search.results.map((e) => <CatalogRow key={e.id} e={e} onClick={() => setDetail(e)} />)}
-        </div>
-        {!search.results.length && (
+        <CatalogBrowse {...search} />
+        <CatalogResults search={search} onOpen={setDetail} />
+        {!search.browsing && !search.results.length && !search.secondary.length && (
           <div className="card">
             <Empty icon={<IconBook />} title="Aucun exercice trouvé">Essaie un autre mot ou un autre groupe.</Empty>
           </div>

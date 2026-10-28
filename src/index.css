@@ -346,3 +346,13 @@ textarea.input { min-height: 90px; resize: vertical; }
 .delta.up { color: var(--success); }
 .delta.down { color: var(--error); }
 .overload { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius); background: var(--success-soft); border: 1px solid var(--success); }
+
+/* Recherche d'exercices : zones → muscles */
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 13px; }
+.crumbs button { border: 0; background: none; padding: 4px 2px; color: var(--khaki); cursor: pointer; font-weight: 500; }
+.crumbs button.on { color: var(--text); font-weight: 600; }
+.crumbs span { color: var(--faint); }
+.zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.zone-card { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 12px; min-height: 108px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); text-align: left; cursor: pointer; }
+.zone-card .n { font-family: var(--font-head); font-weight: var(--head-weight); font-size: 16px; letter-spacing: 0.04em; text-transform: uppercase; }
+.zone-card .c { margin-top: auto; font-size: 12px; color: var(--khaki); font-weight: 600; }

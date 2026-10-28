@@ -1,36 +1,123 @@
 import { useMemo, useState } from 'react'
-import { CATALOG, GROUPS, cardioSummary, exerciseFromCatalog, pdcSummary, groupLabel, type CatalogExercise } from '../data/catalog'
+import { CATALOG, cardioSummary, exerciseFromCatalog, pdcSummary, groupLabel, type CatalogExercise } from '../data/catalog'
+import { KINDS, ZONES, findMuscle, findZone, kindOf, muscleIdOf, norm, worksSecondary, type Kind } from '../data/muscles'
 import type { ProgramExercise } from '../data/types'
 import { uid } from '../logic/util'
 import { NumInput, Sheet } from './kit'
 import { IconChevron, IconPlus, IconSearch } from './icons'
 import { Prescription, exerciseSubtitle } from './Prescription'
 
-const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
-
 export function useCatalogSearch() {
   const [q, setQ] = useState('')
-  const [group, setGroup] = useState<string>()
-  const results = useMemo(() => {
+  const [zone, setZone] = useState<string>()
+  const [muscle, setMuscle] = useState<string>()
+  const [kind, setKind] = useState<Kind>('tous')
+  const m = findMuscle(muscle)
+  const z = findZone(zone)
+  const { results, secondary } = useMemo(() => {
     const nq = norm(q.trim())
-    return CATALOG.filter((e) => (!group || e.groupe_musculaire === group) && (!nq || norm(e.nom).includes(nq) || norm(e.equipement).includes(nq)))
-  }, [q, group])
-  return { q, setQ, group, setGroup, results }
+    const zoneMuscles = new Set(z?.muscles.map((x) => x.id))
+    const kindOk = (e: CatalogExercise) => kind === 'tous' || kindOf(e) === kind
+    const textOk = (e: CatalogExercise) => !nq || norm(e.nom).includes(nq) || norm(e.equipement).includes(nq) || norm(findMuscle(muscleIdOf(e))?.label ?? '').includes(nq)
+    const results = CATALOG.filter((e) => {
+      const id = muscleIdOf(e)
+      return (!m || id === m.id) && (!z || m || zoneMuscles.has(id ?? '')) && kindOk(e) && textOk(e)
+    })
+    const secondary = m ? CATALOG.filter((e) => muscleIdOf(e) !== m.id && worksSecondary(e, m) && kindOk(e) && textOk(e)) : []
+    return { results, secondary }
+  }, [q, z, m, kind])
+  /** Groupe à donner à un exercice créé à la main. */
+  const group = m?.group ?? z?.muscles[0]?.group
+  const browsing = !q.trim() && !m
+  return { q, setQ, zone, setZone, muscle, setMuscle, kind, setKind, results, secondary, group, browsing }
 }
 
-export function CatalogFilters({ q, setQ, group, setGroup }: Pick<ReturnType<typeof useCatalogSearch>, 'q' | 'setQ' | 'group' | 'setGroup'>) {
+type Search = ReturnType<typeof useCatalogSearch>
+
+const count = (pred: (e: CatalogExercise) => boolean, kind: Kind) => CATALOG.filter((e) => pred(e) && (kind === 'tous' || kindOf(e) === kind)).length
+
+/** Recherche + navigation zone → muscle → exercices. */
+export function CatalogFilters({ q, setQ, zone, setZone, muscle, setMuscle, kind, setKind }: Search) {
+  const z = findZone(zone)
+  const m = findMuscle(muscle)
   return (
     <>
       <div className="row" style={{ position: 'relative' }}>
         <IconSearch style={{ position: 'absolute', left: 12, width: 18, color: 'var(--faint)' }} />
-        <input className="input" style={{ paddingLeft: 38 }} placeholder="Rechercher (nom, matériel)…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input className="input" style={{ paddingLeft: 38 }} placeholder="Rechercher (nom, muscle, matériel)…" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
       <div className="chips scroll">
-        <button className={`chip${!group ? ' on' : ''}`} onClick={() => setGroup(undefined)}>Tous</button>
-        {GROUPS.map((g) => (
-          <button key={g} className={`chip${group === g ? ' on' : ''}`} onClick={() => setGroup(g)}>{groupLabel(g)}</button>
+        {KINDS.map((k) => (
+          <button key={k.kind} className={`chip${kind === k.kind ? ' on' : ''}`} onClick={() => setKind(k.kind)}>{k.label}</button>
         ))}
       </div>
+      {(z || m) && (
+        <div className="crumbs">
+          <button onClick={() => { setZone(undefined); setMuscle(undefined) }}>Toutes les zones</button>
+          {z && <><span>›</span><button className={m ? '' : 'on'} onClick={() => setMuscle(undefined)}>{z.label}</button></>}
+          {m && <><span>›</span><button className="on">{m.label}</button></>}
+        </div>
+      )}
+    </>
+  )
+}
+
+/** Étapes de navigation : zones, puis muscles d'une zone. Rien quand on affiche des exercices. */
+export function CatalogBrowse({ zone, setZone, muscle, setMuscle, kind, q }: Search) {
+  if (q.trim() || muscle) return null
+  const z = findZone(zone)
+  if (!z) {
+    return (
+      <div className="zone-grid">
+        {ZONES.map((x) => {
+          const ids = new Set(x.muscles.map((mm) => mm.id))
+          return (
+            <button key={x.id} className="zone-card" onClick={() => setZone(x.id)}>
+              <span className="n">{x.label}</span>
+              <span className="small muted">{x.muscles.map((mm) => mm.label.replace(/ \(.*\)/, '')).join(' · ')}</span>
+              <span className="c">{count((e) => ids.has(muscleIdOf(e) ?? ''), kind)} exercices</span>
+            </button>
+          )
+        })}
+      </div>
+    )
+  }
+  return (
+    <div className="list">
+      {z.muscles.map((mm) => (
+        <button key={mm.id} className="list-item clickable" style={{ width: '100%', textAlign: 'left' }} onClick={() => setMuscle(mm.id)}>
+          <div className="grow">
+            <div style={{ fontWeight: 600 }}>{mm.label}</div>
+            {mm.hint && <div className="small muted">{mm.hint}</div>}
+          </div>
+          <span className="badge">{count((e) => muscleIdOf(e) === mm.id, kind)}</span>
+          <IconChevron style={{ width: 18, color: 'var(--faint)', flex: 'none' }} />
+        </button>
+      ))}
+      <div className="eyebrow" style={{ marginTop: 6 }}>Tous les exercices · {z.label}</div>
+    </div>
+  )
+}
+
+/** Liste des exercices trouvés, avec ceux qui travaillent le muscle en secondaire. */
+export function CatalogResults({ search, onOpen, limit = 400 }: { search: Search; onOpen: (e: CatalogExercise) => void; limit?: number }) {
+  const m = findMuscle(search.muscle)
+  return (
+    <>
+      {!search.browsing && <div className="small muted">{search.results.length} exercice{search.results.length > 1 ? 's' : ''}{m ? ` · ${m.label}` : ''}</div>}
+      {(!search.browsing || search.zone) && (
+        <div className="list">
+          {search.results.slice(0, limit).map((e) => <CatalogRow key={e.id} e={e} onClick={() => onOpen(e)} />)}
+        </div>
+      )}
+      {search.secondary.length > 0 && (
+        <>
+          <div className="eyebrow" style={{ marginTop: 8 }}>Travaillent aussi ce muscle</div>
+          <div className="list">
+            {search.secondary.slice(0, limit).map((e) => <CatalogRow key={e.id} e={e} onClick={() => onOpen(e)} />)}
+          </div>
+        </>
+      )}
     </>
   )
 }
@@ -125,15 +212,14 @@ export function ExercisePicker({ open, onClose, onPick, defaultRest }: { open: b
       ) : (
         <div className="stack">
           <CatalogFilters {...search} />
-          <div className="list">
-            {search.results.slice(0, 120).map((e) => <CatalogRow key={e.id} e={e} onClick={() => setDetail(e)} />)}
-            {search.q.trim() && (
-              <button className="btn block" onClick={custom}>
-                <IconPlus /> Créer « {search.q.trim()} »
-              </button>
-            )}
-            {!search.results.length && !search.q.trim() && <div className="muted center small">Aucun exercice dans ce groupe.</div>}
-          </div>
+          <CatalogBrowse {...search} />
+          <CatalogResults search={search} onOpen={setDetail} limit={150} />
+          {search.q.trim() && (
+            <button className="btn block" onClick={custom}>
+              <IconPlus /> Créer « {search.q.trim()} »
+            </button>
+          )}
+          {!search.browsing && !search.results.length && !search.q.trim() && <div className="muted center small">Aucun exercice avec ce filtre.</div>}
         </div>
       )}
     </Sheet>
