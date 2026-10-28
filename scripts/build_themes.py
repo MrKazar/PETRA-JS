@@ -110,46 +110,44 @@ def forces_speciales(src):
 
 
 def pompier(src):
-    """Médaillon rouge cerclé de laiton, couronne de flammes au sommet, deux haches croisées derrière l'emblème."""
+    """Médaillon rouge cerclé de laiton, emblème doré."""
     c = canvas()
     d = ImageDraw.Draw(c)
     s = SS
-    # Flammes : langues ondulées en éventail au-dessus du médaillon (rouge, orange, jaune)
-    def flame(angle, length, width, lean):
-        a = math.radians(angle)
-        ux, uy = math.cos(a), math.sin(a)
-        nx, ny = -uy, ux
-        left, right = [], []
-        for k in range(21):
-            t = k / 20
-            w = width * math.sin(math.pi * min(1, t * 1.15)) ** 0.8 * (1 - t) ** 0.9
-            bend = lean * length * (t ** 2) * 0.35 + math.sin(t * math.pi * 2) * width * 0.15
-            r = 150 + t * length
-            px, py = 256 + r * ux + bend * nx, 270 + r * uy + bend * ny
-            left.append((px + nx * w, py + ny * w))
-            right.append((px - nx * w, py - ny * w))
-        return left + right[::-1]
-    for col, k in (((178, 40, 24, 255), 1.0), ((226, 108, 34, 255), 0.78), ((246, 186, 70, 255), 0.52)):
-        for i in range(13):
-            ang = -174 + i * 14
-            length = (150 if i % 2 == 0 else 110) * k
-            lean = 1 if ang < -90 else -1
-            d.polygon([(x * s, y * s) for x, y in flame(ang, length, 26 * (0.55 + 0.45 * k), lean * 0.7)], fill=col)
-    # Haches croisées (manches et fers) derrière le médaillon
-    wood = (120, 78, 44, 255)
-    steel = (196, 200, 206, 255)
-    for side in (-1, 1):
-        x0, x1 = 256 - side * 196, 256 + side * 196
-        d.line([(x0 * s, 470 * s), (x1 * s, 92 * s)], fill=wood, width=18 * s)
-        hx, hy = x1, 92
-        d.polygon([(x * s, y * s) for x, y in [(hx, hy - 16), (hx + side * 48, hy - 34), (hx + side * 58, hy + 18), (hx, hy + 22)]], fill=steel)
-    # Médaillon
-    d.ellipse([86 * s, 100 * s, 426 * s, 440 * s], fill=(212, 162, 76, 255))
-    d.ellipse([100 * s, 114 * s, 412 * s, 426 * s], fill=(122, 20, 20, 255))
-    d.ellipse([116 * s, 130 * s, 396 * s, 410 * s], outline=(232, 190, 110, 255), width=3 * s)
+    d.ellipse([20 * s, 20 * s, 492 * s, 492 * s], fill=(212, 162, 76, 255))
+    d.ellipse([38 * s, 38 * s, 474 * s, 474 * s], fill=(122, 20, 20, 255))
+    d.ellipse([58 * s, 58 * s, 454 * s, 454 * s], outline=(232, 190, 110, 255), width=4 * s)
     img = finish(c)
-    paste_center(img, recolor(src, (60, 18, 14), (246, 214, 150), 1.25), 236, dy=14)
+    paste_center(img, recolor(src, (60, 18, 14), (246, 214, 150), 1.25), 320)
     return img
+
+
+def neon(src):
+    """Pixel art néon violet : emblème pixelisé, cadre carré en escalier, halo lumineux."""
+    px = 64  # grille de pixels
+    g = Image.new("RGBA", (px, px), (0, 0, 0, 0))
+    d = ImageDraw.Draw(g)
+    # Cadre en escalier (coins crantés), violet profond bordé de magenta
+    for inset, col in ((2, (255, 70, 220, 255)), (4, (24, 6, 44, 255))):
+        a, b = inset, px - 1 - inset
+        d.polygon([(a + 3, a), (b - 3, a), (b, a + 3), (b, b - 3), (b - 3, b), (a + 3, b), (a, b - 3), (a, a + 3)], fill=col)
+    d.rectangle([7, 7, px - 8, px - 8], outline=(150, 70, 255, 255))
+    # Emblème réduit à 40 px, deux tons néon
+    lum = ImageOps.autocontrast(src.convert("L")).resize((48, 48), Image.LANCZOS)
+    alpha = src.getchannel("A").resize((48, 48), Image.LANCZOS)
+    e = Image.new("RGBA", (48, 48), (0, 0, 0, 0))
+    for y in range(48):
+        for x in range(48):
+            if alpha.getpixel((x, y)) > 90:
+                v = lum.getpixel((x, y))
+                e.putpixel((x, y), (255, 120, 240, 255) if v > 150 else (176, 92, 255, 255) if v > 70 else (70, 24, 130, 255))
+    g.alpha_composite(e, (8, 8))
+    big = g.resize((N, N), Image.NEAREST)
+    glow = big.filter(ImageFilter.GaussianBlur(14))
+    out = Image.new("RGBA", (N, N), (0, 0, 0, 0))
+    out.alpha_composite(glow)
+    out.alpha_composite(big)
+    return out
 
 
 def minimal(src):
@@ -177,7 +175,7 @@ def vantablack(src):
 
 def main():
     src = Image.open(IMG / "emblem.webp").convert("RGBA")
-    for name, fn in (("police", police), ("gendarmerie", gendarmerie), ("forces", forces_speciales), ("minimal", minimal), ("vantablack", vantablack), ("pompier", pompier)):
+    for name, fn in (("police", police), ("gendarmerie", gendarmerie), ("forces", forces_speciales), ("minimal", minimal), ("vantablack", vantablack), ("pompier", pompier), ("neon", neon)):
         out = IMG / f"emblem-{name}.webp"
         fn(src).save(out, "WEBP", quality=90, method=6)
         print("écrit", out.relative_to(ROOT))

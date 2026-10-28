@@ -345,6 +345,30 @@ textarea.input { min-height: 90px; resize: vertical; }
   --head-weight: 600;
   --bg-image: radial-gradient(ellipse at 50% 115%, rgba(208, 65, 42, 0.22), transparent 60%);
 }
+:root[data-theme='neon'] {
+  --bg: #0a0414; --surface: #140a24; --surface-2: #1d1033; --line: #3a1f66;
+  --text: #f3e9ff; --muted: #b9a2df; --faint: #75609c;
+  --olive: #8a2be2; --olive-light: #b45cff; --olive-dark: #4a1580;
+  --khaki: #ff46dc; --khaki-soft: rgba(255, 70, 220, 0.13);
+  --success: #3cf2ff; --success-soft: rgba(60, 242, 255, 0.14);
+  --on-primary: #ffffff;
+  --radius: 0px;
+  --font-body: 'Barlow', Roboto, system-ui, sans-serif;
+  --font-head: 'VT323', monospace;
+  --head-weight: 400;
+  --bg-image: linear-gradient(rgba(180, 92, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(180, 92, 255, 0.07) 1px, transparent 1px);
+}
+:root[data-theme='neon'] { image-rendering: pixelated; }
+:root[data-theme='neon'] body { background: var(--bg-image) 0 0 / 8px 8px repeat, var(--bg); }
+:root[data-theme='neon'] .card { border: 2px solid var(--line); box-shadow: 0 0 0 1px rgba(180, 92, 255, 0.25), 0 0 14px rgba(180, 92, 255, 0.12); }
+:root[data-theme='neon'] .logo-compose .word { font-family: 'Press Start 2P', monospace; letter-spacing: 0.04em; text-shadow: 0 0 8px rgba(255, 70, 220, 0.7); }
+:root[data-theme='neon'] .header h1 { font-size: 28px; line-height: 1.1; letter-spacing: 0.06em; text-shadow: 0 0 8px rgba(255, 70, 220, 0.7); }
+:root[data-theme='neon'] .logo-compose .word { font-size: 34px; color: var(--khaki); }
+:root[data-theme='neon'] .eyebrow, :root[data-theme='neon'] .section-title, :root[data-theme='neon'] .field > span { font-size: 17px; letter-spacing: 0.08em; }
+:root[data-theme='neon'] .btn, :root[data-theme='neon'] .seg button, :root[data-theme='neon'] .badge { font-size: 1.15em; }
+:root[data-theme='neon'] .tab { font-family: var(--font-body); }
+:root[data-theme='neon'] .card h2, :root[data-theme='neon'] .card h3, :root[data-theme='neon'] .topbar h1, :root[data-theme='neon'] .sheet h2 { font-size: 1.35em; letter-spacing: 0.04em; }
+:root[data-theme='neon'] .stat .v, :root[data-theme='neon'] .rest .clock { text-shadow: 0 0 10px rgba(60, 242, 255, 0.5); }
 :root[data-theme='minimal'] .stripe { box-shadow: 0 0 0 1px var(--line); } /* blanc du drapeau visible sur fond clair */
 
 /* Progression */

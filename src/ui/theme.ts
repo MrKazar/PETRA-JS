@@ -71,6 +71,14 @@ export const THEMES: Theme[] = [
     swatches: ['#120d0c', '#1d1412', '#9e1c1c', '#d4a24c'],
     statusBar: '#120D0C',
   },
+  {
+    id: 'neon',
+    label: 'Néon',
+    description: 'Violet et magenta lumineux sur nuit, logo et titres en pixel art.',
+    emblem: 'emblem-neon.webp',
+    swatches: ['#0a0414', '#140a24', '#8a2be2', '#ff46dc'],
+    statusBar: '#0A0414',
+  },
 ]
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]
