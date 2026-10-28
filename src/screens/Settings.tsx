@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import { emptyData, getData, setData, update, useData } from '../data/store'
 import { BACKUP_KEEP, parseBackup, restoreBackup, writeBackup } from '../logic/backup'
-import { cloudAvailable, pickCloudFile, releaseCloudFile } from '../logic/cloud'
 import { downloadDriveBackup, findDriveBackup, googleAvailable, googleEmail, googleError, googleToken, revokeGoogle } from '../logic/gdrive'
 import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
@@ -61,23 +60,9 @@ export function SettingsScreen() {
     setSaving(true)
     const r = await writeBackup()
     setSaving(false)
-    const cfg = getData().settings
-    const provider = [cfg.google && 'Google Drive', cfg.cloudBackup?.provider].filter(Boolean).join(' et ') || 'le cloud'
-    if (r.cloud === false) toast(`Envoi vers ${provider} impossible : vérifie le réseau, ou reconnecte-toi dans Paramètres`)
-    else if (r.cloud) toast(`Sauvegarde enregistrée sur le téléphone et sur ${provider}`)
+    if (r.cloud === false) toast('Envoi vers Google Drive impossible : vérifie le réseau, ou reconnecte-toi')
+    else if (r.cloud) toast('Sauvegarde enregistrée sur le téléphone et sur Google Drive')
     else toast(r.local ? 'Sauvegarde enregistrée dans Documents/PETRA' : 'Sauvegarde impossible sur ce téléphone')
-  }
-  const chooseCloud = async () => {
-    const f = await pickCloudFile()
-    if (!f) return
-    if (s.cloudBackup && s.cloudBackup.uri !== f.uri) void releaseCloudFile(s.cloudBackup.uri)
-    saveSettings({ cloudBackup: { uri: f.uri, name: f.name, provider: f.provider } })
-    await backupNow()
-  }
-  const removeCloud = () => {
-    if (!s.cloudBackup || !confirmAction(`Arrêter l’envoi vers ${s.cloudBackup.provider} ? Le fichier déjà envoyé reste dans ton cloud.`)) return
-    void releaseCloudFile(s.cloudBackup.uri)
-    saveSettings({ cloudBackup: undefined })
   }
   const connectGoogle = async () => {
     setBusy(true)
@@ -223,25 +208,6 @@ export function SettingsScreen() {
                   <div className="small muted">Relie ton compte Google : PETRA enverra la sauvegarde dans ton Drive après chaque séance, et tu pourras tout récupérer sur un nouveau téléphone.</div>
                   <button className="btn primary block" style={{ marginTop: 8 }} disabled={busy} onClick={connectGoogle}>Se connecter avec Google</button>
                 </>
-              )}
-            </div>
-          )}
-          {cloudAvailable() && (
-            <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
-              {s.cloudBackup ? (
-                <>
-                  <div style={{ fontWeight: 600 }}>Fichier dans le cloud</div>
-                  <div className="small muted">{s.cloudBackup.provider} · {s.cloudBackup.name}, remplacé après chaque séance.</div>
-                  <div className="small" style={{ marginTop: 6, color: s.cloudBackup.failed ? 'var(--error)' : 'var(--khaki)' }}>
-                    {s.cloudBackup.failed ? 'Le dernier envoi a échoué : choisis à nouveau le fichier.' : s.cloudBackup.lastAt ? `Dernier envoi : ${when(s.cloudBackup.lastAt)}` : 'Pas encore envoyé'}
-                  </div>
-                  <div className="row" style={{ marginTop: 8 }}>
-                    <button className="btn sm grow" onClick={chooseCloud}>Changer de fichier</button>
-                    <button className="btn sm ghost grow" onClick={removeCloud}>Arrêter</button>
-                  </div>
-                </>
-              ) : (
-                <button className="btn ghost sm block" onClick={chooseCloud}>Autre cloud (OneDrive…) : choisir un fichier</button>
               )}
             </div>
           )}

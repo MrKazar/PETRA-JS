@@ -122,8 +122,6 @@ export interface Settings {
   theme: ThemeId
   /** Date de la dernière sauvegarde automatique (fichier dans Documents/PETRA). */
   lastBackupAt?: number
-  /** Fichier de sauvegarde dans le cloud (Drive, OneDrive…), remplacé après chaque séance. */
-  cloudBackup?: { uri: string; name: string; provider: string; lastAt?: number; failed?: boolean }
   /** Compte Google relié : la sauvegarde est envoyée dans son Drive après chaque séance. */
   google?: { email?: string; fileId?: string; lastAt?: number; failed?: boolean }
 }

@@ -1,7 +1,6 @@
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
 import { getData, normalize, setData, update } from '../data/store'
 import type { AppData } from '../data/types'
-import { writeCloudFile } from './cloud'
 import { googleToken, uploadDriveBackup } from './gdrive'
 
 /** Dossier des sauvegardes : Documents/PETRA sur le téléphone (il reste après une désinstallation). */
@@ -30,23 +29,13 @@ export function parseBackup(text: string): AppData {
 }
 
 /**
- * Sauvegarde : une copie dans Documents/PETRA (les plus anciennes sont supprimées), et si un fichier cloud
- * est choisi, son contenu est remplacé. Renvoie ce qui a réussi.
+ * Sauvegarde : une copie dans Documents/PETRA (les plus anciennes sont supprimées), et si un compte Google
+ * est relié, envoi dans son Drive. Renvoie ce qui a réussi.
  */
 export async function writeBackup(): Promise<{ local: boolean; cloud?: boolean }> {
   const at = new Date()
   const json = JSON.stringify({ ...getData(), backupAt: at.getTime() })
-  const cloudFile = getData().settings.cloudBackup
   let cloud: boolean | undefined
-  if (cloudFile) {
-    try {
-      await writeCloudFile(cloudFile.uri, json)
-      cloud = true
-    } catch {
-      cloud = false
-    }
-    update((d) => (d.settings.cloudBackup?.uri === cloudFile.uri ? { ...d, settings: { ...d.settings, cloudBackup: { ...cloudFile, ...(cloud ? { lastAt: at.getTime(), failed: false } : { failed: true }) } } } : d))
-  }
   const g = getData().settings.google
   if (g) {
     let ok = false
@@ -58,7 +47,7 @@ export async function writeBackup(): Promise<{ local: boolean; cloud?: boolean }
       ok = false
     }
     update((d) => (d.settings.google ? { ...d, settings: { ...d.settings, google: { ...d.settings.google, fileId, ...(ok ? { lastAt: at.getTime(), failed: false } : { failed: true }) } } } : d))
-    cloud = cloud === false ? false : ok
+    cloud = ok
   }
   const local = await writeLocal(at, json)
   return { local, cloud }
@@ -92,6 +81,6 @@ async function writeLocal(at: Date, json: string): Promise<boolean> {
 
 /** Remplace toutes les données par une sauvegarde, en gardant l'état des sauvegardes de ce téléphone. */
 export function restoreBackup(data: AppData) {
-  const { lastBackupAt, cloudBackup, google } = getData().settings
-  setData({ ...data, settings: { ...data.settings, lastBackupAt, cloudBackup, google } })
+  const { lastBackupAt, google } = getData().settings
+  setData({ ...data, settings: { ...data.settings, lastBackupAt, google } })
 }
