@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import type { AppData, Settings } from './types'
 import { addDays, dateKey, weekday } from '../logic/util'
+import { migrateCardio } from './catalog'
 
 const KEY = 'petra.data.v1'
 
@@ -39,6 +40,7 @@ export function normalize(input: Partial<AppData>): AppData {
     ...input,
     version: 1,
     settings: { ...base.settings, ...(input.settings ?? {}) },
+    programs: (input.programs ?? base.programs).map((p) => ({ ...p, exercises: p.exercises.map(migrateCardio) })),
   }
 }
 

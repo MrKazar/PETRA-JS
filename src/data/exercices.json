@@ -1,5 +1,5 @@
 {
- "version": "2.0",
+ "version": "2.1",
  "langue": "fr",
  "legende": {
   "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
@@ -9,7 +9,7 @@
   "repos_sec": "Repos conseillé après la série, en secondes.",
   "charge": "Si false, l'exercice se fait au poids du corps (lest facultatif).",
   "par_cote": "Si true, les répétitions se font de chaque côté.",
-  "cardio": "Exercice de cardio : échauffement, effort puis retour au calme, durées en minutes.",
+  "cardio": "Cardio sans cycle chauffe / travail / hypertrophie : mode duree (bloc continu, duree_min), intervalles (tours × effort_sec, repos_sec) ou reps (tours × reps en unite, repos_sec).",
   "note": "Valeurs indicatives issues des recommandations courantes en musculation : à ajuster selon ton niveau et ta récupération."
  },
  "groupes_musculaires": [
@@ -6198,11 +6198,13 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 15,
-    "retour_calme_min": 5,
+    "mode": "reps",
+    "tours": 10,
+    "reps": 100,
+    "unite": "sauts",
+    "repos_sec": 45,
     "intensite": "élevée",
-    "consigne": "Fractionné : 30 s rapide / 30 s tranquille, en continu."
+    "consigne": "Sur l'avant du pied, petits sauts, poignets qui tournent."
    }
   },
   {
@@ -6215,9 +6217,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 30,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 30,
     "intensite": "modérée",
     "consigne": "Allure soutenue : on peut parler, mais pas chanter."
    }
@@ -6232,9 +6233,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 30,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 30,
     "intensite": "modérée",
     "consigne": "Inclinaison 8 à 12 %, vitesse 5 à 6 km/h, sans se tenir aux barres."
    }
@@ -6249,11 +6249,10 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 25,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 30,
     "intensite": "modérée",
-    "consigne": "Footing en aisance respiratoire."
+    "consigne": "Footing en aisance respiratoire ; les 5 premières minutes plus lentes."
    }
   },
   {
@@ -6266,9 +6265,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 20,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 25,
     "intensite": "modérée",
     "consigne": "Allure régulière, 1 % d'inclinaison pour compenser l'absence de vent."
    }
@@ -6283,11 +6281,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 16,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 8,
+    "effort_sec": 60,
+    "repos_sec": 60,
     "intensite": "élevée",
-    "consigne": "8 × (1 min rapide / 1 min de récupération en trottinant)."
+    "consigne": "1 min rapide, récupération en trottinant. 5 min de footing avant."
    }
   },
   {
@@ -6300,9 +6299,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 15,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 15,
     "intensite": "modérée",
     "consigne": "Montées et descentes alternées sur une marche ou un step, rythme régulier."
    }
@@ -6317,9 +6315,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 15,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 15,
     "intensite": "élevée",
     "consigne": "Rythme constant, buste droit, sans s'appuyer sur les poignées."
    }
@@ -6334,9 +6331,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 25,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 25,
     "intensite": "modérée",
     "consigne": "Résistance moyenne, cadence régulière."
    }
@@ -6351,9 +6347,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 30,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 30,
     "intensite": "modérée",
     "consigne": "Cadence 80 à 90 tours/min, résistance moyenne."
    }
@@ -6368,9 +6363,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 15,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 15,
     "intensite": "élevée",
     "consigne": "Poussée des jambes d'abord, puis tirage des bras ; 22 à 26 coups/min."
    }
@@ -6385,11 +6379,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 10,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 10,
+    "effort_sec": 20,
+    "repos_sec": 40,
     "intensite": "très élevée",
-    "consigne": "10 × (20 s à fond / 40 s tranquille)."
+    "consigne": "20 s à fond, 40 s en pédalant tranquille."
    }
   },
   {
@@ -6402,11 +6397,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 12,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 12,
+    "effort_sec": 40,
+    "repos_sec": 20,
     "intensite": "très élevée",
-    "consigne": "Circuit : 40 s d'effort / 20 s de repos, en enchaînant les mouvements."
+    "consigne": "Enchaîne burpees, jumping jacks, montées de genoux, squats sautés."
    }
   },
   {
@@ -6419,9 +6415,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 25,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 30,
     "intensite": "modérée",
     "consigne": "Nage libre à allure régulière, pauses courtes au bord si besoin."
    }
@@ -6436,9 +6431,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 40,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 45,
     "intensite": "modérée",
     "consigne": "Allure où tu peux parler en phrases courtes (zone 2)."
    }
@@ -6453,9 +6447,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 10,
-    "effort_min": 60,
-    "retour_calme_min": 10,
+    "mode": "duree",
+    "duree_min": 90,
     "intensite": "modérée",
     "consigne": "Rythme régulier, plus lent dans les montées."
    }
@@ -6470,9 +6463,8 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 40,
-    "retour_calme_min": 5,
+    "mode": "duree",
+    "duree_min": 45,
     "intensite": "modérée",
     "consigne": "Pousse sur les bâtons à chaque pas, buste droit."
    }
@@ -6487,11 +6479,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 10,
-    "effort_min": 12,
-    "retour_calme_min": 8,
+    "mode": "intervalles",
+    "tours": 10,
+    "effort_sec": 15,
+    "repos_sec": 90,
     "intensite": "élevée",
-    "consigne": "8 à 10 sprints de 10-15 s en montée, retour en marchant."
+    "consigne": "Sprint en montée, retour en marchant. 10 min de footing avant."
    }
   },
   {
@@ -6504,11 +6497,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 10,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 10,
+    "effort_sec": 30,
+    "repos_sec": 30,
     "intensite": "élevée",
-    "consigne": "Fractionné : 30 s d'ondulations / 30 s de repos."
+    "consigne": "Ondulations alternées, genoux fléchis, gainage serré."
    }
   },
   {
@@ -6521,11 +6515,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 15,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 8,
+    "effort_sec": 60,
+    "repos_sec": 60,
     "intensite": "élevée",
-    "consigne": "Fractionné : 1 min rapide / 1 min tranquille."
+    "consigne": "1 min rapide, 1 min tranquille."
    }
   },
   {
@@ -6538,11 +6533,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 15,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 5,
+    "effort_sec": 120,
+    "repos_sec": 60,
     "intensite": "élevée",
-    "consigne": "Rounds de 2 min, 1 min de récupération."
+    "consigne": "Rounds de 2 min, garde haute, frappe en expirant."
    }
   },
   {
@@ -6555,9 +6551,10 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 15,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 4,
+    "effort_sec": 180,
+    "repos_sec": 60,
     "intensite": "modérée",
     "consigne": "Rounds de 3 min, garde haute, appuis mobiles."
    }
@@ -6572,11 +6569,12 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 20,
-    "retour_calme_min": 5,
+    "mode": "intervalles",
+    "tours": 8,
+    "effort_sec": 30,
+    "repos_sec": 90,
     "intensite": "élevée",
-    "consigne": "Fractionné : 30 s à fond / 90 s tranquille."
+    "consigne": "30 s à fond, 90 s tranquille."
    }
   },
   {
@@ -6589,11 +6587,13 @@
    "type": "cardio",
    "charge": false,
    "cardio": {
-    "echauffement_min": 5,
-    "effort_min": 16,
-    "retour_calme_min": 5,
+    "mode": "reps",
+    "tours": 8,
+    "reps": 250,
+    "unite": "m",
+    "repos_sec": 60,
     "intensite": "élevée",
-    "consigne": "8 × 250 m rapides, 1 min de récupération."
+    "consigne": "250 m rapides, 1 min de récupération."
    }
   }
  ]

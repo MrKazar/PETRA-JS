@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
 import type { ActiveSession, FinisherType, SessionExercise } from '../data/types'
-import { groupLabel, setLabels } from '../data/catalog'
+import { groupLabel, isCardio, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
 import { addSet, completeSet, extendRest, nextPending, patchSet, removeSet, startRest, statsOf, toSessionExercise } from '../logic/session'
@@ -246,10 +246,10 @@ function ExerciseCard({
             ) : (
               <span className="row" style={{ gap: 2 }}>
                 <NumInput value={set.reps} width={48} placeholder="—" onChange={(v) => onPatch(i, { reps: v })} />
-                <span className="unit">{ex.parCote ? '/côté' : 'rép'}</span>
+                <span className="unit">{set.unit ?? (ex.parCote ? '/côté' : 'rép')}</span>
               </span>
             )}
-            {timed && ex.usesLoad === false ? (
+            {(timed || isCardio(ex)) && ex.usesLoad === false ? (
               <span />
             ) : (
               <span className="row" style={{ gap: 2 }}>

@@ -33,7 +33,7 @@ export function addSet(s: ActiveSession, exId: string): ActiveSession {
     exercises: s.exercises.map((e) => {
       if (e.id !== exId) return e
       const last: PlannedSet = e.sets[e.sets.length - 1] ?? { phase: 'travail', reps: 10 }
-      return { ...e, sets: [...e.sets, { phase: last.phase, reps: last.reps, weight: last.weight, durationSec: last.durationSec, done: false }] }
+      return { ...e, sets: [...e.sets, { phase: last.phase, reps: last.reps, weight: last.weight, durationSec: last.durationSec, unit: last.unit, pct: last.pct, restSec: last.restSec, done: false }] }
     }),
   }
 }
@@ -82,7 +82,7 @@ export function describeSet(set: PlannedSet, parCote = false): string {
     const sec = set.durationSec % 60
     return m ? `${m} min${sec ? ` ${sec} s` : ''}` : `${sec} s`
   }
-  const reps = set.reps != null ? `${set.reps} reps${parCote ? '/côté' : ''}` : '—'
+  const reps = set.reps != null ? `${set.reps} ${set.unit ?? 'reps'}${parCote ? '/côté' : ''}` : '—'
   return set.weight != null && set.weight > 0 ? `${reps} × ${set.weight} kg` : reps
 }
 

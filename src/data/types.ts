@@ -1,9 +1,11 @@
-export type Phase = 'chauffe' | 'travail' | 'hypertrophie' | 'effort' | 'retour'
+/** effort et retour : anciennes phases de cardio (avant la 1.2.1), gardées pour l'historique. */
+export type Phase = 'chauffe' | 'travail' | 'hypertrophie' | 'cardio' | 'effort' | 'retour'
 
 export const PHASE_LABEL: Record<Phase, string> = {
   chauffe: 'Chauffe',
   travail: 'Travail',
   hypertrophie: 'Hypertrophie',
+  cardio: 'Cardio',
   effort: 'Effort',
   retour: 'Retour au calme',
 }
@@ -14,6 +16,8 @@ export interface PlannedSet {
   reps?: number
   weight?: number
   durationSec?: number
+  /** Unité des répétitions quand ce ne sont pas des répétitions classiques (sauts, m). */
+  unit?: string
   /** Charge en % de la charge de travail (chauffe, hypertrophie). Les séries de travail sont à 100 %. */
   pct?: number
   /** Repos après la série ; à défaut, celui de l'exercice. */

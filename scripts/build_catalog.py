@@ -244,17 +244,57 @@ NEW = [
 ]
 
 NEW_CARDIO = [
-    ("velo_exterieur", "Vélo (extérieur)", "vélo", 5, 40, 5, "modérée", "Allure où tu peux parler en phrases courtes (zone 2)."),
-    ("randonnee", "Randonnée", "aucun", 10, 60, 10, "modérée", "Rythme régulier, plus lent dans les montées."),
-    ("marche_nordique", "Marche nordique", "bâtons", 5, 40, 5, "modérée", "Pousse sur les bâtons à chaque pas, buste droit."),
-    ("sprints_cote", "Sprints en côte", "aucun", 10, 12, 8, "élevée", "8 à 10 sprints de 10-15 s en montée, retour en marchant."),
-    ("battle_ropes", "Battle ropes", "cordes", 5, 10, 5, "élevée", "Fractionné : 30 s d'ondulations / 30 s de repos."),
-    ("ski_erg", "Ski erg", "machine", 5, 15, 5, "élevée", "Fractionné : 1 min rapide / 1 min tranquille."),
-    ("sac_frappe", "Sac de frappe", "sac", 5, 15, 5, "élevée", "Rounds de 2 min, 1 min de récupération."),
-    ("shadow_boxing", "Shadow boxing", "aucun", 5, 15, 5, "modérée", "Rounds de 3 min, garde haute, appuis mobiles."),
-    ("velo_fractionne", "Vélo d'appartement fractionné", "machine", 5, 20, 5, "élevée", "Fractionné : 30 s à fond / 90 s tranquille."),
-    ("rameur_fractionne", "Rameur fractionné", "machine", 5, 16, 5, "élevée", "8 × 250 m rapides, 1 min de récupération."),
+    ("velo_exterieur", "Vélo (extérieur)", "vélo"),
+    ("randonnee", "Randonnée", "aucun"),
+    ("marche_nordique", "Marche nordique", "bâtons"),
+    ("sprints_cote", "Sprints en côte", "aucun"),
+    ("battle_ropes", "Battle ropes", "cordes"),
+    ("ski_erg", "Ski erg", "machine"),
+    ("sac_frappe", "Sac de frappe", "sac"),
+    ("shadow_boxing", "Shadow boxing", "aucun"),
+    ("velo_fractionne", "Vélo d'appartement fractionné", "machine"),
+    ("rameur_fractionne", "Rameur fractionné", "machine"),
 ]
+
+# Pas de chauffe / travail / hypertrophie en cardio. Trois formats :
+#   duree        : un bloc continu de duree_min minutes ;
+#   intervalles  : tours × effort_sec, repos_sec de récupération entre deux tours ;
+#   reps         : tours × reps (unite : sauts, m...), repos_sec entre deux tours.
+D = lambda m: {"mode": "duree", "duree_min": m}
+I = lambda t, e, r: {"mode": "intervalles", "tours": t, "effort_sec": e, "repos_sec": r}
+R = lambda t, n, u, r: {"mode": "reps", "tours": t, "reps": n, "unite": u, "repos_sec": r}
+CARDIO = {
+    "corde_a_sauter": (R(10, 100, "sauts", 45), "élevée", "Sur l'avant du pied, petits sauts, poignets qui tournent."),
+    "marche_rapide": (D(30), "modérée", "Allure soutenue : on peut parler, mais pas chanter."),
+    "marche_inclinee": (D(30), "modérée", "Inclinaison 8 à 12 %, vitesse 5 à 6 km/h, sans se tenir aux barres."),
+    "course_exterieur": (D(30), "modérée", "Footing en aisance respiratoire ; les 5 premières minutes plus lentes."),
+    "course_tapis": (D(25), "modérée", "Allure régulière, 1 % d'inclinaison pour compenser l'absence de vent."),
+    "course_fractionnee": (I(8, 60, 60), "élevée", "1 min rapide, récupération en trottinant. 5 min de footing avant."),
+    "step": (D(15), "modérée", "Montées et descentes alternées sur une marche ou un step, rythme régulier."),
+    "escalier_machine": (D(15), "élevée", "Rythme constant, buste droit, sans s'appuyer sur les poignées."),
+    "velo_elliptique": (D(25), "modérée", "Résistance moyenne, cadence régulière."),
+    "velo_appartement": (D(30), "modérée", "Cadence 80 à 90 tours/min, résistance moyenne."),
+    "rameur": (D(15), "élevée", "Poussée des jambes d'abord, puis tirage des bras ; 22 à 26 coups/min."),
+    "air_bike": (I(10, 20, 40), "très élevée", "20 s à fond, 40 s en pédalant tranquille."),
+    "hiit_poids_corps": (I(12, 40, 20), "très élevée", "Enchaîne burpees, jumping jacks, montées de genoux, squats sautés."),
+    "natation": (D(30), "modérée", "Nage libre à allure régulière, pauses courtes au bord si besoin."),
+    "velo_exterieur": (D(45), "modérée", "Allure où tu peux parler en phrases courtes (zone 2)."),
+    "randonnee": (D(90), "modérée", "Rythme régulier, plus lent dans les montées."),
+    "marche_nordique": (D(45), "modérée", "Pousse sur les bâtons à chaque pas, buste droit."),
+    "sprints_cote": (I(10, 15, 90), "élevée", "Sprint en montée, retour en marchant. 10 min de footing avant."),
+    "battle_ropes": (I(10, 30, 30), "élevée", "Ondulations alternées, genoux fléchis, gainage serré."),
+    "ski_erg": (I(8, 60, 60), "élevée", "1 min rapide, 1 min tranquille."),
+    "sac_frappe": (I(5, 120, 60), "élevée", "Rounds de 2 min, garde haute, frappe en expirant."),
+    "shadow_boxing": (I(4, 180, 60), "modérée", "Rounds de 3 min, garde haute, appuis mobiles."),
+    "velo_fractionne": (I(8, 30, 90), "élevée", "30 s à fond, 90 s tranquille."),
+    "rameur_fractionne": (R(8, 250, "m", 60), "élevée", "250 m rapides, 1 min de récupération."),
+}
+
+
+def cardio(id_):
+    plan, intensite, consigne = CARDIO[id_]
+    return {**plan, "intensite": intensite, "consigne": consigne}
+
 
 
 def strength(e, profile):
@@ -283,17 +323,17 @@ def main():
     exercises = []
     for e in legacy:
         base = {k: e[k] for k in ("id", "nom", "groupe_musculaire", "muscles_secondaires", "equipement", "par_cote")}
-        if "cardio" in e:
-            exercises.append({**base, "type": "cardio", "charge": False, "cardio": e["cardio"]})
+        if e["id"] in CARDIO:
+            exercises.append({**base, "type": "cardio", "charge": False, "cardio": cardio(e["id"])})
         else:
             exercises.append(strength(base, LEGACY_PROFILES[e["id"]]))
     for (id_, nom, groupe, sec, equip, profile, par_cote) in NEW:
         exercises.append(strength({"id": id_, "nom": nom, "groupe_musculaire": groupe, "muscles_secondaires": sec, "equipement": equip, "par_cote": par_cote}, profile))
-    for (id_, nom, equip, ech, eff, ret, intensite, consigne) in NEW_CARDIO:
+    for (id_, nom, equip) in NEW_CARDIO:
         exercises.append({
             "id": id_, "nom": nom, "groupe_musculaire": "cardio", "muscles_secondaires": [], "equipement": equip,
             "par_cote": False, "type": "cardio", "charge": False,
-            "cardio": {"echauffement_min": ech, "effort_min": eff, "retour_calme_min": ret, "intensite": intensite, "consigne": consigne},
+            "cardio": cardio(id_),
         })
 
     ids = [e["id"] for e in exercises]
@@ -304,7 +344,7 @@ def main():
     exercises.sort(key=lambda e: order[e["groupe_musculaire"]])
 
     catalog = {
-        "version": "2.0",
+        "version": "2.1",
         "langue": "fr",
         "legende": {
             "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
@@ -314,7 +354,7 @@ def main():
             "repos_sec": "Repos conseillé après la série, en secondes.",
             "charge": "Si false, l'exercice se fait au poids du corps (lest facultatif).",
             "par_cote": "Si true, les répétitions se font de chaque côté.",
-            "cardio": "Exercice de cardio : échauffement, effort puis retour au calme, durées en minutes.",
+            "cardio": "Cardio sans cycle chauffe / travail / hypertrophie : mode duree (bloc continu, duree_min), intervalles (tours × effort_sec, repos_sec) ou reps (tours × reps en unite, repos_sec).",
             "note": "Valeurs indicatives issues des recommandations courantes en musculation : à ajuster selon ton niveau et ta récupération.",
         },
         "groupes_musculaires": GROUPS,

@@ -4,8 +4,8 @@ import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
 import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
-import { groupLabel, setLabels, withWorkLoad } from '../data/catalog'
-import { uid } from '../logic/util'
+import { cardioPlanOf, cardioSets, cardioSummary, groupLabel, isCardio, setLabels, withWorkLoad, type CardioPlan } from '../data/catalog'
+import { formatDuration, uid } from '../logic/util'
 import { describeSet } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { Empty, NumInput, Sheet, TopBar, confirmAction, toast } from '../ui/kit'
@@ -164,6 +164,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
 const hasLoad = (e: ProgramExercise) => e.usesLoad !== false && e.sets.some((s) => s.durationSec == null)
 
 function summarize(e: ProgramExercise): string {
+  if (isCardio(e)) return cardioSummary(cardioPlanOf(e.sets))
   const labels = setLabels(e.sets)
   return e.sets.map((s, i) => `${labels[i]} ${describeSet(s, e.parCote)}`).join(' · ')
 }
@@ -180,7 +181,7 @@ function RenameSheet({ open, initial, onClose, onSave }: { open: boolean; initia
   )
 }
 
-const PHASES: Phase[] = ['chauffe', 'travail', 'hypertrophie', 'effort', 'retour']
+const PHASES: Phase[] = ['chauffe', 'travail', 'hypertrophie']
 
 export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exercise: ProgramExercise; onChange: (e: ProgramExercise) => void; onClose: () => void; onDelete: () => void }) {
   const e = exercise
@@ -215,6 +216,10 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
             </div>
           </div>
         )}
+        {isCardio(e) ? (
+          <CardioFields plan={cardioPlanOf(e.sets)} onChange={(p) => onChange({ ...e, sets: cardioSets(p), restSec: p.mode === 'duree' ? 0 : p.repos_sec })} />
+        ) : (
+          <>
         <div className="row between">
           <span className="small muted">Séries en {timed ? 'durée' : 'répétitions'} · reps × kg · repos</span>
           <button className="btn sm" onClick={switchMode}>Passer en {timed ? 'répétitions' : 'durée'}</button>
@@ -248,6 +253,8 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
         <button className="btn block" onClick={addSet}>
           <IconPlus /> Ajouter une série
         </button>
+          </>
+        )}
         {e.note && <p className="small muted">{e.note}</p>}
         <div className="row">
           <button className="btn danger grow" onClick={onDelete}>
@@ -257,5 +264,68 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
         </div>
       </div>
     </Sheet>
+  )
+}
+
+const CARDIO_MODES: { mode: CardioPlan['mode']; label: string; init: CardioPlan }[] = [
+  { mode: 'duree', label: 'Durée', init: { mode: 'duree', duree_min: 20 } },
+  { mode: 'intervalles', label: 'Fractionné', init: { mode: 'intervalles', tours: 8, effort_sec: 30, repos_sec: 30 } },
+  { mode: 'reps', label: 'Répétitions', init: { mode: 'reps', tours: 5, reps: 20, repos_sec: 30 } },
+]
+
+/** Réglage d'un cardio : un temps total, du fractionné (tours × durée) ou des tours de répétitions. */
+function CardioFields({ plan, onChange }: { plan: CardioPlan; onChange: (p: CardioPlan) => void }) {
+  const field = (label: string, unit: string, value: number, set: (v: number) => void, width = 64) => (
+    <div className="row between">
+      <span>{label}</span>
+      <span className="row" style={{ gap: 6 }}>
+        <NumInput value={value} width={width} onChange={(v) => set(Math.max(0, v ?? 0))} />
+        <span className="small faint" style={{ minWidth: 28 }}>{unit}</span>
+      </span>
+    </div>
+  )
+  return (
+    <div className="stack">
+      <div className="seg">
+        {CARDIO_MODES.map((m) => (
+          <button key={m.mode} className={plan.mode === m.mode ? 'on' : ''} onClick={() => plan.mode !== m.mode && onChange(m.init)}>{m.label}</button>
+        ))}
+      </div>
+      {plan.mode === 'duree' && (
+        <>
+          {field('Temps total', 'min', plan.duree_min, (v) => onChange({ ...plan, duree_min: v }))}
+          <div className="chips">
+            {[10, 15, 20, 30, 45, 60].map((m) => (
+              <button key={m} className={`chip${plan.duree_min === m ? ' on' : ''}`} onClick={() => onChange({ ...plan, duree_min: m })}>{m} min</button>
+            ))}
+          </div>
+        </>
+      )}
+      {plan.mode === 'intervalles' && (
+        <>
+          {field('Tours', '', plan.tours, (v) => onChange({ ...plan, tours: Math.max(1, Math.round(v)) }))}
+          {field('Effort', 's', plan.effort_sec, (v) => onChange({ ...plan, effort_sec: Math.round(v) }))}
+          {field('Récupération', 's', plan.repos_sec, (v) => onChange({ ...plan, repos_sec: Math.round(v) }))}
+        </>
+      )}
+      {plan.mode === 'reps' && (
+        <>
+          {field('Tours', '', plan.tours, (v) => onChange({ ...plan, tours: Math.max(1, Math.round(v)) }))}
+          <div className="row between">
+            <span>Répétitions</span>
+            <span className="row" style={{ gap: 6 }}>
+              <NumInput value={plan.reps} width={64} onChange={(v) => onChange({ ...plan, reps: Math.max(0, Math.round(v ?? 0)) })} />
+              <input className="input" style={{ width: 70, minHeight: 40, padding: '6px 8px' }} placeholder="rép." value={plan.unite ?? ''} onChange={(ev) => onChange({ ...plan, unite: ev.target.value.trim() ? ev.target.value : undefined })} />
+            </span>
+          </div>
+          {field('Récupération', 's', plan.repos_sec, (v) => onChange({ ...plan, repos_sec: Math.round(v) }))}
+        </>
+      )}
+      <div className="small muted">
+        {plan.mode === 'duree'
+          ? 'Un seul bloc, sans chauffe ni hypertrophie. Le temps reste modifiable pendant la séance.'
+          : `Total ≈ ${formatDuration(plan.tours * ((plan.mode === 'intervalles' ? plan.effort_sec : 0) + plan.repos_sec))}${plan.mode === 'reps' ? ' de récupération' : ''}. Le minuteur de repos se lance entre deux tours.`}
+      </div>
+    </div>
   )
 }

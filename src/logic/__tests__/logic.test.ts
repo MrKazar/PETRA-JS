@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { FINISHERS, drawFinisher } from '../../data/finishers'
-import { CATALOG, buildCycle, exerciseFromCatalog, parseReps, setLabels, withWorkLoad } from '../../data/catalog'
+import { CATALOG, buildCycle, cardioPlanOf, cardioSets, cardioSummary, exerciseFromCatalog, migrateCardio, parseReps, setLabels, withWorkLoad } from '../../data/catalog'
 import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
 import { addSet, completeSet, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
 import { addDays, weekday } from '../util'
@@ -67,11 +67,33 @@ describe('catalogue', () => {
     const pushups = CATALOG.find((e) => e.id === 'pompes')!
     expect(exerciseFromCatalog(pushups, 50).sets.every((s) => s.weight == null)).toBe(true)
   })
-  it('construit les phases de cardio en durée', () => {
-    const rope = CATALOG.find((e) => e.id === 'corde_a_sauter')!
-    const sets = buildCycle(rope)
-    expect(sets.map((s) => s.phase)).toEqual(['chauffe', 'effort', 'retour'])
-    expect(sets[1].durationSec).toBe(15 * 60)
+  it('ne met jamais de chauffe / travail / hypertrophie sur le cardio', () => {
+    for (const e of CATALOG.filter((x) => x.cardio)) expect(buildCycle(e).every((s) => s.phase === 'cardio')).toBe(true)
+  })
+  it('construit un cardio en durée, en fractionné ou en répétitions', () => {
+    const run = buildCycle(CATALOG.find((e) => e.id === 'course_exterieur')!)
+    expect(run).toEqual([{ phase: 'cardio', durationSec: 30 * 60, restSec: 0 }])
+    expect(setLabels(run)).toEqual(['Durée'])
+    const hiit = buildCycle(CATALOG.find((e) => e.id === 'air_bike')!)
+    expect(hiit).toHaveLength(10)
+    expect(hiit[0]).toMatchObject({ durationSec: 20, restSec: 40 })
+    const rope = buildCycle(CATALOG.find((e) => e.id === 'corde_a_sauter')!)
+    expect(rope[0]).toMatchObject({ reps: 100, unit: 'sauts', restSec: 45 })
+    expect(cardioSummary(cardioPlanOf(rope))).toBe('10 × 100 sauts · récup 45 s')
+  })
+  it('retrouve le réglage d’un cardio depuis ses séries', () => {
+    for (const p of [
+      { mode: 'duree', duree_min: 25 },
+      { mode: 'intervalles', tours: 6, effort_sec: 45, repos_sec: 15 },
+      { mode: 'reps', tours: 4, reps: 250, unite: 'm', repos_sec: 60 },
+    ] as const) expect(cardioPlanOf(cardioSets(p))).toEqual(p)
+  })
+  it('convertit les anciens cardios en 3 phases', () => {
+    const old = { id: 'x', catalogId: 'course_exterieur', name: 'Course', group: 'cardio', parCote: false, restSec: 0, sets: [
+      { phase: 'chauffe' as const, durationSec: 300 }, { phase: 'effort' as const, durationSec: 2400 }, { phase: 'retour' as const, durationSec: 300 },
+    ] }
+    expect(migrateCardio(old).sets).toEqual([{ phase: 'cardio', durationSec: 2400, restSec: 0 }])
+    expect(migrateCardio({ ...old, catalogId: 'air_bike' }).sets).toHaveLength(10)
   })
 })
 
