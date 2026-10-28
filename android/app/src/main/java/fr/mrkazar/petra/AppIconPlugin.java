@@ -13,6 +13,8 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 /**
  * Icône du lanceur selon le thème : chaque thème a son activity-alias dans le manifeste,
  * on active celle du thème choisi et on désactive les autres.
+ * Android ferme l'appli quand on désactive l'entrée qui l'a lancée : le changement est donc
+ * mémorisé et appliqué seulement quand l'appli passe en arrière-plan.
  */
 @CapacitorPlugin(name = "AppIcon")
 public class AppIconPlugin extends Plugin {
@@ -29,15 +31,25 @@ public class AppIconPlugin extends Plugin {
             return;
         }
         Context ctx = getContext();
-        PackageManager pm = ctx.getPackageManager();
-        String current = currentIcon(pm, ctx);
+        String current = currentIcon(ctx.getPackageManager(), ctx);
+        pending = name.equals(current) ? null : name;
         JSObject ret = new JSObject();
-        ret.put("changed", !name.equals(current));
-        // D'abord activer la nouvelle entrée, pour qu'il y en ait toujours une dans le lanceur.
-        // Sans effet si l'état est déjà le bon.
-        setEnabled(pm, ctx, name, true);
-        for (String icon : ICONS) if (!icon.equals(name)) setEnabled(pm, ctx, icon, false);
+        ret.put("changed", pending != null);
         call.resolve(ret);
+    }
+
+    private String pending;
+
+    @Override
+    protected void handleOnStop() {
+        super.handleOnStop();
+        if (pending == null) return;
+        Context ctx = getContext();
+        PackageManager pm = ctx.getPackageManager();
+        // D'abord activer la nouvelle entrée, pour qu'il y en ait toujours une dans le lanceur.
+        setEnabled(pm, ctx, pending, true);
+        for (String icon : ICONS) if (!icon.equals(pending)) setEnabled(pm, ctx, icon, false);
+        pending = null;
     }
 
     @PluginMethod
