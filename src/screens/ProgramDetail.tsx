@@ -4,9 +4,8 @@ import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
 import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
-import { cardioPlanOf, cardioSets, cardioSummary, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, pdcSummary, setLabels, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
+import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
-import { describeSet } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { overloadSuggestion } from '../logic/progress'
 import { OverloadCard } from '../ui/Overload'
@@ -93,10 +92,9 @@ export function ProgramDetailScreen({ id }: { id: string }) {
                   <div className="grow" onClick={() => setEditingEx(e.id)} style={{ cursor: 'pointer' }}>
                     <div style={{ fontWeight: 600 }}>{e.name}</div>
                     <div className="small muted">
-                      {groupLabel(e.group)} · {e.sets.length} série{e.sets.length > 1 ? 's' : ''}
+                      {groupLabel(e.group)} · {e.sets.length} série{e.sets.length > 1 ? 's' : ''}{totalOf(e)}
                       {e.usesLoad === false ? ' · poids du corps' : ''}
                     </div>
-                    <div className="small faint" style={{ marginTop: 4 }}>{summarize(e)}</div>
                     {hasLoad(e) && (
                       <div className="row" style={{ marginTop: 8, gap: 6 }} onClick={(ev) => ev.stopPropagation()}>
                         <span className="small" style={{ color: 'var(--khaki)' }}>Charge de travail</span>
@@ -174,11 +172,12 @@ export function ProgramDetailScreen({ id }: { id: string }) {
 
 const hasLoad = (e: ProgramExercise) => e.usesLoad !== false && e.sets.some((s) => s.durationSec == null)
 
-function summarize(e: ProgramExercise): string {
-  if (isCardio(e)) return cardioSummary(cardioPlanOf(e.sets))
-  if (isPdc(e)) return pdcSummary(pdcPlanOf(e.sets), e.parCote)
-  const labels = setLabels(e.sets)
-  return e.sets.map((s, i) => `${labels[i]} ${describeSet(s, e.parCote)}`).join(' · ')
+/** Volume total d'un exercice : répétitions cumulées, ou durée cumulée pour les séries en temps. */
+function totalOf(e: ProgramExercise): string {
+  const reps = e.sets.reduce((n, s) => n + (s.durationSec == null && !s.toFailure ? s.reps ?? 0 : 0), 0)
+  const sec = e.sets.reduce((n, s) => n + (s.durationSec ?? 0), 0)
+  const parts = [reps ? `${reps} reps${e.parCote ? ' par côté' : ''}` : '', sec ? formatDuration(sec) : ''].filter(Boolean)
+  return parts.length ? ` · ${parts.join(' + ')}` : ''
 }
 
 function RenameSheet({ open, initial, onClose, onSave }: { open: boolean; initial: string; onClose: () => void; onSave: (n: string) => void }) {
