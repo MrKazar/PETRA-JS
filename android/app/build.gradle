@@ -2,10 +2,12 @@ apply plugin: 'com.android.application'
 
 import groovy.json.JsonSlurper
 
-// Version unique : celle de package.json (ex. 1.2.3 -> versionCode 10203).
+// Version unique : celle de package.json, avec un 4e chiffre facultatif pour les correctifs
+// (1.2.3 -> versionCode 1020300 ; 1.2.3.1 -> 1020301). Toujours plus grand que l'ancien schéma (1.2.3 -> 10203).
 def pkg = new JsonSlurper().parse(file('../../package.json'))
 def appVersion = pkg.version as String
-def (vMajor, vMinor, vPatch) = appVersion.tokenize('.-')[0..2].collect { it as int }
+def parts = (appVersion.tokenize('.-').findAll { it.isInteger() }.collect { it as int } + [0, 0, 0, 0])[0..3]
+def (vMajor, vMinor, vPatch, vFix) = parts
 
 android {
     namespace = "fr.mrkazar.petra"
@@ -14,7 +16,7 @@ android {
         applicationId "fr.mrkazar.petra"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode vMajor * 10000 + vMinor * 100 + vPatch
+        versionCode vMajor * 1000000 + vMinor * 10000 + vPatch * 100 + vFix
         versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

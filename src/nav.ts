@@ -10,6 +10,7 @@ export type Route =
   | { name: 'session'; id: string }
   | { name: 'records' }
   | { name: 'routines' }
+  | { name: 'appearance' }
 
 export interface Nav {
   route: Route

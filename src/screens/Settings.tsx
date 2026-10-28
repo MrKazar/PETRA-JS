@@ -4,7 +4,7 @@ import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
 import { UpdateBody } from '../ui/UpdateCard'
-import { THEMES } from '../ui/theme'
+import { themeOf } from '../ui/theme'
 import { Header, LogoFull, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
 import { IconCheckList, IconChevron, IconHistory, IconTrophy } from '../ui/icons'
 
@@ -60,17 +60,14 @@ export function SettingsScreen() {
           </div>
         </div>
 
-        <SectionTitle>Apparence</SectionTitle>
-        <div className="theme-grid">
-          {THEMES.map((t) => (
-            <button key={t.id} className={`theme-card${s.theme === t.id ? ' on' : ''}`} onClick={() => saveSettings({ theme: t.id })}>
-              <img src={imgUrl(t.emblem)} alt="" />
-              <span className="n">{t.label}</span>
-              <span className="sw">{t.swatches.map((c) => <i key={c} style={{ background: c }} />)}</span>
-            </button>
-          ))}
-        </div>
-        <div className="small muted">{THEMES.find((t) => t.id === s.theme)?.description} L’icône de l’appli sur le téléphone reste celle d’origine.</div>
+        <button className="list-item clickable" style={{ width: '100%', textAlign: 'left' }} onClick={() => nav.push({ name: 'appearance' })}>
+          <img src={imgUrl(themeOf(s.theme).emblem)} alt="" style={{ width: 40, height: 40, objectFit: 'contain' }} />
+          <div className="grow">
+            <div style={{ fontWeight: 600 }}>Apparence</div>
+            <div className="small muted">Thème {themeOf(s.theme).label}</div>
+          </div>
+          <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+        </button>
 
         <div className="list">
           <div className="list-item clickable" onClick={() => nav.push({ name: 'history' })}>

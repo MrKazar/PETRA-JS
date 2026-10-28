@@ -47,6 +47,22 @@ export const THEMES: Theme[] = [
     swatches: ['#08090a', '#121312', '#6b5f43', '#cbb98c'],
     statusBar: '#08090A',
   },
+  {
+    id: 'minimal',
+    label: 'Minimaliste',
+    description: 'Noir et blanc sur fond clair, sans décor, logo à plat.',
+    emblem: 'emblem-minimal.webp',
+    swatches: ['#ffffff', '#f5f5f4', '#121212', '#8b8b88'],
+    statusBar: '#FFFFFF',
+  },
+  {
+    id: 'vantablack',
+    label: 'Vantablack',
+    description: 'Noir absolu, contrastes discrets, logo en silhouette éclairée par la tranche.',
+    emblem: 'emblem-vantablack.webp',
+    swatches: ['#000000', '#050505', '#161616', '#d9d9d9'],
+    statusBar: '#000000',
+  },
 ]
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]

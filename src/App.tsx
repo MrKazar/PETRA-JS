@@ -15,6 +15,7 @@ import { SettingsScreen } from './screens/Settings'
 import { WorkoutScreen } from './screens/Workout'
 import { HistoryScreen, SessionDetailScreen } from './screens/History'
 import { RecordsScreen } from './screens/Records'
+import { AppearanceScreen } from './screens/Appearance'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
@@ -134,5 +135,7 @@ function Screen({ route }: { route: Route }) {
       return <SessionDetailScreen id={route.id} />
     case 'records':
       return <RecordsScreen />
+    case 'appearance':
+      return <AppearanceScreen />
   }
 }

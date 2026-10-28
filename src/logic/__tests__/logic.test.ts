@@ -192,12 +192,15 @@ describe('mises à jour', () => {
     expect(isNewer('v1.0.1', '1.0.0')).toBe(true)
     expect(isNewer('1.0.0', '1.0.0')).toBe(false)
     expect(isNewer('v1.10.0', '1.9.9')).toBe(true)
+    expect(isNewer('v1.2.3.1', '1.2.3')).toBe(true)
+    expect(isNewer('v1.2.4', '1.2.3.1')).toBe(true)
+    expect(isNewer('v1.2.3', '1.2.3.1')).toBe(false)
   })
 })
 
 describe('thèmes', () => {
-  it('propose 4 thèmes, militaire par défaut', () => {
-    expect(THEMES.map((t) => t.id)).toEqual(['militaire', 'police', 'gendarmerie', 'forces'])
+  it('propose 6 thèmes, militaire par défaut', () => {
+    expect(THEMES.map((t) => t.id)).toEqual(['militaire', 'police', 'gendarmerie', 'forces', 'minimal', 'vantablack'])
     expect(themeOf(undefined).id).toBe('militaire')
     expect(themeOf('forces').emblem).toBe('emblem-forces.webp')
   })

@@ -109,9 +109,32 @@ def forces_speciales(src):
     return img
 
 
+def minimal(src):
+    """Emblème seul, à plat, noir sur fond clair."""
+    img = Image.new("RGBA", (N, N), (0, 0, 0, 0))
+    paste_center(img, recolor(src, (0, 0, 0), (58, 58, 58), 1.0), 470)
+    return img
+
+
+def vantablack(src):
+    """Silhouette noire absolue avec un liseré de lumière, comme un objet qui absorbe tout."""
+    img = Image.new("RGBA", (N, N), (0, 0, 0, 0))
+    e = src.resize((470, 470), Image.LANCZOS)
+    alpha = e.getchannel("A")
+    rim = Image.new("RGBA", e.size, (210, 210, 210, 0))
+    rim.putalpha(alpha.filter(ImageFilter.MaxFilter(7)).filter(ImageFilter.GaussianBlur(3)).point(lambda v: int(v * 0.55)))
+    glow = Image.new("RGBA", e.size, (255, 255, 255, 0))
+    glow.putalpha(alpha.filter(ImageFilter.GaussianBlur(18)).point(lambda v: int(v * 0.18)))
+    body = recolor(src.resize((470, 470), Image.LANCZOS), (0, 0, 0), (22, 22, 22), 1.0)
+    off = ((N - 470) // 2, (N - 470) // 2)
+    for layer in (glow, rim, body):
+        img.alpha_composite(layer, off)
+    return img
+
+
 def main():
     src = Image.open(IMG / "emblem.webp").convert("RGBA")
-    for name, fn in (("police", police), ("gendarmerie", gendarmerie), ("forces", forces_speciales)):
+    for name, fn in (("police", police), ("gendarmerie", gendarmerie), ("forces", forces_speciales), ("minimal", minimal), ("vantablack", vantablack)):
         out = IMG / f"emblem-{name}.webp"
         fn(src).save(out, "WEBP", quality=90, method=6)
         print("écrit", out.relative_to(ROOT))
