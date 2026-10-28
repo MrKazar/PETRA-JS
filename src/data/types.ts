@@ -120,6 +120,8 @@ export interface Settings {
   name: string
   /** Thème graphique : couleurs, polices et logo. */
   theme: ThemeId
+  /** Date de la dernière sauvegarde automatique (fichier dans Documents/PETRA). */
+  lastBackupAt?: number
 }
 
 export interface AppData {

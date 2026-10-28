@@ -10,6 +10,7 @@ import { THEMES, activeTheme, themeOf, themesFor } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS } from '../../data/store'
+import { backupName, backupsToPrune, parseBackup } from '../backup'
 
 const program: Program = {
   id: 'p1',
@@ -294,5 +295,18 @@ describe('durée estimée', () => {
     expect(formatEstimate(830)).toBe('~15 min')
     expect(formatEstimate(4200)).toBe('~1 h 10')
     expect(formatEstimate(3600)).toBe('~1 h')
+  })
+})
+
+describe('sauvegarde automatique', () => {
+  it('nomme les fichiers par date et garde les 10 plus récents', () => {
+    expect(backupName(new Date(2026, 9, 28, 20, 41, 5))).toBe('petra-2026-10-28-204105.json')
+    const names = Array.from({ length: 12 }, (_, i) => `petra-2026-10-${String(i + 10)}-120000.json`).concat('notes.txt')
+    expect(backupsToPrune(names)).toEqual(['petra-2026-10-10-120000.json', 'petra-2026-10-11-120000.json'])
+    expect(backupsToPrune(names.slice(0, 5))).toEqual([])
+  })
+  it('refuse un fichier qui n’est pas une sauvegarde', () => {
+    expect(() => parseBackup('{"a":1}')).toThrow()
+    expect(parseBackup('{"programs":[]}').programs).toEqual([])
   })
 })

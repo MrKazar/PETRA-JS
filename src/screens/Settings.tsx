@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { emptyData, getData, normalize, setData, update, useData } from '../data/store'
+import { useRef, useState } from 'react'
+import { emptyData, getData, setData, update, useData } from '../data/store'
+import { BACKUP_KEEP, parseBackup, restoreBackup, writeBackup } from '../logic/backup'
 import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
@@ -14,6 +15,8 @@ export function SettingsScreen() {
   const s = data.settings
   const [backup, setBackup] = useState<'export' | 'import' | null>(null)
   const [importText, setImportText] = useState('')
+  const [saving, setSaving] = useState(false)
+  const fileInput = useRef<HTMLInputElement>(null)
 
   const exportText = backup === 'export' ? JSON.stringify(getData(), null, 1) : ''
   const totalSec = data.sessions.reduce((n, x) => n + ((x.endedAt ?? x.startedAt) - x.startedAt) / 1000, 0)
@@ -33,18 +36,29 @@ export function SettingsScreen() {
       /* annulé */
     }
   }
-  const doImport = () => {
+  const restoreFrom = (text: string, what: string) => {
     try {
-      const parsed = JSON.parse(importText)
-      if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.programs)) throw new Error('format')
-      if (!confirmAction('Remplacer toutes tes données par cette sauvegarde ?')) return
-      setData(normalize(parsed))
+      const parsed = parseBackup(text)
+      const n = parsed.sessions.length
+      if (!confirmAction(`Remplacer toutes tes données par cette sauvegarde (${parsed.programs.length} programmes, ${n} séance${n > 1 ? 's' : ''}) ?`)) return
+      restoreBackup(parsed)
       setBackup(null)
       setImportText('')
       toast('Sauvegarde restaurée')
     } catch {
-      toast('Ce texte n’est pas une sauvegarde PETRA valide')
+      toast(`Ce ${what} n’est pas une sauvegarde PETRA valide`)
     }
+  }
+  const doImport = () => restoreFrom(importText, 'texte')
+  const pickFile = (file?: File) => {
+    if (!file) return
+    file.text().then((t) => restoreFrom(t, 'fichier'), () => toast('Lecture du fichier impossible'))
+  }
+  const backupNow = async () => {
+    setSaving(true)
+    const name = await writeBackup()
+    setSaving(false)
+    toast(name ? 'Sauvegarde enregistrée dans Documents/PETRA' : 'Sauvegarde impossible sur ce téléphone')
   }
 
   return (
@@ -121,10 +135,23 @@ export function SettingsScreen() {
 
         <SectionTitle>Données</SectionTitle>
         <div className="card stack">
-          <div className="small muted">Tout est stocké sur ton téléphone. Fais une sauvegarde de temps en temps.</div>
+          <div>
+            <div style={{ fontWeight: 600 }}>Sauvegarde automatique</div>
+            <div className="small muted">
+              Une copie après chaque séance terminée, dans Documents/PETRA sur le téléphone (les {BACKUP_KEEP} dernières sont gardées).
+            </div>
+            <div className="small" style={{ marginTop: 6, color: s.lastBackupAt ? 'var(--khaki)' : 'var(--faint)' }}>
+              {s.lastBackupAt ? `Dernière sauvegarde : ${new Date(s.lastBackupAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}` : 'Aucune sauvegarde pour l’instant'}
+            </div>
+          </div>
           <div className="row">
-            <button className="btn grow" onClick={() => setBackup('export')}>Sauvegarder</button>
-            <button className="btn grow" onClick={() => setBackup('import')}>Restaurer</button>
+            <button className="btn grow" disabled={saving} onClick={backupNow}>Sauvegarder maintenant</button>
+            <button className="btn grow" onClick={() => fileInput.current?.click()}>Restaurer un fichier</button>
+            <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => { pickFile(e.target.files?.[0]); e.target.value = '' }} />
+          </div>
+          <div className="row">
+            <button className="btn ghost sm grow" onClick={() => setBackup('export')}>Copier en texte</button>
+            <button className="btn ghost sm grow" onClick={() => setBackup('import')}>Coller un texte</button>
           </div>
           <div className="row wrap">
             <button className="btn danger sm" onClick={() => confirmAction('Effacer tout l’historique des séances ?') && update((d) => ({ ...d, sessions: [] }))}>Effacer les séances</button>
