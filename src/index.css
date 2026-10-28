@@ -23,8 +23,12 @@
   --radius: 10px;
   --safe-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
   --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
+  --font-body: Inter, Roboto, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-head: var(--font-body);
+  --head-weight: 600;
+  --bg-image: url('/img/topo.webp');
   color-scheme: dark;
-  font-family: Inter, Roboto, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -32,7 +36,7 @@
 html, body, #root { height: 100%; margin: 0; }
 
 body {
-  background: var(--bg) url('/img/topo.webp') center / cover no-repeat fixed;
+  background: var(--bg-image) center / cover no-repeat fixed, var(--bg);
   color: var(--text);
   font-size: 16px;
   letter-spacing: 0.01em;
@@ -162,6 +166,64 @@ textarea.input { min-height: 90px; resize: vertical; }
 @keyframes pulse { 50% { opacity: 0.25; } }
 
 .logo-full { display: block; width: min(78%, 300px); margin: 0 auto; }
+.logo-compose { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 4px 0; }
+.logo-compose img { width: min(48%, 180px); aspect-ratio: 1; object-fit: contain; }
+.logo-compose .word { font-family: var(--font-head); font-weight: var(--head-weight); font-size: 52px; line-height: 1; letter-spacing: 0.16em; padding-left: 0.16em; color: var(--khaki); }
+.logo-compose .rule { display: flex; align-items: center; gap: 10px; width: min(80%, 300px); }
+.logo-compose .rule i { flex: 1; height: 1px; background: var(--line); }
+.logo-compose .rule .stripe { margin: 0; }
+.logo-compose .motto { font-family: var(--font-head); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); text-align: center; }
+
+/* Choix du thème */
+.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.theme-card { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px 10px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; text-align: center; }
+.theme-card.on { border-color: var(--khaki); box-shadow: 0 0 0 1px var(--khaki) inset; }
+.theme-card img { width: 64px; height: 64px; object-fit: contain; }
+.theme-card .n { font-weight: 600; font-size: 14px; }
+.theme-card .sw { display: flex; gap: 4px; }
+.theme-card .sw i { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.12); }
+
+/* Polices des titres selon le thème */
+.header h1, .topbar h1, .sheet h2, .eyebrow, .section-title, .card h2, .card h3, .stat .v, .rest .clock, .btn, .seg button, .tab, .field > span, .badge { font-family: var(--font-head); }
+.header h1, .topbar h1, .sheet h2, .card h2, .card h3 { font-weight: var(--head-weight); }
+
+/* ===== Thèmes ===== */
+:root[data-theme='police'] {
+  --bg: #0a0e16; --surface: #121926; --surface-2: #1a2333; --line: #2b3750;
+  --text: #e6eaf2; --muted: #a0aac0; --faint: #66718a;
+  --olive: #24427e; --olive-light: #4a72c4; --olive-dark: #18294a;
+  --khaki: #b9c6de; --khaki-soft: rgba(185, 198, 222, 0.13);
+  --success: #6fb38a; --success-soft: rgba(111, 179, 138, 0.15);
+  --radius: 6px;
+  --font-body: 'Barlow', Roboto, system-ui, sans-serif;
+  --font-head: 'Barlow Condensed', 'Barlow', Roboto, sans-serif;
+  --bg-image: radial-gradient(ellipse at 50% -10%, rgba(74, 114, 196, 0.18), transparent 60%);
+}
+:root[data-theme='gendarmerie'] {
+  --bg: #0b0f1a; --surface: #141a2a; --surface-2: #1c2336; --line: #2f3854;
+  --text: #ecebe6; --muted: #a8acba; --faint: #6c7186;
+  --olive: #1d3264; --olive-light: #3d5ea8; --olive-dark: #142246;
+  --khaki: #c8ccd8; --khaki-soft: rgba(200, 204, 216, 0.12);
+  --success: #86b08a; --success-soft: rgba(134, 176, 138, 0.15);
+  --destructive: #7a2b2b;
+  --radius: 4px;
+  --font-body: 'Source Sans 3', Roboto, system-ui, sans-serif;
+  --font-head: 'Cinzel', Georgia, serif;
+  --bg-image: linear-gradient(180deg, rgba(29, 50, 100, 0.22), transparent 40%);
+}
+:root[data-theme='forces'] {
+  --bg: #08090a; --surface: #121312; --surface-2: #1a1b19; --line: #2c2d29;
+  --text: #e4e1d6; --muted: #9d998b; --faint: #66635a;
+  --olive: #6b5f43; --olive-light: #8f7f58; --olive-dark: #2b271d;
+  --khaki: #cbb98c; --khaki-soft: rgba(203, 185, 140, 0.12);
+  --success: #a3b071; --success-soft: rgba(163, 176, 113, 0.15);
+  --radius: 3px;
+  --font-body: 'Rajdhani', Roboto, system-ui, sans-serif;
+  --font-head: 'Saira Stencil One', 'Rajdhani', sans-serif;
+  --head-weight: 400;
+  --bg-image: linear-gradient(rgba(8, 9, 10, 0.6), rgba(8, 9, 10, 0.6)), url('/img/topo.webp');
+}
+:root[data-theme='forces'] body { font-weight: 500; }
 
 /* Feuille modale */
 .backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); z-index: 50; display: flex; align-items: flex-end; justify-content: center; animation: fade 0.15s; }
@@ -236,3 +298,4 @@ textarea.input { min-height: 90px; resize: vertical; }
 .prescription { display: grid; grid-template-columns: auto 1fr auto auto; gap: 4px 12px; font-size: 13px; align-items: baseline; }
 .prescription .k { color: var(--khaki); font-weight: 500; }
 .prescription .r { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+:root[data-theme='gendarmerie'] .tab, :root[data-theme='gendarmerie'] .seg button, :root[data-theme='gendarmerie'] .badge { font-family: var(--font-body); }

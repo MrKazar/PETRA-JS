@@ -4,7 +4,8 @@ import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
 import { UpdateBody } from '../ui/UpdateCard'
-import { Header, LogoFull, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
+import { THEMES } from '../ui/theme'
+import { Header, LogoFull, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
 import { IconCheckList, IconChevron, IconHistory, IconTrophy } from '../ui/icons'
 
 export function SettingsScreen() {
@@ -58,6 +59,18 @@ export function SettingsScreen() {
             <div className="stat"><div className="v">{personalRecords(data.sessions).length}</div><div className="l">Records</div></div>
           </div>
         </div>
+
+        <SectionTitle>Apparence</SectionTitle>
+        <div className="theme-grid">
+          {THEMES.map((t) => (
+            <button key={t.id} className={`theme-card${s.theme === t.id ? ' on' : ''}`} onClick={() => saveSettings({ theme: t.id })}>
+              <img src={imgUrl(t.emblem)} alt="" />
+              <span className="n">{t.label}</span>
+              <span className="sw">{t.swatches.map((c) => <i key={c} style={{ background: c }} />)}</span>
+            </button>
+          ))}
+        </div>
+        <div className="small muted">{THEMES.find((t) => t.id === s.theme)?.description} L’icône de l’appli sur le téléphone reste celle d’origine.</div>
 
         <div className="list">
           <div className="list-item clickable" onClick={() => nav.push({ name: 'history' })}>

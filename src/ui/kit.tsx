@@ -1,5 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { IconBack } from './icons'
+import { useData } from '../data/store'
+import { themeOf } from './theme'
 
 export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: () => void; right?: ReactNode }) {
   return (
@@ -17,8 +19,25 @@ export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: ()
 
 const IMG = `${import.meta.env.BASE_URL}img/`
 
-export const Emblem = ({ size = 40 }: { size?: number }) => <img className="emblem" src={`${IMG}emblem.webp`} width={size} height={size} alt="" />
-export const LogoFull = () => <img className="logo-full" src={`${IMG}logo.webp`} alt="PETRA — Discipline, progrès, objectif" />
+export const imgUrl = (file: string) => `${IMG}${file}`
+
+const useTheme = () => themeOf(useData().settings.theme)
+
+export const Emblem = ({ size = 40 }: { size?: number }) => <img className="emblem" src={imgUrl(useTheme().emblem)} width={size} height={size} alt="" />
+
+/** Logo complet : l'image d'origine pour le thème militaire, sinon emblème + PETRA dans la police du thème. */
+export function LogoFull() {
+  const t = useTheme()
+  if (t.logo) return <img className="logo-full" src={imgUrl(t.logo)} alt="PETRA — Discipline, progrès, objectif" />
+  return (
+    <div className="logo-compose" role="img" aria-label="PETRA — Discipline, progrès, objectif">
+      <img src={imgUrl(t.emblem)} alt="" />
+      <div className="word">PETRA</div>
+      <div className="rule"><i /><Stripe width={64} /><i /></div>
+      <div className="motto">Discipline · Progrès · Objectif</div>
+    </div>
+  )
+}
 
 export function Stripe({ width = 36 }: { width?: number }) {
   return (

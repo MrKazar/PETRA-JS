@@ -1,0 +1,121 @@
+"""Génère les emblèmes des thèmes (public/img/emblem-<thème>.webp) à partir de l'emblème d'origine.
+
+Le casque et la montagne de PETRA restent dans chaque logo : seuls la matière et l'insigne autour changent.
+Dessins originaux (aucun insigne officiel reproduit).
+"""
+import math
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFilter, ImageOps
+
+ROOT = Path(__file__).resolve().parent.parent
+IMG = ROOT / "public" / "img"
+SS = 4  # suréchantillonnage pour des bords nets
+N = 512
+
+
+def recolor(src: Image.Image, dark, light, contrast=1.0) -> Image.Image:
+    """Repeint l'emblème en gardant sa texture : la luminance va de `dark` à `light`."""
+    lum = ImageOps.autocontrast(src.convert("L"))
+    if contrast != 1.0:
+        lum = lum.point(lambda v: max(0, min(255, int(128 + (v - 128) * contrast))))
+    out = ImageOps.colorize(lum, dark, light).convert("RGBA")
+    out.putalpha(src.getchannel("A"))
+    return out
+
+
+def canvas():
+    return Image.new("RGBA", (N * SS, N * SS), (0, 0, 0, 0))
+
+
+def finish(img: Image.Image) -> Image.Image:
+    return img.resize((N, N), Image.LANCZOS)
+
+
+def paste_center(base: Image.Image, emblem: Image.Image, size: int, dy=0):
+    e = emblem.resize((size, size), Image.LANCZOS)
+    base.alpha_composite(e, ((N - size) // 2, (N - size) // 2 + dy))
+
+
+def star(cx, cy, r, points=5, inner=0.45, rot=-90):
+    pts = []
+    for i in range(points * 2):
+        rr = r if i % 2 == 0 else r * inner
+        a = math.radians(rot + i * 180 / points)
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    return pts
+
+
+def police(src):
+    """Écusson bleu nuit bordé d'argent, étoile au sommet, emblème chromé."""
+    c = canvas()
+    d = ImageDraw.Draw(c)
+    s = SS
+    shield = [(256, 14), (496, 84), (482, 318), (256, 504), (30, 318), (16, 84)]
+    big = [(x * s, y * s) for x, y in shield]
+    d.polygon(big, fill=(200, 208, 222, 255))
+    inset = [(256, 36), (474, 100), (462, 308), (256, 478), (50, 308), (38, 100)]
+    d.polygon([(x * s, y * s) for x, y in inset], fill=(18, 32, 64, 255))
+    inner = [(256, 50), (460, 110), (449, 302), (256, 462), (63, 302), (52, 110)]
+    d.line([(x * s, y * s) for x, y in inner + inner[:1]], fill=(120, 140, 175, 255), width=3 * s)
+    d.polygon([(x * s, y * s) for x, y in star(256, 86, 20)], fill=(214, 220, 232, 255))
+    img = finish(c)
+    paste_center(img, recolor(src, (70, 82, 104), (238, 242, 248), 1.2), 262, dy=12)
+    return img
+
+
+def gendarmerie(src):
+    """Médaillon rond bleu nuit à double anneau argent, ruban tricolore au sommet, trois étoiles."""
+    c = canvas()
+    d = ImageDraw.Draw(c)
+    s = SS
+    d.ellipse([28 * s, 40 * s, 484 * s, 496 * s], fill=(196, 202, 212, 255))
+    d.ellipse([42 * s, 54 * s, 470 * s, 482 * s], fill=(14, 24, 48, 255))
+    d.ellipse([60 * s, 72 * s, 452 * s, 464 * s], outline=(150, 160, 182, 255), width=3 * s)
+    # Ruban tricolore en chevron au sommet du médaillon
+    for i, col in enumerate(((58, 90, 140, 255), (232, 231, 222, 255), (165, 64, 64, 255))):
+        x0 = 214 + i * 28
+        d.polygon([(x * s, y * s) for x, y in [(x0, 22), (x0 + 28, 22), (x0 + 28, 70), (x0 + 14, 60), (x0, 70)]], fill=col)
+    for cx in (206, 256, 306):
+        d.polygon([(x * s, y * s) for x, y in star(cx, 430 if cx == 256 else 420, 11)], fill=(168, 52, 52, 255))
+    img = finish(c)
+    paste_center(img, recolor(src, (86, 94, 112), (236, 238, 242), 1.15), 300, dy=-2)
+    return img
+
+
+def forces_speciales(src):
+    """Dague verticale derrière l'emblème, ailes stylisées, tons sable sur noir mat."""
+    c = canvas()
+    d = ImageDraw.Draw(c)
+    s = SS
+    blade = (58, 60, 54, 255)
+    edge = (150, 140, 112, 255)
+    # Lame
+    d.polygon([(x * s, y * s) for x, y in [(256, 500), (238, 150), (256, 96), (274, 150)]], fill=edge)
+    d.polygon([(x * s, y * s) for x, y in [(256, 486), (244, 154), (256, 112), (268, 154)]], fill=blade)
+    # Garde et pommeau
+    d.rounded_rectangle([170 * s, 76 * s, 342 * s, 96 * s], radius=8 * s, fill=edge)
+    d.rectangle([248 * s, 34 * s, 264 * s, 78 * s], fill=edge)
+    d.ellipse([240 * s, 14 * s, 272 * s, 46 * s], fill=edge)
+    # Ailes : plumes en dégradé de longueur
+    for side in (-1, 1):
+        for i in range(5):
+            y = 250 + i * 26
+            x0 = 256 + side * 90
+            x1 = 256 + side * (250 - i * 30)
+            pts = [(x0, y), (x1, y - 44 + i * 6), (x1 - side * 10, y - 26 + i * 6), (x0, y + 18)]
+            d.polygon([(x * s, yy * s) for x, yy in pts], fill=(92, 86, 68, 255) if i % 2 else (118, 110, 86, 255))
+    img = finish(c)
+    paste_center(img, recolor(src, (40, 38, 32), (214, 198, 156), 1.3), 330, dy=30)
+    return img
+
+
+def main():
+    src = Image.open(IMG / "emblem.webp").convert("RGBA")
+    for name, fn in (("police", police), ("gendarmerie", gendarmerie), ("forces", forces_speciales)):
+        out = IMG / f"emblem-{name}.webp"
+        fn(src).save(out, "WEBP", quality=90, method=6)
+        print("écrit", out.relative_to(ROOT))
+
+
+if __name__ == "__main__":
+    main()

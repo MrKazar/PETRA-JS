@@ -18,6 +18,7 @@ import { RecordsScreen } from './screens/Records'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
+import { applyTheme } from './ui/theme'
 
 const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
   { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
@@ -59,6 +60,8 @@ export default function App() {
   useEffect(() => {
     if (Capacitor.isNativePlatform()) checkOnLaunch()
   }, [])
+
+  useEffect(() => applyTheme(data.settings.theme), [data.settings.theme])
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return

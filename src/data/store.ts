@@ -15,6 +15,7 @@ export const DEFAULT_SETTINGS: Settings = {
   vibrate: true,
   keepAwake: true,
   name: '',
+  theme: 'militaire',
 }
 
 export function emptyData(): AppData {

@@ -103,6 +103,8 @@ export type TaskStatus = 'fait' | 'reporte' | 'saute'
 
 export type FinisherType = 'abdos' | 'dos' | 'pecs' | 'jambes' | 'epaules_bras'
 
+export type ThemeId = 'militaire' | 'police' | 'gendarmerie' | 'forces'
+
 export interface Settings {
   defaultRestSec: number
   /** Alternance semaine A / semaine B. */
@@ -113,6 +115,8 @@ export interface Settings {
   vibrate: boolean
   keepAwake: boolean
   name: string
+  /** Thème graphique : couleurs, polices et logo. */
+  theme: ThemeId
 }
 
 export interface AppData {
