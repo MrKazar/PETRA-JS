@@ -1,3 +1,5 @@
+import type { Finisher } from './finishers'
+
 /** effort et retour : anciennes phases de cardio (avant la 1.2.1), gardées pour l'historique. */
 export type Phase = 'chauffe' | 'travail' | 'hypertrophie' | 'cardio' | 'effort' | 'retour'
 
@@ -128,5 +130,7 @@ export interface AppData {
   /** date → id de programme, ou null pour « repos » ce jour-là */
   planOverrides: Record<string, string | null>
   lastFinisher: Partial<Record<FinisherType, string>>
+  /** Finishers personnalisés ; absent tant que l'utilisateur garde ceux par défaut. */
+  finishers?: Finisher[]
   settings: Settings
 }

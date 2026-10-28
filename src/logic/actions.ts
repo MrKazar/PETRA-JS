@@ -1,10 +1,27 @@
 import { getData, update } from '../data/store'
+import { finishersOf, type Finisher } from '../data/finishers'
 import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
 import { cancelRestEnd, hideOngoing, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
 import { describeSet, finalize, nextPending, startFrom, statsOf } from './session'
 
 export function saveSettings(patch: Partial<Settings>) {
   update((d) => ({ ...d, settings: { ...d.settings, ...patch } }))
+}
+
+/** Enregistre (ou ajoute) un finisher ; la première modification copie la liste par défaut. */
+export function saveFinisher(f: Finisher) {
+  update((d) => {
+    const list = finishersOf(d)
+    return { ...d, finishers: list.some((x) => x.id === f.id) ? list.map((x) => (x.id === f.id ? f : x)) : [...list, f] }
+  })
+}
+
+export function deleteFinisher(id: string) {
+  update((d) => ({ ...d, finishers: finishersOf(d).filter((f) => f.id !== id) }))
+}
+
+export function resetFinishers() {
+  update((d) => ({ ...d, finishers: undefined }))
 }
 
 export function saveProgram(p: Program) {

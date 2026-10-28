@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FINISHERS, drawFinisher } from '../../data/finishers'
+import { DEFAULT_FINISHERS as FINISHERS, drawFinisher, finishersOf, formatItem } from '../../data/finishers'
 import { CATALOG, buildCycle, cardioPlanOf, cardioSets, cardioSummary, exerciseFromCatalog, migrateCardio, parseReps, setLabels, withWorkLoad } from '../../data/catalog'
 import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
 import { addSet, completeSet, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
@@ -25,15 +25,28 @@ describe('finishers', () => {
   })
   it('ne tire jamais le même que la dernière fois', () => {
     for (let i = 0; i < 200; i++) {
-      const f = drawFinisher('pecs', 'pecs_2')
+      const f = drawFinisher('pecs', 'pecs_2')!
       expect(f.type).toBe('pecs')
       expect(f.id).not.toBe('pecs_2')
     }
   })
   it('peut tirer chacun des autres', () => {
     const seen = new Set<string>()
-    for (let i = 0; i < 300; i++) seen.add(drawFinisher('dos', 'dos_1').id)
+    for (let i = 0; i < 300; i++) seen.add(drawFinisher('dos', 'dos_1')!.id)
     expect([...seen].sort()).toEqual(['dos_2', 'dos_3', 'dos_4'])
+  })
+  it('tire dans les finishers personnalisés', () => {
+    const mine = [{ id: 'm1', type: 'abdos' as const, name: 'Perso', items: [{ name: 'crunchs', kind: 'reps' as const, value: 50 }] }]
+    expect(drawFinisher('abdos', 'm1', mine)?.id).toBe('m1')
+    expect(drawFinisher('dos', undefined, mine)).toBeUndefined()
+    expect(finishersOf({})).toBe(FINISHERS)
+    expect(finishersOf({ finishers: mine })).toBe(mine)
+  })
+  it('écrit les exercices en clair', () => {
+    expect(formatItem({ name: 'squats', kind: 'reps', value: 20 })).toBe('20 squats')
+    expect(formatItem({ name: 'gainage', kind: 'temps', value: 60 })).toBe('Gainage 1 min')
+    expect(formatItem({ name: 'chaise contre le mur', kind: 'temps', value: 45 })).toBe('Chaise contre le mur 45 s')
+    expect(formatItem({ name: 'suspension à la barre', kind: 'echec' })).toBe('Suspension à la barre jusqu’à l’échec')
   })
 })
 

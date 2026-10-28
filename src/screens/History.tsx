@@ -99,7 +99,7 @@ export function SessionDetailScreen({ id }: { id: string }) {
               </div>
             </div>
             <ol className="finisher-list">
-              {s.finisher.items.map((it) => <li key={it}>{it}</li>)}
+              {s.finisher.items.map((it, i) => <li key={i}>{it}</li>)}
             </ol>
           </div>
         )}

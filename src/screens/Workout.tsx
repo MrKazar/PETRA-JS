@@ -3,7 +3,7 @@ import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
 import type { ActiveSession, FinisherType, SessionExercise } from '../data/types'
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
-import { FINISHER_TYPES, drawFinisher, type Finisher } from '../data/finishers'
+import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
 import { addSet, completeSet, extendRest, nextPending, patchSet, removeSet, startRest, statsOf, toSessionExercise } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
@@ -68,7 +68,7 @@ export function WorkoutScreen() {
     else complete()
   }
   const complete = (f?: Finisher) => {
-    const id = finishSession(f ? { type: f.type, id: f.id, name: f.name, items: f.items } : undefined)
+    const id = finishSession(f ? { type: f.type, id: f.id, name: f.name, items: f.items.map(formatItem) } : undefined)
     if (id) nav.replace({ name: 'session', id })
   }
   const abandon = () => {
@@ -140,7 +140,7 @@ export function WorkoutScreen() {
         }}
       />
 
-      {finishing && <FinisherSheet lastByType={data.lastFinisher} onClose={() => setFinishing(false)} onDone={complete} />}
+      {finishing && <FinisherSheet finishers={finishersOf(data)} lastByType={data.lastFinisher} onClose={() => setFinishing(false)} onDone={complete} />}
     </div>
   )
 }
@@ -284,7 +284,7 @@ function ExerciseCard({
   )
 }
 
-function FinisherSheet({ lastByType, onClose, onDone }: { lastByType: Partial<Record<FinisherType, string>>; onClose: () => void; onDone: (f?: Finisher) => void }) {
+function FinisherSheet({ finishers, lastByType, onClose, onDone }: { finishers: Finisher[]; lastByType: Partial<Record<FinisherType, string>>; onClose: () => void; onDone: (f?: Finisher) => void }) {
   const [drawn, setDrawn] = useState<Finisher>()
   return (
     <Sheet open onClose={onClose} title={drawn ? drawn.name : 'Un finisher pour finir ?'}>
@@ -292,8 +292,8 @@ function FinisherSheet({ lastByType, onClose, onDone }: { lastByType: Partial<Re
         <div className="stack">
           <p className="muted small" style={{ margin: 0 }}>Un seul tour, à fond. Choisis le type, je tire un finisher au hasard (jamais le même que la dernière fois).</p>
           <div className="list">
-            {FINISHER_TYPES.map((t) => (
-              <button key={t.type} className="list-item clickable" style={{ cursor: 'pointer' }} onClick={() => setDrawn(drawFinisher(t.type, lastByType[t.type]))}>
+            {FINISHER_TYPES.filter((t) => drawFinisher(t.type, undefined, finishers)).map((t) => (
+              <button key={t.type} className="list-item clickable" style={{ cursor: 'pointer' }} onClick={() => setDrawn(drawFinisher(t.type, lastByType[t.type], finishers))}>
                 <IconFlame style={{ width: 22, color: 'var(--khaki)' }} />
                 <span className="grow" style={{ textAlign: 'left', fontWeight: 600 }}>{t.label}</span>
               </button>
@@ -306,7 +306,7 @@ function FinisherSheet({ lastByType, onClose, onDone }: { lastByType: Partial<Re
           <div className="card accent">
             <div className="eyebrow">Un seul tour · à fond</div>
             <ol className="finisher-list">
-              {drawn.items.map((it) => <li key={it}>{it}</li>)}
+              {drawn.items.map((it, i) => <li key={i}>{formatItem(it)}</li>)}
             </ol>
           </div>
           <button className="btn primary block big" onClick={() => onDone(drawn)}>
