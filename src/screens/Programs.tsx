@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useData, update } from '../data/store'
 import { useNav } from '../nav'
 import { saveProgram, saveSettings } from '../logic/actions'
-import { programFor, weekLetter, type WeekLetter } from '../logic/planner'
-import { addDays, dateKey, formatShortDay, uid, WEEKDAYS, weekday } from '../logic/util'
+import { weekLetter, type WeekLetter } from '../logic/planner'
+import { addDays, dateKey, uid, WEEKDAYS, weekday } from '../logic/util'
 import { groupLabel } from '../data/catalog'
 import { Empty, Header, SectionTitle, Sheet, Toggle } from '../ui/kit'
 import { IconChevron, IconDumbbell, IconHistory, IconPlus, IconTrophy } from '../ui/icons'
@@ -16,25 +16,15 @@ export function ProgramsScreen() {
   const current = weekLetter(s, today)
   const [editWeek, setEditWeek] = useState<WeekLetter>(current)
   const [pickDay, setPickDay] = useState<number | null>(null)
-  const [pickDate, setPickDate] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
   const [name, setName] = useState('')
 
   const shownWeek: WeekLetter = s.abWeeks ? editWeek : 'A'
   const plan = shownWeek === 'B' ? data.weekPlanB : data.weekPlan
   const nameOf = (id?: string | null) => (id ? data.programs.find((p) => p.id === id)?.name : undefined)
-  const days = Array.from({ length: 14 }, (_, i) => addDays(today, i))
-  const doneDays = new Set(data.sessions.map((x) => dateKey(new Date(x.startedAt))))
 
   const setDay = (day: number, id: string | null) =>
     update((d) => (shownWeek === 'B' ? { ...d, weekPlanB: { ...d.weekPlanB, [day]: id ?? undefined } } : { ...d, weekPlan: { ...d.weekPlan, [day]: id ?? undefined } }))
-  const setOverride = (date: string, value: string | null | 'default') =>
-    update((d) => {
-      const o = { ...d.planOverrides }
-      if (value === 'default') delete o[date]
-      else o[date] = value
-      return { ...d, planOverrides: o }
-    })
   /** Fait de la semaine en cours une semaine A ou B. */
   const setCurrentWeek = (letter: WeekLetter) => {
     const monday = addDays(today, -weekday(today))
@@ -90,24 +80,6 @@ export function ProgramsScreen() {
               )
             })}
           </div>
-        </div>
-
-        <SectionTitle>Les deux prochaines semaines</SectionTitle>
-        <div className="card" style={{ paddingTop: 6, paddingBottom: 6 }}>
-          {days.map((k) => {
-            const p = programFor(data, k)
-            return (
-              <div key={k} className="task" style={{ minHeight: 50 }} onClick={() => setPickDate(k)}>
-                <div style={{ width: 90 }}>
-                  <div style={{ fontWeight: 500, textTransform: 'capitalize' }}>{k === today ? 'Aujourd’hui' : formatShortDay(k)}</div>
-                  {s.abWeeks && weekday(k) === 0 && <div className="small faint">Semaine {weekLetter(s, k)}</div>}
-                </div>
-                <div className={`grow ellipsis${p ? '' : ' faint'}`} style={{ fontWeight: p ? 600 : 400 }}>{p?.name ?? 'Repos'}</div>
-                {k in data.planOverrides && <span className="badge blue">modifié</span>}
-                {doneDays.has(k) && <span className="badge green">fait</span>}
-              </div>
-            )
-          })}
         </div>
 
         <SectionTitle>Mes programmes</SectionTitle>
@@ -173,26 +145,6 @@ export function ProgramsScreen() {
             setPickDay(null)
           }}
         />
-      </Sheet>
-
-      <Sheet open={pickDate != null} onClose={() => setPickDate(null)} title={pickDate ? `Le ${formatShortDay(pickDate)}` : ''}>
-        {pickDate && (
-          <>
-            <ProgramChoices
-              current={pickDate in data.planOverrides ? data.planOverrides[pickDate] : undefined}
-              programs={data.programs}
-              onPick={(id) => {
-                setOverride(pickDate, id)
-                setPickDate(null)
-              }}
-            />
-            {pickDate in data.planOverrides && (
-              <button className="btn block" style={{ marginTop: 10 }} onClick={() => { setOverride(pickDate, 'default'); setPickDate(null) }}>
-                Revenir au planning
-              </button>
-            )}
-          </>
-        )}
       </Sheet>
     </div>
   )
