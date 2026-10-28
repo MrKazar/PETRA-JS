@@ -1,5 +1,5 @@
 {
- "version": "2.2",
+ "version": "2.3",
  "langue": "fr",
  "legende": {
   "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
@@ -5190,6 +5190,126 @@
     "series": 3,
     "repos_sec": 60,
     "reps": 15
+   }
+  },
+  {
+   "id": "abduction_allonge_haltere",
+   "nom": "Abduction allongé sur le côté avec haltère",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "haltère",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "abduction_machine_debout",
+   "nom": "Abduction de hanche debout à la machine",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "machine",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 75
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "monster_walk",
+   "nom": "Marche latérale avec élastique (monster walk)",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "élastique",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
+   "id": "coquillage_elastique",
+   "nom": "Coquillage avec élastique (clamshell)",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "élastique",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 15
+   }
+  },
+  {
+   "id": "gainage_lateral_releve_jambe",
+   "nom": "Gainage latéral avec relevé de jambe",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "obliques"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 12
+   }
+  },
+  {
+   "id": "abduction_allonge_pdc",
+   "nom": "Abduction allongé sur le côté",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {

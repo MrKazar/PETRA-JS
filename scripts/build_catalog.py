@@ -42,7 +42,7 @@ PROFILES = {
 }
 
 # Équipements sans charge additionnelle : la charge de travail ne s'y applique pas (lest facultatif).
-BODYWEIGHT = {"poids du corps", "barres parallèles", "barre de traction", "roue", "banc", "aucun", "anneaux", "box", "chaise romaine", "mur"}
+BODYWEIGHT = {"poids du corps", "barres parallèles", "barre de traction", "roue", "banc", "aucun", "anneaux", "box", "chaise romaine", "mur", "élastique"}
 
 GROUPS = [
     "pectoraux", "dos", "epaules", "biceps", "triceps", "avant_bras", "trapezes", "lombaires",
@@ -338,6 +338,13 @@ NEW += [
     ("mollets_pdc", "Mollets debout au poids du corps", "mollets", [], "poids du corps", "pdc", False),
     ("jumping_jacks", "Jumping jacks", "corps_entier", ["mollets"], "poids du corps", "pdc", False),
     ("bear_crawl", "Marche de l'ours (bear crawl)", "corps_entier", ["epaules", "abdominaux"], "poids du corps", "gainage", False),
+    # Abducteurs (moyen fessier)
+    ("abduction_allonge_haltere", "Abduction allongé sur le côté avec haltère", "fessiers", [], "haltère", "iso_petit", True),
+    ("abduction_machine_debout", "Abduction de hanche debout à la machine", "fessiers", [], "machine", "iso_petit", True),
+    ("monster_walk", "Marche latérale avec élastique (monster walk)", "fessiers", [], "élastique", "pdc", False),
+    ("coquillage_elastique", "Coquillage avec élastique (clamshell)", "fessiers", [], "élastique", "pdc", True),
+    ("gainage_lateral_releve_jambe", "Gainage latéral avec relevé de jambe", "fessiers", ["obliques"], "poids du corps", "pdc", True),
+    ("abduction_allonge_pdc", "Abduction allongé sur le côté", "fessiers", [], "poids du corps", "pdc", True),
 ]
 
 # Poids du corps : pas de chauffe / travail / hypertrophie, mais des séries simples comme les finishers.
@@ -360,6 +367,8 @@ PDC_OVERRIDES = {
     "hollow_hold": ("temps", 3, 30, 45), "planche_laterale": ("temps", 3, 30, 30), "planche": ("temps", 3, 45, 45),
     "pompes_genoux": ("reps", 3, 15, 60), "pompes_lentes": ("reps", 3, 10, 75), "traction_scapulaire": ("reps", 3, 12, 60),
     "squat_saute": ("reps", 3, 15, 60), "fentes_sautees": ("reps", 3, 10, 60), "mollets_pdc": ("reps", 3, 25, 45),
+    "monster_walk": ("reps", 3, 20, 45), "coquillage_elastique": ("reps", 3, 15, 45),
+    "gainage_lateral_releve_jambe": ("reps", 3, 12, 45), "abduction_allonge_pdc": ("reps", 3, 20, 45),
 }
 
 
@@ -424,7 +433,7 @@ def main():
     exercises.sort(key=lambda e: order[e["groupe_musculaire"]])
 
     catalog = {
-        "version": "2.2",
+        "version": "2.3",
         "langue": "fr",
         "legende": {
             "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",

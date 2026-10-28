@@ -65,6 +65,7 @@ export const ZONES: Zone[] = [
       { id: 'quadriceps', label: 'Quadriceps', group: 'quadriceps' },
       { id: 'ischio_jambiers', label: 'Ischio-jambiers', group: 'ischio_jambiers' },
       { id: 'fessiers', label: 'Fessiers', group: 'fessiers' },
+      { id: 'abducteurs', label: 'Abducteurs', hint: 'Extérieur de hanche, moyen fessier', group: 'fessiers', match: /abduct|monster walk|coquillage|releve de jambe/ },
       { id: 'adducteurs', label: 'Adducteurs', group: 'adducteurs' },
       { id: 'mollets', label: 'Mollets', group: 'mollets' },
     ],
