@@ -18,7 +18,7 @@
   --error: #d47c72;
   --destructive: #6e2e2a;
   --fr-blue: #3a5a8c;
-  --fr-white: #e8e7de;
+  --fr-white: #e8e7de;     /* le drapeau reste bleu, blanc, rouge quel que soit le thème */
   --fr-red: #a54040;
   --radius: 10px;
   --safe-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
@@ -309,7 +309,6 @@ textarea.input { min-height: 90px; resize: vertical; }
   --khaki: #121212; --khaki-soft: rgba(0, 0, 0, 0.06);
   --success: #2b2b2b; --success-soft: rgba(0, 0, 0, 0.07);
   --warning: #8a6100; --error: #b3261e; --destructive: #b3261e;
-  --fr-blue: #121212; --fr-white: #c8c8c6; --fr-red: #121212;
   --on-primary: #ffffff;
   --radius: 12px;
   --font-body: 'Barlow', Roboto, system-ui, sans-serif;
@@ -326,7 +325,6 @@ textarea.input { min-height: 90px; resize: vertical; }
   --khaki: #d9d9d9; --khaki-soft: rgba(255, 255, 255, 0.06);
   --success: #e6e6e6; --success-soft: rgba(255, 255, 255, 0.08);
   --destructive: #3a1212;
-  --fr-blue: #f2f2f2; --fr-white: #3d3d3d; --fr-red: #f2f2f2;
   --radius: 14px;
   --font-body: 'Barlow', Roboto, system-ui, sans-serif;
   --font-head: 'Barlow Condensed', 'Barlow', Roboto, sans-serif;
@@ -334,3 +332,4 @@ textarea.input { min-height: 90px; resize: vertical; }
   --bg-image: none;
 }
 :root[data-theme='vantablack'] .card { border-color: #111111; }
+:root[data-theme='minimal'] .stripe { box-shadow: 0 0 0 1px var(--line); } /* blanc du drapeau visible sur fond clair */

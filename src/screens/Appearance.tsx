@@ -27,7 +27,7 @@ export function AppearanceScreen() {
             </button>
           ))}
         </div>
-        <div className="small faint">Le thème change les couleurs, les polices et le logo. L’icône de l’appli sur le téléphone reste celle d’origine.</div>
+        <div className="small faint">Le thème change les couleurs, les polices, le logo et l’icône de l’appli sur le téléphone (le lanceur peut mettre quelques secondes à l’afficher).</div>
       </div>
     </div>
   )
