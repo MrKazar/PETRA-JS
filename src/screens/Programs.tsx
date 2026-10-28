@@ -5,6 +5,7 @@ import { saveProgram, saveSettings } from '../logic/actions'
 import { weekLetter, type WeekLetter } from '../logic/planner'
 import { addDays, dateKey, uid, WEEKDAYS, weekday } from '../logic/util'
 import { groupLabel } from '../data/catalog'
+import { estimateDuration, formatEstimate } from '../logic/session'
 import { Empty, Header, SectionTitle, Sheet, Toggle } from '../ui/kit'
 import { IconChevron, IconDumbbell, IconHistory, IconPlus, IconTrophy } from '../ui/icons'
 
@@ -94,7 +95,7 @@ export function ProgramsScreen() {
                     <div className="grow">
                       <h3>{p.name}</h3>
                       <div className="small muted" style={{ marginTop: 2 }}>
-                        {p.exercises.length} exercice{p.exercises.length > 1 ? 's' : ''} · {p.exercises.reduce((n, e) => n + e.sets.length, 0)} séries
+                        {p.exercises.length} exercice{p.exercises.length > 1 ? 's' : ''} · {p.exercises.reduce((n, e) => n + e.sets.length, 0)} séries{p.exercises.length ? ` · ${formatEstimate(estimateDuration(p, s.defaultRestSec))}` : ''}
                       </div>
                       {groups.length > 0 && (
                         <div className="chips" style={{ marginTop: 8 }}>

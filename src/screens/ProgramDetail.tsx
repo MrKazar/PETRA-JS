@@ -6,6 +6,7 @@ import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
 import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
+import { estimateDuration, formatEstimate } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { overloadSuggestion } from '../logic/progress'
 import { OverloadCard } from '../ui/Overload'
@@ -78,6 +79,11 @@ export function ProgramDetailScreen({ id }: { id: string }) {
         <button className="btn primary block big" disabled={!program.exercises.length} onClick={start}>
           <IconPlay /> Lancer cette séance
         </button>
+        {program.exercises.length > 0 && (
+          <div className="small muted" style={{ textAlign: 'center', marginTop: -4 }}>
+            Durée estimée {formatEstimate(estimateDuration(program, data.settings.defaultRestSec))} · {program.exercises.reduce((n, e) => n + e.sets.length, 0)} séries
+          </div>
+        )}
         {program.exercises.length > 0 && (
           <button className="btn block" onClick={() => nav.push({ name: 'progress', id: program.id })}>
             <IconHistory /> Progression ({data.sessions.filter((s) => s.programId === program.id).length} séance{data.sessions.filter((s) => s.programId === program.id).length > 1 ? 's' : ''})

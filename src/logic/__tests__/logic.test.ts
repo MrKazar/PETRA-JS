@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { DEFAULT_FINISHERS as FINISHERS, drawFinisher, finishersOf, formatItem } from '../../data/finishers'
 import { CATALOG, buildCycle, cardioPlanOf, cardioSets, cardioSummary, exerciseFromCatalog, migrateCardio, migrateExercise, parseReps, pdcPlanOf, pdcSets, setLabels, withWorkLoad } from '../../data/catalog'
 import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
-import { addSet, completeSet, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
+import { addSet, completeSet, estimateDuration, formatEstimate, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
 import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, overloadIncrement, overloadSuggestion } from '../progress'
@@ -280,5 +280,19 @@ describe('recherche par muscle', () => {
     expect(kindOf(byName('Développé couché à la barre'))).toBe('libre')
     expect(kindOf(byName('Presse à cuisses'))).toBe('machine')
     expect(kindOf(byName('Tractions pronation'))).toBe('pdc')
+  })
+})
+
+describe('durée estimée', () => {
+  it('additionne séries et repos, sans repos après la dernière série', () => {
+    const p = { exercises: [
+      { id: 'a', name: 'A', group: 'pectoraux', restSec: 60, sets: [{ phase: 'travail', reps: 10, restSec: 60 }, { phase: 'travail', reps: 10, restSec: 60 }] },
+      { id: 'b', name: 'B', group: 'cardio', restSec: 0, sets: [{ phase: 'cardio', durationSec: 600 }] },
+    ] } as unknown as Program
+    // 40 + 60 + 40 + max(60, 90) + 600
+    expect(estimateDuration(p, 90)).toBe(830)
+    expect(formatEstimate(830)).toBe('~15 min')
+    expect(formatEstimate(4200)).toBe('~1 h 10')
+    expect(formatEstimate(3600)).toBe('~1 h')
   })
 })

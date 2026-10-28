@@ -163,3 +163,32 @@ export function personalRecords(sessions: Session[]): PersonalRecord[] {
   }
   return [...map.values()].sort((a, b) => a.name.localeCompare(b.name, 'fr'))
 }
+
+/** Secondes estimées par répétition, et minimum pour une série (installation, placement). */
+const SEC_PER_REP = 4
+const MIN_SET_SEC = 25
+
+/**
+ * Durée estimée d'un programme : temps de chaque série (durée prévue, ou répétitions × 4 s, doublé par côté)
+ * plus les repos prévus entre les séries. Entre deux exercices, au moins le repos par défaut, comme en séance.
+ */
+export function estimateDuration(program: Pick<Program, 'exercises'>, defaultRestSec: number): number {
+  let total = 0
+  program.exercises.forEach((ex, e) => {
+    ex.sets.forEach((set, i) => {
+      const work = set.durationSec ?? Math.max(MIN_SET_SEC, (set.toFailure ? 12 : set.reps ?? 10) * SEC_PER_REP)
+      total += work * (ex.parCote && set.durationSec == null ? 2 : 1)
+      const lastOfEx = i === ex.sets.length - 1
+      if (lastOfEx && e === program.exercises.length - 1) return
+      const rest = set.restSec ?? ex.restSec
+      total += lastOfEx ? Math.max(rest, defaultRestSec) : rest
+    })
+  })
+  return total
+}
+
+/** Durée arrondie aux 5 minutes : « ~45 min », « ~1 h 10 ». */
+export function formatEstimate(sec: number): string {
+  const min = Math.max(5, Math.round(sec / 300) * 5)
+  return min < 60 ? `~${min} min` : `~${Math.floor(min / 60)} h${min % 60 ? ` ${String(min % 60).padStart(2, '0')}` : ''}`
+}
