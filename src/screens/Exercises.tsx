@@ -16,7 +16,7 @@ export function ExercisesScreen() {
   return (
     <div className="screen">
       <div className="screen-inner">
-        <Header title="Exercices" sub={`${CATALOG.length} exercices · 1 chauffe, 2 travail, 1 hypertrophie`} />
+        <Header title="Exercices" sub={`${CATALOG.length} exercices · ${CATALOG.filter((e) => e.pdc).length} au poids du corps`} />
         <CatalogFilters {...search} />
         <div className="small muted">{search.results.length} résultat{search.results.length > 1 ? 's' : ''}</div>
         <div className="list">

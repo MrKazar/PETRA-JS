@@ -4,7 +4,7 @@ import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
 import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
-import { cardioPlanOf, cardioSets, cardioSummary, groupLabel, isCardio, setLabels, withWorkLoad, type CardioPlan } from '../data/catalog'
+import { cardioPlanOf, cardioSets, cardioSummary, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, pdcSummary, setLabels, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
 import { describeSet } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
@@ -176,6 +176,7 @@ const hasLoad = (e: ProgramExercise) => e.usesLoad !== false && e.sets.some((s) 
 
 function summarize(e: ProgramExercise): string {
   if (isCardio(e)) return cardioSummary(cardioPlanOf(e.sets))
+  if (isPdc(e)) return pdcSummary(pdcPlanOf(e.sets), e.parCote)
   const labels = setLabels(e.sets)
   return e.sets.map((s, i) => `${labels[i]} ${describeSet(s, e.parCote)}`).join(' · ')
 }
@@ -229,6 +230,8 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
         )}
         {isCardio(e) ? (
           <CardioFields plan={cardioPlanOf(e.sets)} onChange={(p) => onChange({ ...e, sets: cardioSets(p), restSec: p.mode === 'duree' ? 0 : p.repos_sec })} />
+        ) : isPdc(e) ? (
+          <PdcFields plan={pdcPlanOf(e.sets)} parCote={e.parCote} onChange={(p) => onChange({ ...e, sets: pdcSets(p), restSec: p.repos_sec })} />
         ) : (
           <>
         <div className="row between">
@@ -336,6 +339,49 @@ function CardioFields({ plan, onChange }: { plan: CardioPlan; onChange: (p: Card
         {plan.mode === 'duree'
           ? 'Un seul bloc, sans chauffe ni hypertrophie. Le temps reste modifiable pendant la séance.'
           : `Total ≈ ${formatDuration(plan.tours * ((plan.mode === 'intervalles' ? plan.effort_sec : 0) + plan.repos_sec))}${plan.mode === 'reps' ? ' de récupération' : ''}. Le minuteur de repos se lance entre deux tours.`}
+      </div>
+    </div>
+  )
+}
+
+const PDC_MODES: { mode: PdcPlan['mode']; label: string }[] = [
+  { mode: 'reps', label: 'Rép.' },
+  { mode: 'temps', label: 'Temps' },
+  { mode: 'echec', label: 'Échec' },
+]
+
+/** Poids du corps : comme un finisher, des séries de répétitions, de temps tenu ou jusqu'à l'échec. */
+function PdcFields({ plan, parCote, onChange }: { plan: PdcPlan; parCote: boolean; onChange: (p: PdcPlan) => void }) {
+  const row = (label: string, unit: string, value: number | undefined, set: (v: number) => void) => (
+    <div className="row between">
+      <span>{label}</span>
+      <span className="row" style={{ gap: 6 }}>
+        <NumInput value={value} width={64} onChange={(v) => set(Math.max(0, Math.round(v ?? 0)))} />
+        <span className="small faint" style={{ minWidth: 36 }}>{unit}</span>
+      </span>
+    </div>
+  )
+  return (
+    <div className="stack">
+      <div className="seg">
+        {PDC_MODES.map((m) => (
+          <button
+            key={m.mode}
+            className={plan.mode === m.mode ? 'on' : ''}
+            onClick={() => plan.mode !== m.mode && onChange({ ...plan, mode: m.mode, reps: m.mode === 'reps' ? plan.reps ?? 12 : undefined, duree_sec: m.mode === 'temps' ? plan.duree_sec ?? 30 : undefined })}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+      {row('Séries', '', plan.series, (v) => onChange({ ...plan, series: Math.max(1, v) }))}
+      {plan.mode === 'reps' && row('Répétitions', parCote ? '/ côté' : 'rép.', plan.reps, (v) => onChange({ ...plan, reps: v }))}
+      {plan.mode === 'temps' && row('Temps tenu', 's', plan.duree_sec, (v) => onChange({ ...plan, duree_sec: v }))}
+      {row('Repos entre séries', 's', plan.repos_sec, (v) => onChange({ ...plan, repos_sec: v }))}
+      <div className="small muted">
+        {plan.mode === 'echec'
+          ? 'Chaque série jusqu’à l’échec : tu notes en séance le nombre de répétitions faites.'
+          : 'Pas de chauffe ni d’hypertrophie au poids du corps. Tu peux ajouter un lest en séance.'}
       </div>
     </div>
   )

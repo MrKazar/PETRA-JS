@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { CATALOG, GROUPS, cardioSummary, exerciseFromCatalog, groupLabel, type CatalogExercise } from '../data/catalog'
+import { CATALOG, GROUPS, cardioSummary, exerciseFromCatalog, pdcSummary, groupLabel, type CatalogExercise } from '../data/catalog'
 import type { ProgramExercise } from '../data/types'
 import { uid } from '../logic/util'
 import { NumInput, Sheet } from './kit'
@@ -42,7 +42,7 @@ export function CatalogRow({ e, onClick }: { e: CatalogExercise; onClick: () => 
         <div style={{ fontWeight: 600 }}>{e.nom}</div>
         <div className="small muted">
           {exerciseSubtitle(e)}
-          {e.cardio ? ` · ${cardioSummary(e.cardio)}` : e.travail ? ` · travail ${e.travail.reps}` : ''}
+          {e.cardio ? ` · ${cardioSummary(e.cardio)}` : e.pdc ? ` · ${pdcSummary(e.pdc, e.par_cote)}` : e.travail ? ` · travail ${e.travail.reps}` : ''}
         </div>
       </div>
       <IconChevron style={{ width: 18, color: 'var(--faint)', flex: 'none' }} />
@@ -62,10 +62,11 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter' }: { ex: Catalog
         </div>
       )}
       <div className="card tight">
-        <div className="eyebrow" style={{ marginBottom: 8 }}>{ex.cardio ? (ex.cardio.mode === 'duree' ? 'Durée conseillée' : ex.cardio.mode === 'intervalles' ? 'Fractionné conseillé' : 'Répétitions conseillées') : 'Cycle préconisé'}</div>
+        <div className="eyebrow" style={{ marginBottom: 8 }}>{ex.cardio ? (ex.cardio.mode === 'duree' ? 'Durée conseillée' : ex.cardio.mode === 'intervalles' ? 'Fractionné conseillé' : 'Répétitions conseillées') : ex.pdc ? 'Séries conseillées' : 'Cycle préconisé'}</div>
         <Prescription ex={ex} workLoad={load} />
       </div>
       {ex.cardio && <div className="small muted">{ex.cardio.consigne} Intensité {ex.cardio.intensite}. Durée et tours se règlent ensuite dans le programme.</div>}
+      {ex.pdc && <div className="small muted">Au poids du corps : pas de chauffe ni d’hypertrophie. Séries, répétitions (ou temps, ou échec) et repos se règlent ensuite dans le programme.</div>}
       {ex.charge && !ex.cardio && (
         <div className="row">
           <div className="grow">

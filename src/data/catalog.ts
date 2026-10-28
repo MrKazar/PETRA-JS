@@ -23,6 +23,8 @@ export interface CatalogExercise {
   travail?: { reps: string; repos_sec: number }
   hypertrophie?: Phase
   cardio?: CatalogCardio
+  /** Poids du corps : séries simples comme les finishers. */
+  pdc?: PdcPlan
 }
 
 export type CardioPlan =
@@ -31,6 +33,15 @@ export type CardioPlan =
   | { mode: 'reps'; tours: number; reps: number; unite?: string; repos_sec: number }
 
 export type CatalogCardio = CardioPlan & { intensite: string; consigne: string }
+
+/** Séries au poids du corps : répétitions, temps tenu ou jusqu'à l'échec. */
+export interface PdcPlan {
+  mode: 'reps' | 'temps' | 'echec'
+  series: number
+  reps?: number
+  duree_sec?: number
+  repos_sec: number
+}
 
 export const CATALOG: CatalogExercise[] = (raw as unknown as { exercices: CatalogExercise[] }).exercices
 export const GROUPS: string[] = (raw as { groupes_musculaires: string[] }).groupes_musculaires
@@ -100,9 +111,37 @@ export function cardioSummary(p: CardioPlan): string {
 export const isCardio = (e: Pick<ProgramExercise, 'group' | 'sets'>) =>
   e.group === 'cardio' || e.sets.some((s) => s.phase === 'cardio' || s.phase === 'effort' || s.phase === 'retour')
 
-/** Cycle fixe : 1 chauffe, 2 travail, 1 hypertrophie (le cardio a son propre format). */
+export function pdcSets(p: PdcPlan): PlannedSet[] {
+  const set: PlannedSet =
+    p.mode === 'temps'
+      ? { phase: 'serie', durationSec: p.duree_sec ?? 30, restSec: p.repos_sec }
+      : p.mode === 'echec'
+        ? { phase: 'serie', toFailure: true, restSec: p.repos_sec }
+        : { phase: 'serie', reps: p.reps ?? 10, restSec: p.repos_sec }
+  return Array.from({ length: Math.max(1, p.series) }, () => ({ ...set }))
+}
+
+export function pdcPlanOf(sets: PlannedSet[]): PdcPlan {
+  const f = sets[0]
+  const repos_sec = f?.restSec ?? 60
+  const series = Math.max(1, sets.length)
+  if (f?.durationSec != null) return { mode: 'temps', series, duree_sec: f.durationSec, repos_sec }
+  if (f?.toFailure) return { mode: 'echec', series, repos_sec }
+  return { mode: 'reps', series, reps: f?.reps ?? 10, repos_sec }
+}
+
+/** « 4 × 8 rép. », « 3 × 45 s », « 3 × max » (+ repos). */
+export function pdcSummary(p: PdcPlan, parCote = false): string {
+  const what = p.mode === 'temps' ? formatDuration(p.duree_sec ?? 0) : p.mode === 'echec' ? 'max' : `${p.reps} rép.${parCote ? ' / côté' : ''}`
+  return `${p.series} × ${what}${p.repos_sec ? ` · repos ${formatDuration(p.repos_sec)}` : ''}`
+}
+
+export const isPdc = (e: Pick<ProgramExercise, 'sets'>) => e.sets.length > 0 && e.sets.every((s) => s.phase === 'serie')
+
+/** Cycle fixe : 1 chauffe, 2 travail, 1 hypertrophie (le cardio et le poids du corps ont leur propre format). */
 export function buildCycle(ex: CatalogExercise): PlannedSet[] {
   if (ex.cardio) return cardioSets(ex.cardio)
+  if (ex.pdc) return pdcSets(ex.pdc)
   const sets: PlannedSet[] = []
   if (ex.chauffe) sets.push({ phase: 'chauffe', ...parseReps(ex.chauffe.reps), pct: ex.chauffe.charge_pct, restSec: ex.chauffe.repos_sec })
   if (ex.travail) {
@@ -138,7 +177,7 @@ export function exerciseFromCatalog(ex: CatalogExercise, workLoad?: number): Pro
     group: ex.groupe_musculaire,
     parCote: ex.par_cote,
     usesLoad: ex.charge,
-    restSec: ex.travail?.repos_sec ?? (ex.cardio && ex.cardio.mode !== 'duree' ? ex.cardio.repos_sec : 0),
+    restSec: ex.travail?.repos_sec ?? ex.pdc?.repos_sec ?? (ex.cardio && ex.cardio.mode !== 'duree' ? ex.cardio.repos_sec : 0),
     sets: buildCycle(ex),
     note: ex.cardio ? `${ex.cardio.consigne} Intensité ${ex.cardio.intensite}.` : undefined,
   }
@@ -154,11 +193,22 @@ export function setLabels(sets: Pick<PlannedSet, 'phase' | 'durationSec'>[]): st
   for (const s of sets) total[s.phase] = (total[s.phase] ?? 0) + 1
   return sets.map((s) => {
     seen[s.phase] = (seen[s.phase] ?? 0) + 1
+    if (s.phase === 'serie') return total.serie > 1 ? `Série ${seen.serie}` : 'Série'
     if (s.phase === 'cardio') return total.cardio > 1 ? `Série ${seen.cardio}` : s.durationSec != null ? 'Durée' : 'Cardio'
     const label = { chauffe: 'Chauffe', travail: 'Travail', hypertrophie: 'Hypertrophie', effort: 'Effort', retour: 'Retour au calme' }[s.phase]
     return total[s.phase] > 1 ? `${label} ${seen[s.phase]}` : label
   })
 }
+
+/** Programmes d'avant la 1.3.1 : un exercice au poids du corps en chauffe / travail / hypertrophie passe en séries simples. */
+function migratePdc(e: ProgramExercise): ProgramExercise {
+  const plan = findCatalog(e.catalogId)?.pdc
+  if (!plan || isPdc(e) || e.usesLoad !== false) return e
+  return { ...e, sets: pdcSets(plan), restSec: plan.repos_sec }
+}
+
+/** Mises à jour du format des exercices enregistrés dans les programmes. */
+export const migrateExercise = (e: ProgramExercise) => migratePdc(migrateCardio(e))
 
 /** Programmes d'avant la 1.2.1 : un cardio en chauffe / effort / retour au calme devient le format du catalogue. */
 export function migrateCardio(e: ProgramExercise): ProgramExercise {

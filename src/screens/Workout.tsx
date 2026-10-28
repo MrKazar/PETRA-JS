@@ -231,6 +231,7 @@ function ExerciseCard({
               <div className="lbl ellipsis">{labels[i]}</div>
               <div className="hint ellipsis">
                 {set.pct != null && ex.usesLoad !== false ? `${set.pct} % · ` : ''}
+                {set.toFailure ? 'jusqu’à l’échec · ' : ''}
                 {rest ? `repos ${formatDuration(rest)}` : ''}
               </div>
             </div>
@@ -245,7 +246,7 @@ function ExerciseCard({
               </span>
             ) : (
               <span className="row" style={{ gap: 2 }}>
-                <NumInput value={set.reps} width={48} placeholder="—" onChange={(v) => onPatch(i, { reps: v })} />
+                <NumInput value={set.reps} width={48} placeholder={set.toFailure ? 'max' : '—'} onChange={(v) => onPatch(i, { reps: v })} />
                 <span className="unit">{set.unit ?? (ex.parCote ? '/côté' : 'rép')}</span>
               </span>
             )}

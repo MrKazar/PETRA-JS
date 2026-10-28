@@ -1,21 +1,21 @@
 import { buildCycle, groupLabel, loadFor, setLabels, type CatalogExercise } from '../data/catalog'
 import { formatDuration } from '../logic/util'
 
-const repsText = (reps?: number, durationSec?: number, parCote = false, unit?: string) =>
-  durationSec != null ? formatDuration(durationSec) : reps != null ? `${reps} ${unit ?? 'rép.'}${parCote ? ' / côté' : ''}` : '—'
+const repsText = (reps?: number, durationSec?: number, parCote = false, unit?: string, toFailure = false) =>
+  durationSec != null ? formatDuration(durationSec) : toFailure && reps == null ? 'jusqu’à l’échec' : reps != null ? `${reps} ${unit ?? 'rép.'}${parCote ? ' / côté' : ''}` : '—'
 
 /** Tableau du cycle préconisé : série, répétitions, charge (selon la charge de travail), repos. */
 export function Prescription({ ex, workLoad }: { ex: CatalogExercise; workLoad?: number }) {
   const sets = buildCycle(ex)
-  if (ex.cardio && sets.length > 1) {
-    // Tours identiques : une ligne suffit.
+  if ((ex.cardio || ex.pdc) && sets.length > 1) {
+    // Séries identiques : une ligne suffit.
     const s = sets[0]
     return (
       <div className="prescription">
-        <span className="k">{sets.length} tours</span>
-        <span>{repsText(s.reps, s.durationSec, false, s.unit)}</span>
+        <span className="k">{sets.length} {ex.cardio ? 'tours' : 'séries'}</span>
+        <span>{repsText(s.reps, s.durationSec, ex.par_cote, s.unit, s.toFailure)}</span>
         <span className="r" />
-        <span className="r">{s.restSec ? `récup ${formatDuration(s.restSec)}` : ''}</span>
+        <span className="r">{s.restSec ? `${ex.cardio ? 'récup' : 'repos'} ${formatDuration(s.restSec)}` : ''}</span>
       </div>
     )
   }

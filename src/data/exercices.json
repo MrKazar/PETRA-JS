@@ -1,8 +1,9 @@
 {
- "version": "2.1",
+ "version": "2.2",
  "langue": "fr",
  "legende": {
   "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
+  "pdc": "Exercices au poids du corps : séries simples (mode reps, temps ou echec), series × reps ou duree_sec, repos_sec entre deux séries.",
   "chauffe": "Série d'échauffement à charge légère (charge_pct % de la charge de travail), sans aller à l'échec.",
   "travail": "Deux séries à la charge de travail, orientées force, 1 à 2 répétitions en réserve.",
   "hypertrophie": "Dernière série plus légère (charge_pct % de la charge de travail) et plus longue, proche de l'échec.",
@@ -394,17 +395,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -419,17 +414,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -471,17 +460,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -497,17 +480,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -522,17 +499,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -548,17 +519,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 6
    }
   },
   {
@@ -573,17 +538,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -599,17 +558,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -881,6 +834,122 @@
    }
   },
   {
+   "id": "pompes_genoux",
+   "nom": "Pompes sur les genoux",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
+   "id": "pompes_lentes",
+   "nom": "Pompes lentes (3 s en descente)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 75,
+    "reps": 10
+   }
+  },
+  {
+   "id": "pompes_spiderman",
+   "nom": "Pompes spiderman",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "obliques"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
+   "id": "pompes_t",
+   "nom": "Pompes en T (rotation)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "epaules",
+    "obliques"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
+   "id": "pompes_typewriter",
+   "nom": "Pompes typewriter",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 120,
+    "reps": 6
+   }
+  },
+  {
+   "id": "pompes_une_main",
+   "nom": "Pompes à une main (assistées)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "triceps",
+    "abdominaux"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 120,
+    "reps": 5
+   }
+  },
+  {
    "id": "souleve_terre",
    "nom": "Soulevé de terre",
    "groupe_musculaire": "dos",
@@ -923,17 +992,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -948,17 +1011,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -1440,17 +1497,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -1465,17 +1516,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -1490,17 +1535,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -1694,6 +1733,141 @@
     "reps": "12-15",
     "repos_sec": 60,
     "charge_pct": 70
+   }
+  },
+  {
+   "id": "traction_large",
+   "nom": "Tractions prise large",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
+   }
+  },
+  {
+   "id": "traction_archer",
+   "nom": "Tractions archer",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 5
+   }
+  },
+  {
+   "id": "traction_negative",
+   "nom": "Tractions négatives (descente lente)",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 5
+   }
+  },
+  {
+   "id": "traction_scapulaire",
+   "nom": "Tractions scapulaires",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 12
+   }
+  },
+  {
+   "id": "muscle_up",
+   "nom": "Muscle-up",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "triceps",
+    "pectoraux"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 150,
+    "reps": 3
+   }
+  },
+  {
+   "id": "traction_commando",
+   "nom": "Tractions commando",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps",
+    "abdominaux"
+   ],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
+   }
+  },
+  {
+   "id": "rowing_anneaux",
+   "nom": "Rowing aux anneaux",
+   "groupe_musculaire": "dos",
+   "muscles_secondaires": [
+    "biceps"
+   ],
+   "equipement": "anneaux",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -2341,17 +2515,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -2366,17 +2534,31 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 150,
+    "reps": 5
+   }
+  },
+  {
+   "id": "pompes_hindoues",
+   "nom": "Pompes hindoues",
+   "groupe_musculaire": "epaules",
+   "muscles_secondaires": [
+    "pectoraux",
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -2954,17 +3136,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -3058,17 +3234,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -3083,17 +3253,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -3274,6 +3438,42 @@
    }
   },
   {
+   "id": "pompes_serrees",
+   "nom": "Pompes prise serrée",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [
+    "pectoraux"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
+   "id": "extension_triceps_sol",
+   "nom": "Extension triceps au sol (sphinx)",
+   "groupe_musculaire": "triceps",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
    "id": "curl_poignets",
    "nom": "Curl des poignets",
    "groupe_musculaire": "avant_bras",
@@ -3415,17 +3615,10 @@
    "type": "isolation",
    "charge": false,
    "profil": "gainage",
-   "chauffe": {
-    "reps": "20 s",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "45 s",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "60 s",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "echec",
+    "series": 3,
+    "repos_sec": 90
    }
   },
   {
@@ -3597,17 +3790,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -3650,17 +3837,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -3676,17 +3857,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -3702,17 +3877,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -4296,17 +4465,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4322,17 +4485,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4347,17 +4504,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 120,
+    "reps": 6
    }
   },
   {
@@ -4370,17 +4521,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4395,17 +4540,87 @@
    "type": "isolation",
    "charge": false,
    "profil": "gainage",
-   "chauffe": {
-    "reps": "20 s",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "45 s",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "60 s",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 60,
+    "duree_sec": 45
+   }
+  },
+  {
+   "id": "fentes_sautees",
+   "nom": "Fentes sautées",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 10
+   }
+  },
+  {
+   "id": "squat_bulgare_pdc",
+   "nom": "Squat bulgare au poids du corps",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "banc",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
+   "id": "step_up_pdc",
+   "nom": "Step-up sur banc",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "banc",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
+   "id": "shrimp_squat",
+   "nom": "Shrimp squat",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "fessiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc_force",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 120,
+    "reps": 6
    }
   },
   {
@@ -4604,17 +4819,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 150,
+    "reps": 5
    }
   },
   {
@@ -4629,17 +4838,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 8
    }
   },
   {
@@ -4654,17 +4857,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4808,17 +5005,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4860,17 +5051,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4883,17 +5068,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4959,17 +5138,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -4998,6 +5171,25 @@
     "reps": "6-8",
     "repos_sec": 120,
     "charge_pct": 70
+   }
+  },
+  {
+   "id": "pont_fessier_unilateral",
+   "nom": "Pont fessier unilatéral",
+   "groupe_musculaire": "fessiers",
+   "muscles_secondaires": [
+    "ischio_jambiers"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
    }
   },
   {
@@ -5090,17 +5282,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "gainage",
-   "chauffe": {
-    "reps": "20 s",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "45 s",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "60 s",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 45,
+    "duree_sec": 20
    }
   },
   {
@@ -5288,17 +5474,28 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 15
+   }
+  },
+  {
+   "id": "mollets_pdc",
+   "nom": "Mollets debout au poids du corps",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 25
    }
   },
   {
@@ -5311,17 +5508,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5386,17 +5577,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5409,17 +5594,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5434,17 +5613,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5513,17 +5686,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "gainage",
-   "chauffe": {
-    "reps": "20 s",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "45 s",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "60 s",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 45,
+    "duree_sec": 45
    }
   },
   {
@@ -5536,17 +5703,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5561,17 +5722,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5584,17 +5739,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5607,17 +5756,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5632,17 +5775,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5657,17 +5794,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 30,
+    "duree_sec": 30
    }
   },
   {
@@ -5680,17 +5811,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5705,17 +5830,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 90,
+    "reps": 8
    }
   },
   {
@@ -5730,17 +5849,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 120,
+    "reps": 5
    }
   },
   {
@@ -5778,17 +5891,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "gainage",
-   "chauffe": {
-    "reps": "20 s",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "45 s",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "60 s",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 45,
+    "duree_sec": 30
    }
   },
   {
@@ -5803,17 +5910,151 @@
    "type": "isolation",
    "charge": false,
    "profil": "gainage",
-   "chauffe": {
-    "reps": "20 s",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "45 s",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "60 s",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 45,
+    "duree_sec": 45
+   }
+  },
+  {
+   "id": "releve_genoux_suspendu",
+   "nom": "Relevé de genoux suspendu",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "barre de traction",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
+   "id": "battements_jambes",
+   "nom": "Battements de jambes (flutter kicks)",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 30,
+    "duree_sec": 30
+   }
+  },
+  {
+   "id": "ciseaux",
+   "nom": "Ciseaux",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 30,
+    "duree_sec": 30
+   }
+  },
+  {
+   "id": "toucher_pieds",
+   "nom": "Touchers de pieds jambes tendues",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
+   "id": "jackknife",
+   "nom": "Jackknife",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
+   "id": "planche_dynamique",
+   "nom": "Gainage dynamique (planche haute / basse)",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
+   "id": "l_sit",
+   "nom": "L-sit",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [
+    "triceps"
+   ],
+   "equipement": "barres parallèles",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "pdc": {
+    "mode": "temps",
+    "series": 4,
+    "repos_sec": 60,
+    "duree_sec": 15
+   }
+  },
+  {
+   "id": "planche_rkc",
+   "nom": "Planche RKC (gainage contracté)",
+   "groupe_musculaire": "abdominaux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 45,
+    "duree_sec": 20
    }
   },
   {
@@ -5828,17 +6069,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "gainage",
-   "chauffe": {
-    "reps": "20 s",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "45 s",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "60 s",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 30,
+    "duree_sec": 30
    }
   },
   {
@@ -5851,17 +6086,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5876,17 +6105,11 @@
    "type": "isolation",
    "charge": false,
    "profil": "abdos",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 30
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 60
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 45
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
@@ -5996,6 +6219,59 @@
    }
   },
   {
+   "id": "russian_twist_pdc",
+   "nom": "Russian twist au poids du corps",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [
+    "abdominaux"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
+   "id": "toucher_talons",
+   "nom": "Touchers de talons",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
+   "id": "releve_hanche_lateral",
+   "nom": "Gainage latéral avec relevé de hanche",
+   "groupe_musculaire": "obliques",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": false,
+   "profil": "abdos",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
+   }
+  },
+  {
    "id": "burpees",
    "nom": "Burpees",
    "groupe_musculaire": "corps_entier",
@@ -6008,17 +6284,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc",
-   "chauffe": {
-    "reps": "10",
-    "repos_sec": 45
-   },
-   "travail": {
-    "reps": "12-15",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 60,
+    "reps": 12
    }
   },
   {
@@ -6091,17 +6361,11 @@
    "type": "polyarticulaire",
    "charge": false,
    "profil": "pdc_force",
-   "chauffe": {
-    "reps": "5",
-    "repos_sec": 60
-   },
-   "travail": {
-    "reps": "6-10",
-    "repos_sec": 120
-   },
-   "hypertrophie": {
-    "reps": "10-15",
-    "repos_sec": 90
+   "pdc": {
+    "mode": "reps",
+    "series": 4,
+    "repos_sec": 90,
+    "reps": 6
    }
   },
   {
@@ -6186,6 +6450,45 @@
     "reps": "60 s",
     "repos_sec": 90,
     "charge_pct": 75
+   }
+  },
+  {
+   "id": "jumping_jacks",
+   "nom": "Jumping jacks",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "mollets"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "polyarticulaire",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 30,
+    "reps": 40
+   }
+  },
+  {
+   "id": "bear_crawl",
+   "nom": "Marche de l'ours (bear crawl)",
+   "groupe_musculaire": "corps_entier",
+   "muscles_secondaires": [
+    "epaules",
+    "abdominaux"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "gainage",
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 45,
+    "duree_sec": 30
    }
   },
   {

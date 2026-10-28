@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { DEFAULT_FINISHERS as FINISHERS, drawFinisher, finishersOf, formatItem } from '../../data/finishers'
-import { CATALOG, buildCycle, cardioPlanOf, cardioSets, cardioSummary, exerciseFromCatalog, migrateCardio, parseReps, setLabels, withWorkLoad } from '../../data/catalog'
+import { CATALOG, buildCycle, cardioPlanOf, cardioSets, cardioSummary, exerciseFromCatalog, migrateCardio, migrateExercise, parseReps, pdcPlanOf, pdcSets, setLabels, withWorkLoad } from '../../data/catalog'
 import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
 import { addSet, completeSet, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
 import { addDays, weekday } from '../util'
@@ -64,7 +64,7 @@ describe('catalogue', () => {
     expect(parseReps('max')).toEqual({})
   })
   it('suit le cycle 1 chauffe, 2 travail, 1 hypertrophie pour toute la musculation', () => {
-    for (const e of CATALOG.filter((x) => !x.cardio)) {
+    for (const e of CATALOG.filter((x) => !x.cardio && !x.pdc)) {
       expect(buildCycle(e).map((s) => s.phase)).toEqual(['chauffe', 'travail', 'travail', 'hypertrophie'])
       expect(buildCycle(e).every((s) => (s.restSec ?? 0) > 0)).toBe(true)
     }
@@ -81,6 +81,26 @@ describe('catalogue', () => {
   it('ne met pas de charge sur le poids du corps', () => {
     const pushups = CATALOG.find((e) => e.id === 'pompes')!
     expect(exerciseFromCatalog(pushups, 50).sets.every((s) => s.weight == null)).toBe(true)
+  })
+  it('fait le poids du corps en séries simples, comme les finishers', () => {
+    const pdc = CATALOG.filter((e) => e.pdc)
+    expect(pdc.length).toBeGreaterThan(80)
+    for (const e of pdc) expect(buildCycle(e).every((s) => s.phase === 'serie')).toBe(true)
+    const pull = exerciseFromCatalog(CATALOG.find((e) => e.id === 'traction_pronation')!)
+    expect(pull.sets).toHaveLength(4)
+    expect(pull.sets[0]).toMatchObject({ reps: 8, restSec: 120 })
+    expect(setLabels(pull.sets)).toEqual(['Série 1', 'Série 2', 'Série 3', 'Série 4'])
+    expect(buildCycle(CATALOG.find((e) => e.id === 'planche')!)[0]).toMatchObject({ durationSec: 45 })
+    expect(buildCycle(CATALOG.find((e) => e.id === 'suspension_barre')!)[0]).toMatchObject({ toFailure: true })
+    for (const p of [{ mode: 'reps', series: 4, reps: 12, repos_sec: 60 }, { mode: 'temps', series: 3, duree_sec: 40, repos_sec: 30 }, { mode: 'echec', series: 3, repos_sec: 90 }] as const) {
+      expect(pdcPlanOf(pdcSets(p))).toEqual(p)
+    }
+  })
+  it('convertit les anciens exercices au poids du corps', () => {
+    const old = { id: 'x', catalogId: 'pompes', name: 'Pompes', group: 'pectoraux', parCote: false, usesLoad: false, restSec: 75, sets: [
+      { phase: 'chauffe' as const, reps: 10 }, { phase: 'travail' as const, reps: 15 }, { phase: 'travail' as const, reps: 15 }, { phase: 'hypertrophie' as const, reps: 20 },
+    ] }
+    expect(migrateExercise(old).sets.every((s) => s.phase === 'serie')).toBe(true)
   })
   it('ne met jamais de chauffe / travail / hypertrophie sur le cardio', () => {
     for (const e of CATALOG.filter((x) => x.cardio)) expect(buildCycle(e).every((s) => s.phase === 'cardio')).toBe(true)

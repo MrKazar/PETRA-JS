@@ -297,6 +297,82 @@ def cardio(id_):
 
 
 
+# Exercices au poids du corps ajoutés en 1.3.1 (même format que NEW).
+NEW += [
+    # Dos
+    ("traction_large", "Tractions prise large", "dos", ["biceps"], "barre de traction", "pdc_force", False),
+    ("traction_archer", "Tractions archer", "dos", ["biceps"], "barre de traction", "pdc_force", False),
+    ("traction_negative", "Tractions négatives (descente lente)", "dos", ["biceps"], "barre de traction", "pdc_force", False),
+    ("traction_scapulaire", "Tractions scapulaires", "dos", ["trapezes"], "barre de traction", "pdc", False),
+    ("muscle_up", "Muscle-up", "dos", ["triceps", "pectoraux"], "barre de traction", "pdc_force", False),
+    ("traction_commando", "Tractions commando", "dos", ["biceps", "abdominaux"], "barre de traction", "pdc_force", False),
+    ("rowing_anneaux", "Rowing aux anneaux", "dos", ["biceps"], "anneaux", "pdc", False),
+    # Pectoraux / épaules / triceps
+    ("pompes_genoux", "Pompes sur les genoux", "pectoraux", ["triceps"], "poids du corps", "pdc", False),
+    ("pompes_lentes", "Pompes lentes (3 s en descente)", "pectoraux", ["triceps"], "poids du corps", "pdc", False),
+    ("pompes_spiderman", "Pompes spiderman", "pectoraux", ["obliques"], "poids du corps", "pdc", False),
+    ("pompes_t", "Pompes en T (rotation)", "pectoraux", ["epaules", "obliques"], "poids du corps", "pdc", False),
+    ("pompes_typewriter", "Pompes typewriter", "pectoraux", ["triceps"], "poids du corps", "pdc_force", False),
+    ("pompes_une_main", "Pompes à une main (assistées)", "pectoraux", ["triceps", "abdominaux"], "poids du corps", "pdc_force", True),
+    ("pompes_hindoues", "Pompes hindoues", "epaules", ["pectoraux", "triceps"], "poids du corps", "pdc", False),
+    ("pompes_serrees", "Pompes prise serrée", "triceps", ["pectoraux"], "poids du corps", "pdc", False),
+    ("extension_triceps_sol", "Extension triceps au sol (sphinx)", "triceps", [], "poids du corps", "pdc", False),
+    # Abdos / obliques
+    ("releve_genoux_suspendu", "Relevé de genoux suspendu", "abdominaux", [], "barre de traction", "abdos", False),
+    ("russian_twist_pdc", "Russian twist au poids du corps", "obliques", ["abdominaux"], "poids du corps", "abdos", False),
+    ("battements_jambes", "Battements de jambes (flutter kicks)", "abdominaux", [], "poids du corps", "abdos", False),
+    ("ciseaux", "Ciseaux", "abdominaux", [], "poids du corps", "abdos", False),
+    ("toucher_pieds", "Touchers de pieds jambes tendues", "abdominaux", [], "poids du corps", "abdos", False),
+    ("jackknife", "Jackknife", "abdominaux", [], "poids du corps", "abdos", False),
+    ("toucher_talons", "Touchers de talons", "obliques", [], "poids du corps", "abdos", False),
+    ("planche_dynamique", "Gainage dynamique (planche haute / basse)", "abdominaux", ["triceps"], "poids du corps", "abdos", False),
+    ("releve_hanche_lateral", "Gainage latéral avec relevé de hanche", "obliques", [], "poids du corps", "abdos", True),
+    ("l_sit", "L-sit", "abdominaux", ["triceps"], "barres parallèles", "gainage", False),
+    ("planche_rkc", "Planche RKC (gainage contracté)", "abdominaux", [], "poids du corps", "gainage", False),
+    # Jambes / corps entier
+    ("fentes_sautees", "Fentes sautées", "quadriceps", ["fessiers"], "poids du corps", "pdc", True),
+    ("squat_bulgare_pdc", "Squat bulgare au poids du corps", "quadriceps", ["fessiers"], "banc", "pdc", True),
+    ("step_up_pdc", "Step-up sur banc", "quadriceps", ["fessiers"], "banc", "pdc", True),
+    ("pont_fessier_unilateral", "Pont fessier unilatéral", "fessiers", ["ischio_jambiers"], "poids du corps", "pdc", True),
+    ("shrimp_squat", "Shrimp squat", "quadriceps", ["fessiers"], "poids du corps", "pdc_force", True),
+    ("mollets_pdc", "Mollets debout au poids du corps", "mollets", [], "poids du corps", "pdc", False),
+    ("jumping_jacks", "Jumping jacks", "corps_entier", ["mollets"], "poids du corps", "pdc", False),
+    ("bear_crawl", "Marche de l'ours (bear crawl)", "corps_entier", ["epaules", "abdominaux"], "poids du corps", "gainage", False),
+]
+
+# Poids du corps : pas de chauffe / travail / hypertrophie, mais des séries simples comme les finishers.
+#   (mode, séries, répétitions ou secondes, repos en s) ; mode = reps | temps | echec
+PDC_PROFILES = {
+    "pdc": ("reps", 3, 15, 60),
+    "pdc_force": ("reps", 4, 8, 120),
+    "abdos": ("reps", 3, 20, 45),
+    "gainage": ("temps", 3, 45, 45),
+}
+PDC_OVERRIDES = {
+    "pompes_archer": ("reps", 4, 6, 120), "pompes_une_main": ("reps", 3, 5, 120), "pompes_typewriter": ("reps", 3, 6, 120),
+    "pompes_poirier": ("reps", 4, 5, 150), "muscle_up": ("reps", 4, 3, 150), "traction_negative": ("reps", 4, 5, 120),
+    "traction_archer": ("reps", 4, 5, 120), "pistol_squat": ("reps", 3, 6, 120), "shrimp_squat": ("reps", 3, 6, 120),
+    "nordic_curl": ("reps", 4, 5, 150), "dragon_flag": ("reps", 4, 5, 120), "toes_to_bar": ("reps", 4, 8, 90),
+    "box_jump": ("reps", 4, 6, 90), "burpees": ("reps", 4, 12, 60), "jumping_jacks": ("reps", 3, 40, 30),
+    "mountain_climbers": ("temps", 3, 30, 30), "battements_jambes": ("temps", 3, 30, 30), "ciseaux": ("temps", 3, 30, 30),
+    "suspension_barre": ("echec", 3, None, 90), "chaise_murale": ("temps", 3, 45, 60), "planche_copenhague": ("temps", 3, 20, 45),
+    "l_sit": ("temps", 4, 15, 60), "planche_rkc": ("temps", 3, 20, 45), "bear_crawl": ("temps", 3, 30, 45),
+    "hollow_hold": ("temps", 3, 30, 45), "planche_laterale": ("temps", 3, 30, 30), "planche": ("temps", 3, 45, 45),
+    "pompes_genoux": ("reps", 3, 15, 60), "pompes_lentes": ("reps", 3, 10, 75), "traction_scapulaire": ("reps", 3, 12, 60),
+    "squat_saute": ("reps", 3, 15, 60), "fentes_sautees": ("reps", 3, 10, 60), "mollets_pdc": ("reps", 3, 25, 45),
+}
+
+
+def pdc(id_, profile):
+    mode, series, value, rest = PDC_OVERRIDES.get(id_, PDC_PROFILES[profile])
+    out = {"mode": mode, "series": series, "repos_sec": rest}
+    if mode == "reps":
+        out["reps"] = value
+    elif mode == "temps":
+        out["duree_sec"] = value
+    return out
+
+
 def strength(e, profile):
     warm, work, hyp, kind = PROFILES[profile]
     out = dict(e)
@@ -309,6 +385,10 @@ def strength(e, profile):
         if pct is not None and out["charge"]:
             p["charge_pct"] = pct
         return p
+
+    if profile in PDC_PROFILES and not out["charge"]:
+        out["pdc"] = pdc(e["id"], profile)
+        return out
 
     out["chauffe"] = phase(*warm)
     out["travail"] = {"reps": work[0], "repos_sec": work[1]}
@@ -344,10 +424,11 @@ def main():
     exercises.sort(key=lambda e: order[e["groupe_musculaire"]])
 
     catalog = {
-        "version": "2.1",
+        "version": "2.2",
         "langue": "fr",
         "legende": {
             "cycle": "Chaque exercice de musculation se fait en 4 séries : 1 de chauffe, 2 de travail, 1 d'hypertrophie.",
+            "pdc": "Exercices au poids du corps : séries simples (mode reps, temps ou echec), series × reps ou duree_sec, repos_sec entre deux séries.",
             "chauffe": "Série d'échauffement à charge légère (charge_pct % de la charge de travail), sans aller à l'échec.",
             "travail": "Deux séries à la charge de travail, orientées force, 1 à 2 répétitions en réserve.",
             "hypertrophie": "Dernière série plus légère (charge_pct % de la charge de travail) et plus longue, proche de l'échec.",
