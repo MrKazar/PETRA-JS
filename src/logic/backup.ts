@@ -1,6 +1,7 @@
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
 import { getData, normalize, setData, update } from '../data/store'
 import type { AppData } from '../data/types'
+import { writeCloudFile } from './cloud'
 
 /** Dossier des sauvegardes : Documents/PETRA sur le téléphone (il reste après une désinstallation). */
 export const BACKUP_DIR = 'PETRA'
@@ -27,20 +28,40 @@ export function parseBackup(text: string): AppData {
   return normalize(parsed)
 }
 
-/** Écrit une copie des données dans Documents/PETRA, puis supprime les plus anciennes. Renvoie le nom du fichier. */
-export async function writeBackup(): Promise<string | undefined> {
+/**
+ * Sauvegarde : une copie dans Documents/PETRA (les plus anciennes sont supprimées), et si un fichier cloud
+ * est choisi, son contenu est remplacé. Renvoie ce qui a réussi.
+ */
+export async function writeBackup(): Promise<{ local: boolean; cloud?: boolean }> {
   const at = new Date()
+  const json = JSON.stringify({ ...getData(), backupAt: at.getTime() })
+  const cloudFile = getData().settings.cloudBackup
+  let cloud: boolean | undefined
+  if (cloudFile) {
+    try {
+      await writeCloudFile(cloudFile.uri, json)
+      cloud = true
+    } catch {
+      cloud = false
+    }
+    update((d) => (d.settings.cloudBackup?.uri === cloudFile.uri ? { ...d, settings: { ...d.settings, cloudBackup: { ...cloudFile, ...(cloud ? { lastAt: at.getTime(), failed: false } : { failed: true }) } } } : d))
+  }
+  const local = await writeLocal(at, json)
+  return { local, cloud }
+}
+
+async function writeLocal(at: Date, json: string): Promise<boolean> {
   const name = backupName(at)
   try {
     await Filesystem.writeFile({
       path: `${BACKUP_DIR}/${name}`,
-      data: JSON.stringify({ ...getData(), backupAt: at.getTime() }),
+      data: json,
       directory: Directory.Documents,
       encoding: Encoding.UTF8,
       recursive: true,
     })
   } catch {
-    return undefined
+    return false
   }
   update((d) => ({ ...d, settings: { ...d.settings, lastBackupAt: at.getTime() } }))
   try {
@@ -52,11 +73,11 @@ export async function writeBackup(): Promise<string | undefined> {
   } catch {
     /* lecture du dossier impossible : la copie est quand même faite */
   }
-  return name
+  return true
 }
 
-/** Remplace toutes les données par une sauvegarde, en gardant la date de la dernière copie. */
+/** Remplace toutes les données par une sauvegarde, en gardant l'état des sauvegardes de ce téléphone. */
 export function restoreBackup(data: AppData) {
-  const last = getData().settings.lastBackupAt
-  setData({ ...data, settings: { ...data.settings, lastBackupAt: last } })
+  const { lastBackupAt, cloudBackup } = getData().settings
+  setData({ ...data, settings: { ...data.settings, lastBackupAt, cloudBackup } })
 }

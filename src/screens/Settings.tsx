@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { emptyData, getData, setData, update, useData } from '../data/store'
 import { BACKUP_KEEP, parseBackup, restoreBackup, writeBackup } from '../logic/backup'
+import { cloudAvailable, pickCloudFile, releaseCloudFile } from '../logic/cloud'
 import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
@@ -56,10 +57,26 @@ export function SettingsScreen() {
   }
   const backupNow = async () => {
     setSaving(true)
-    const name = await writeBackup()
+    const r = await writeBackup()
     setSaving(false)
-    toast(name ? 'Sauvegarde enregistrée dans Documents/PETRA' : 'Sauvegarde impossible sur ce téléphone')
+    const provider = getData().settings.cloudBackup?.provider ?? 'le cloud'
+    if (r.cloud === false) toast(`Envoi vers ${provider} impossible : choisis à nouveau le fichier`)
+    else if (r.cloud) toast(`Sauvegarde enregistrée sur le téléphone et sur ${provider}`)
+    else toast(r.local ? 'Sauvegarde enregistrée dans Documents/PETRA' : 'Sauvegarde impossible sur ce téléphone')
   }
+  const chooseCloud = async () => {
+    const f = await pickCloudFile()
+    if (!f) return
+    if (s.cloudBackup && s.cloudBackup.uri !== f.uri) void releaseCloudFile(s.cloudBackup.uri)
+    saveSettings({ cloudBackup: { uri: f.uri, name: f.name, provider: f.provider } })
+    await backupNow()
+  }
+  const removeCloud = () => {
+    if (!s.cloudBackup || !confirmAction(`Arrêter l’envoi vers ${s.cloudBackup.provider} ? Le fichier déjà envoyé reste dans ton cloud.`)) return
+    void releaseCloudFile(s.cloudBackup.uri)
+    saveSettings({ cloudBackup: undefined })
+  }
+  const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
   return (
     <div className="screen">
@@ -141,7 +158,7 @@ export function SettingsScreen() {
               Une copie après chaque séance terminée, dans Documents/PETRA sur le téléphone (les {BACKUP_KEEP} dernières sont gardées).
             </div>
             <div className="small" style={{ marginTop: 6, color: s.lastBackupAt ? 'var(--khaki)' : 'var(--faint)' }}>
-              {s.lastBackupAt ? `Dernière sauvegarde : ${new Date(s.lastBackupAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}` : 'Aucune sauvegarde pour l’instant'}
+              {s.lastBackupAt ? `Dernière sauvegarde : ${when(s.lastBackupAt)}` : 'Aucune sauvegarde pour l’instant'}
             </div>
           </div>
           <div className="row">
@@ -149,6 +166,30 @@ export function SettingsScreen() {
             <button className="btn grow" onClick={() => fileInput.current?.click()}>Restaurer un fichier</button>
             <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => { pickFile(e.target.files?.[0]); e.target.value = '' }} />
           </div>
+          {cloudAvailable() && (
+            <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12 }}>
+              <div style={{ fontWeight: 600 }}>Sauvegarde dans le cloud</div>
+              {s.cloudBackup ? (
+                <>
+                  <div className="small muted">
+                    {s.cloudBackup.provider} · {s.cloudBackup.name}, remplacé après chaque séance.
+                  </div>
+                  <div className="small" style={{ marginTop: 6, color: s.cloudBackup.failed ? 'var(--error)' : 'var(--khaki)' }}>
+                    {s.cloudBackup.failed ? 'Le dernier envoi a échoué : choisis à nouveau le fichier.' : s.cloudBackup.lastAt ? `Dernier envoi : ${when(s.cloudBackup.lastAt)}` : 'Pas encore envoyé'}
+                  </div>
+                  <div className="row" style={{ marginTop: 8 }}>
+                    <button className="btn sm grow" onClick={chooseCloud}>Changer de fichier</button>
+                    <button className="btn sm ghost grow" onClick={removeCloud}>Arrêter</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="small muted">Choisis Google Drive ou OneDrive dans la fenêtre qui s’ouvre et enregistre le fichier : PETRA le mettra à jour après chaque séance. Sur un nouveau téléphone, « Restaurer un fichier » et choisis-le dans ton cloud.</div>
+                  <button className="btn block" style={{ marginTop: 8 }} onClick={chooseCloud}>Choisir un fichier dans le cloud</button>
+                </>
+              )}
+            </div>
+          )}
           <div className="row">
             <button className="btn ghost sm grow" onClick={() => setBackup('export')}>Copier en texte</button>
             <button className="btn ghost sm grow" onClick={() => setBackup('import')}>Coller un texte</button>

@@ -122,6 +122,8 @@ export interface Settings {
   theme: ThemeId
   /** Date de la dernière sauvegarde automatique (fichier dans Documents/PETRA). */
   lastBackupAt?: number
+  /** Fichier de sauvegarde dans le cloud (Drive, OneDrive…), remplacé après chaque séance. */
+  cloudBackup?: { uri: string; name: string; provider: string; lastAt?: number; failed?: boolean }
 }
 
 export interface AppData {
