@@ -11,6 +11,8 @@ export interface Theme {
   /** Fond, carte, action, accent : pour l'aperçu. */
   swatches: [string, string, string, string]
   statusBar: string
+  /** Thème caché : n'apparaît et ne s'applique qu'avec ce nom d'utilisateur. */
+  unlockName?: string
 }
 
 export const THEMES: Theme[] = [
@@ -76,12 +78,25 @@ export const THEMES: Theme[] = [
     label: 'Néon',
     description: 'Violet et magenta lumineux sur nuit, logo et titres en pixel art.',
     emblem: 'emblem-neon.webp',
+    unlockName: 'NéoDyme',
     swatches: ['#0a0414', '#140a24', '#8a2be2', '#ff46dc'],
     statusBar: '#0A0414',
   },
 ]
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]
+
+/** Nom comparé sans accents, majuscules ni espaces autour : « neodyme » débloque « NéoDyme ». */
+const simplify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
+
+/** Thèmes proposés pour ce nom d'utilisateur (les thèmes cachés seulement avec le bon nom). */
+export const themesFor = (name: string | undefined) => THEMES.filter((t) => !t.unlockName || simplify(name ?? '') === simplify(t.unlockName))
+
+/** Thème réellement appliqué : un thème caché dont le nom ne correspond plus revient au thème militaire. */
+export function activeTheme(s: { theme?: ThemeId; name?: string }) {
+  const t = themeOf(s.theme)
+  return themesFor(s.name).includes(t) ? t : THEMES[0]
+}
 
 /** Applique le thème au document (variables CSS via data-theme, couleur de la barre d'état). */
 export function applyTheme(id: ThemeId | undefined) {

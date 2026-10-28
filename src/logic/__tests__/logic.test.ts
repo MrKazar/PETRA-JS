@@ -6,7 +6,7 @@ import { addSet, completeSet, extendRest, finalize, nextPending, personalRecords
 import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, overloadIncrement, overloadSuggestion } from '../progress'
-import { THEMES, themeOf } from '../../ui/theme'
+import { THEMES, activeTheme, themeOf, themesFor } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS } from '../../data/store'
@@ -225,6 +225,10 @@ describe('thèmes', () => {
     expect(THEMES.map((t) => t.id)).toEqual(['militaire', 'police', 'gendarmerie', 'forces', 'minimal', 'vantablack', 'pompier', 'neon'])
     expect(themeOf(undefined).id).toBe('militaire')
     expect(themeOf('forces').emblem).toBe('emblem-forces.webp')
+    expect(themesFor('').some((t) => t.id === 'neon')).toBe(false)
+    expect(themesFor(' neodyme ').some((t) => t.id === 'neon')).toBe(true)
+    expect(activeTheme({ theme: 'neon', name: 'NéoDyme' }).id).toBe('neon')
+    expect(activeTheme({ theme: 'neon', name: 'Kazar' }).id).toBe('militaire')
   })
 })
 

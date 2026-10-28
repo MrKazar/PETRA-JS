@@ -1,13 +1,13 @@
 import { useData } from '../data/store'
 import { useNav } from '../nav'
 import { saveSettings } from '../logic/actions'
-import { THEMES, themeOf } from '../ui/theme'
+import { activeTheme, themesFor } from '../ui/theme'
 import { LogoFull, TopBar, imgUrl } from '../ui/kit'
 
 export function AppearanceScreen() {
   const data = useData()
   const nav = useNav()
-  const current = themeOf(data.settings.theme)
+  const current = activeTheme(data.settings)
   return (
     <div className="screen">
       <div className="screen-inner">
@@ -17,7 +17,7 @@ export function AppearanceScreen() {
           <div className="small muted" style={{ textAlign: 'center', marginTop: 10 }}>{current.description}</div>
         </div>
         <div className="theme-grid">
-          {THEMES.map((t) => (
+          {themesFor(data.settings.name).map((t) => (
             <button key={t.id} className={`theme-card${current.id === t.id ? ' on' : ''}`} onClick={() => saveSettings({ theme: t.id })}>
               <span className="emb" style={{ background: t.swatches[0] }}>
                 <img src={imgUrl(t.emblem)} alt="" />

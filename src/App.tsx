@@ -20,7 +20,7 @@ import { ProgressScreen } from './screens/Progress'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
-import { applyTheme } from './ui/theme'
+import { activeTheme, applyTheme } from './ui/theme'
 import { syncAppIcon } from './logic/appIcon'
 
 const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
@@ -64,10 +64,11 @@ export default function App() {
     if (Capacitor.isNativePlatform()) checkOnLaunch()
   }, [])
 
+  const theme = activeTheme(data.settings).id
   useEffect(() => {
-    applyTheme(data.settings.theme)
-    syncAppIcon(data.settings.theme)
-  }, [data.settings.theme])
+    applyTheme(theme)
+    syncAppIcon(theme)
+  }, [theme])
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return

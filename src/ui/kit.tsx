@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { IconBack } from './icons'
 import { useData } from '../data/store'
-import { themeOf } from './theme'
+import { activeTheme } from './theme'
 
 export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: () => void; right?: ReactNode }) {
   return (
@@ -21,7 +21,7 @@ const IMG = `${import.meta.env.BASE_URL}img/`
 
 export const imgUrl = (file: string) => `${IMG}${file}`
 
-const useTheme = () => themeOf(useData().settings.theme)
+const useTheme = () => activeTheme(useData().settings)
 
 export const Emblem = ({ size = 40 }: { size?: number }) => <img className="emblem" src={imgUrl(useTheme().emblem)} width={size} height={size} alt="" />
 
