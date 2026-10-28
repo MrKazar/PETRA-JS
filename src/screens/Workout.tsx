@@ -10,7 +10,7 @@ import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { Empty, NumInput, Sheet, TopBar, confirmAction } from '../ui/kit'
-import { IconCheck, IconFlame, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
+import { IconCheck, IconChevron, IconFlame, IconMinus, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
 import { useNow } from '../ui/useNow'
 
 export function WorkoutScreen() {
@@ -20,6 +20,14 @@ export function WorkoutScreen() {
   const now = useNow(250, !!s)
   const [picking, setPicking] = useState(false)
   const [finishing, setFinishing] = useState(false)
+  const [undo, setUndo] = useState<{ label: string; prev: ActiveSession }>()
+  const undoTimer = useRef<number | undefined>(undefined)
+  const cards = useRef(new Map<string, HTMLDivElement>())
+  const upId = s ? nextPending(s)?.exercise.id : undefined
+  // Après chaque série validée, l'exercice en cours remonte en haut de l'écran.
+  useEffect(() => {
+    if (upId) cards.current.get(upId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [upId])
 
   if (!s) {
     return (
@@ -36,6 +44,22 @@ export function WorkoutScreen() {
   const apply = (fn: (a: ActiveSession) => ActiveSession) => {
     const cur = getData().active
     if (cur) setActive(fn(cur), cur)
+  }
+
+  /** Suppression sans confirmation : un bouton Annuler reste affiché quelques secondes. */
+  const removeWithUndo = (label: string, fn: (a: ActiveSession) => ActiveSession) => {
+    const prev = getData().active
+    if (!prev) return
+    apply(fn)
+    setUndo({ label, prev })
+    window.clearTimeout(undoTimer.current)
+    undoTimer.current = window.setTimeout(() => setUndo(undefined), 6000)
+  }
+  const restore = () => {
+    if (!undo) return
+    const cur = getData().active
+    if (cur) setActive({ ...undo.prev, rest: cur.rest }, cur)
+    setUndo(undefined)
   }
 
   const onCheck = (ex: SessionExercise, i: number) => {
@@ -77,7 +101,12 @@ export function WorkoutScreen() {
     nav.pop()
   }
 
+  const curEx = up?.exercise
+  const curSet = up ? up.exercise.sets[up.index] : undefined
+  const step = (patch: { reps?: number; weight?: number; durationSec?: number }) => up && apply((a) => patchSet(a, up.exercise.id, up.index, patch))
+
   return (
+    <>
     <div className="screen">
       <div className="screen-inner">
         <TopBar
@@ -101,15 +130,14 @@ export function WorkoutScreen() {
         {s.exercises.map((ex) => (
           <ExerciseCard
             key={ex.id}
+            cardRef={(el) => (el ? cards.current.set(ex.id, el) : cards.current.delete(ex.id))}
             ex={ex}
             current={up?.exercise.id === ex.id ? up.index : -1}
             onCheck={(i) => onCheck(ex, i)}
             onPatch={(i, patch) => apply((a) => patchSet(a, ex.id, i, patch))}
             onAddSet={() => apply((a) => addSet(a, ex.id))}
-            onRemoveSet={(i) => apply((a) => removeSet(a, ex.id, i))}
-            onRemove={() => {
-              if (confirmAction(`Retirer ${ex.name} de la séance ?`)) apply((a) => ({ ...a, exercises: a.exercises.filter((e) => e.id !== ex.id) }))
-            }}
+            onRemoveSet={(i) => removeWithUndo('Série retirée', (a) => removeSet(a, ex.id, i))}
+            onRemove={() => removeWithUndo(`${ex.name} retiré`, (a) => ({ ...a, exercises: a.exercises.filter((e) => e.id !== ex.id) }))}
           />
         ))}
 
@@ -141,6 +169,49 @@ export function WorkoutScreen() {
       />
 
       {finishing && <FinisherSheet finishers={finishersOf(data)} lastByType={data.lastFinisher} onClose={() => setFinishing(false)} onDone={complete} />}
+    </div>
+
+    {(undo || (curEx && curSet)) && (
+      <div className="dock">
+        {undo && (
+          <div className="undo">
+            <span className="grow ellipsis">{undo.label}</span>
+            <button className="btn sm" onClick={restore}>Annuler</button>
+          </div>
+        )}
+        {curEx && curSet && up && (
+          <>
+            <div className="dock-steppers">
+              {curSet.durationSec != null ? (
+                <Stepper label="durée" value={curSet.durationSec} unit="s" step={curSet.durationSec >= 180 ? 60 : 5} onChange={(v) => step({ durationSec: v })} />
+              ) : (
+                <Stepper label={curSet.unit ?? (curEx.parCote ? 'reps / côté' : 'reps')} value={curSet.reps} step={1} onChange={(v) => step({ reps: v })} />
+              )}
+              {curEx.usesLoad !== false && !isCardio(curEx) && <Stepper label="kg" value={curSet.weight} step={2.5} onChange={(v) => step({ weight: v })} />}
+            </div>
+            <button className="btn primary block big" onClick={() => onCheck(curEx, up.index)}>
+              <IconCheck /> <span className="ellipsis">Valider · {setLabels(curEx.sets)[up.index]}</span>
+            </button>
+          </>
+        )}
+      </div>
+    )}
+    </>
+  )
+}
+
+/** Réglage au pouce : − valeur + (sans ouvrir le clavier). */
+function Stepper({ label, value, unit, step, onChange }: { label: string; value?: number; unit?: string; step: number; onChange: (v: number) => void }) {
+  const v = value ?? 0
+  const set = (n: number) => onChange(Math.max(0, Math.round(n * 100) / 100))
+  return (
+    <div className="stepper">
+      <button className="icon-btn" aria-label={`Moins (${label})`} onClick={() => set(v - step)}><IconMinus /></button>
+      <div className="val">
+        <b>{value == null ? '—' : v}{unit ? ` ${unit}` : ''}</b>
+        <span>{label}</span>
+      </div>
+      <button className="icon-btn" aria-label={`Plus (${label})`} onClick={() => set(v + step)}><IconPlus /></button>
     </div>
   )
 }
@@ -186,6 +257,7 @@ function RestPanel({ rest, now, onAdd, onSkip }: { rest: NonNullable<ActiveSessi
 }
 
 function ExerciseCard({
+  cardRef,
   ex,
   current,
   onCheck,
@@ -194,6 +266,7 @@ function ExerciseCard({
   onRemoveSet,
   onRemove,
 }: {
+  cardRef: (el: HTMLDivElement | null) => void
   ex: SessionExercise
   current: number
   onCheck: (i: number) => void
@@ -204,9 +277,21 @@ function ExerciseCard({
 }) {
   const allDone = ex.sets.length > 0 && ex.sets.every((x) => x.done)
   const [editing, setEditing] = useState(false)
+  const [open, setOpen] = useState(false)
   const labels = setLabels(ex.sets)
+  // Exercice terminé : replié sur une ligne, un appui le rouvre.
+  if (allDone && !open && !editing) {
+    return (
+      <div ref={cardRef} className="card tight clickable row" style={{ opacity: 0.75 }} onClick={() => setOpen(true)}>
+        <IconCheck style={{ width: 18, color: 'var(--success)', flex: 'none' }} />
+        <span className="grow ellipsis" style={{ fontWeight: 600 }}>{ex.name}</span>
+        <span className="small muted">{ex.sets.length} série{ex.sets.length > 1 ? 's' : ''}</span>
+        <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
+      </div>
+    )
+  }
   return (
-    <div className={`card${current >= 0 ? ' accent' : ''}`} style={{ opacity: allDone ? 0.75 : 1 }}>
+    <div ref={cardRef} className={`card${current >= 0 ? ' accent' : ''}`} style={{ opacity: allDone ? 0.75 : 1, scrollMarginTop: 120 }}>
       <div className="row" style={{ marginBottom: 6 }}>
         <div className="grow">
           <h3>
