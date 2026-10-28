@@ -333,3 +333,16 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 :root[data-theme='vantablack'] .card { border-color: #111111; }
 :root[data-theme='minimal'] .stripe { box-shadow: 0 0 0 1px var(--line); } /* blanc du drapeau visible sur fond clair */
+
+/* Progression */
+.line-chart { display: block; overflow: visible; }
+.line-chart .grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 4; }
+.line-chart .lbl { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.line-chart .area { fill: var(--khaki-soft); }
+.line-chart .line { fill: none; stroke: var(--khaki); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.line-chart .dot { fill: var(--khaki); }
+.line-chart .dot.last { fill: var(--success); stroke: var(--surface); stroke-width: 2; }
+.delta { font-weight: 600; font-variant-numeric: tabular-nums; }
+.delta.up { color: var(--success); }
+.delta.down { color: var(--error); }
+.overload { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius); background: var(--success-soft); border: 1px solid var(--success); }

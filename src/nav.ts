@@ -11,6 +11,7 @@ export type Route =
   | { name: 'records' }
   | { name: 'routines' }
   | { name: 'appearance' }
+  | { name: 'progress'; id: string }
 
 export interface Nav {
   route: Route

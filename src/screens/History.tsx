@@ -5,6 +5,8 @@ import { finisherTypeLabel } from '../data/finishers'
 import { deleteSession } from '../logic/actions'
 import { describeSet, statsOf } from '../logic/session'
 import { formatDuration } from '../logic/util'
+import { overloadSuggestions } from '../logic/progress'
+import { OverloadCard } from '../ui/Overload'
 import { Empty, TopBar, confirmAction } from '../ui/kit'
 import { IconChevron, IconFlame, IconHistory, IconTrash } from '../ui/icons'
 
@@ -69,6 +71,9 @@ export function SessionDetailScreen({ id }: { id: string }) {
     )
   }
   const st = statsOf(s)
+  const program = data.programs.find((p) => p.id === s.programId)
+  const latest = program && !data.sessions.some((x) => x.programId === program.id && x.startedAt > s.startedAt)
+  const suggestions = program ? overloadSuggestions(program.id, data.sessions, program.exercises) : []
   const remove = () => {
     if (!confirmAction('Supprimer cette séance de l’historique ?')) return
     deleteSession(s.id)
@@ -102,6 +107,18 @@ export function SessionDetailScreen({ id }: { id: string }) {
               {s.finisher.items.map((it, i) => <li key={i}>{it}</li>)}
             </ol>
           </div>
+        )}
+
+        {program && latest && suggestions.length > 0 && (
+          <div className="card stack" style={{ gap: 8 }}>
+            <div className="eyebrow">Surcharge progressive</div>
+            {suggestions.map((x) => <OverloadCard key={x.exerciseId} programId={program.id} s={x} showName />)}
+          </div>
+        )}
+        {program && (
+          <button className="btn block" onClick={() => nav.push({ name: 'progress', id: program.id })}>
+            <IconHistory /> Progression de « {program.name} »
+          </button>
         )}
 
         {s.exercises.map((e) => (

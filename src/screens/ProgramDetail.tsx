@@ -8,8 +8,10 @@ import { cardioPlanOf, cardioSets, cardioSummary, groupLabel, isCardio, setLabel
 import { formatDuration, uid } from '../logic/util'
 import { describeSet } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
+import { overloadSuggestion } from '../logic/progress'
+import { OverloadCard } from '../ui/Overload'
 import { Empty, NumInput, Sheet, TopBar, confirmAction, toast } from '../ui/kit'
-import { IconCopy, IconDown, IconDumbbell, IconEdit, IconPlay, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
+import { IconCopy, IconDown, IconDumbbell, IconEdit, IconHistory, IconPlay, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
 
 export function ProgramDetailScreen({ id }: { id: string }) {
   const data = useData()
@@ -77,6 +79,11 @@ export function ProgramDetailScreen({ id }: { id: string }) {
         <button className="btn primary block big" disabled={!program.exercises.length} onClick={start}>
           <IconPlay /> Lancer cette séance
         </button>
+        {program.exercises.length > 0 && (
+          <button className="btn block" onClick={() => nav.push({ name: 'progress', id: program.id })}>
+            <IconHistory /> Progression ({data.sessions.filter((s) => s.programId === program.id).length} séance{data.sessions.filter((s) => s.programId === program.id).length > 1 ? 's' : ''})
+          </button>
+        )}
 
         {program.exercises.length ? (
           <div className="list">
@@ -97,6 +104,10 @@ export function ProgramDetailScreen({ id }: { id: string }) {
                         <span className="small faint">kg</span>
                       </div>
                     )}
+                    {(() => {
+                      const sug = overloadSuggestion(e, data.sessions, program.id)
+                      return sug ? <div style={{ marginTop: 8 }} onClick={(ev) => ev.stopPropagation()}><OverloadCard programId={program.id} s={sug} /></div> : null
+                    })()}
                   </div>
                   <div className="stack" style={{ gap: 0 }}>
                     <button className="icon-btn" style={{ height: 32 }} aria-label="Monter" disabled={i === 0} onClick={() => move(i, -1)}>

@@ -3,6 +3,8 @@ import { finishersOf, type Finisher } from '../data/finishers'
 import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
 import { cancelRestEnd, hideOngoing, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
 import { describeSet, finalize, nextPending, startFrom, statsOf } from './session'
+import { withWorkLoad } from '../data/catalog'
+import type { OverloadSuggestion } from './progress'
 
 export function saveSettings(patch: Partial<Settings>) {
   update((d) => ({ ...d, settings: { ...d.settings, ...patch } }))
@@ -22,6 +24,14 @@ export function deleteFinisher(id: string) {
 
 export function resetFinishers() {
   update((d) => ({ ...d, finishers: undefined }))
+}
+
+/** Surcharge progressive acceptée : nouvelle charge de travail (chauffe et hypertrophie suivent). */
+export function applyOverload(programId: string, s: OverloadSuggestion) {
+  update((d) => ({
+    ...d,
+    programs: d.programs.map((p) => (p.id !== programId ? p : { ...p, exercises: p.exercises.map((e) => (e.id === s.exerciseId ? withWorkLoad(e, s.to) : e)) })),
+  }))
 }
 
 export function saveProgram(p: Program) {

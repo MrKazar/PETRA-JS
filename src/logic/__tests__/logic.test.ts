@@ -5,6 +5,7 @@ import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
 import { addSet, completeSet, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
 import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
+import { exerciseHistory, exerciseKey, overloadIncrement, overloadSuggestion } from '../progress'
 import { THEMES, themeOf } from '../../ui/theme'
 import type { Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS } from '../../data/store'
@@ -203,5 +204,32 @@ describe('thèmes', () => {
     expect(THEMES.map((t) => t.id)).toEqual(['militaire', 'police', 'gendarmerie', 'forces', 'minimal', 'vantablack'])
     expect(themeOf(undefined).id).toBe('militaire')
     expect(themeOf('forces').emblem).toBe('emblem-forces.webp')
+  })
+})
+
+describe('progression', () => {
+  const squat = exerciseFromCatalog(CATALOG.find((e) => e.id === 'squat_barre') ?? CATALOG.find((e) => e.profil === 'poly_lourd' && e.groupe_musculaire === 'quadriceps')!, 100)
+  const bench = exerciseFromCatalog(CATALOG.find((e) => e.profil === 'poly_lourd' && e.groupe_musculaire === 'pectoraux')!, 80)
+  const session = (day: number, ex: typeof squat, weight: number, reps: number, programId = 'p') => ({
+    id: `s${day}${ex.name}`, programId, programName: 'A', startedAt: Date.UTC(2026, 9, day), endedAt: Date.UTC(2026, 9, day) + 3600e3,
+    exercises: [{ ...ex, id: `e${day}`, sets: ex.sets.map((x) => ({ ...x, done: true, ...(x.phase === 'travail' ? { weight, reps } : {}) })) }],
+  })
+  it('suit la charge de travail max séance après séance', () => {
+    const sessions = [session(3, squat, 105, 6), session(1, squat, 100, 6), session(2, squat, 102.5, 6, 'autre')]
+    const h = exerciseHistory(sessions, 'p', exerciseKey(squat))
+    expect(h.map((p) => p.weight)).toEqual([100, 105])
+    expect(h[0].reps).toBe(12)
+  })
+  it('propose d’augmenter après 2 séances réussies', () => {
+    const target = squat.sets.find((x) => x.phase === 'travail')!.reps!
+    expect(overloadSuggestion(squat, [session(1, squat, 100, target)], 'p')).toBeUndefined()
+    const s = overloadSuggestion(squat, [session(1, squat, 100, target), session(2, squat, 100, target)], 'p')
+    expect(s).toMatchObject({ from: 100, to: 105 })
+    expect(overloadSuggestion(squat, [session(1, squat, 100, target), session(2, squat, 100, target - 1)], 'p')).toBeUndefined()
+    expect(overloadSuggestion(squat, [session(1, squat, 100, target), session(2, squat, 95, target)], 'p')).toBeUndefined()
+  })
+  it('augmente de 2,5 kg le haut du corps et 5 kg les jambes', () => {
+    expect(overloadIncrement(bench)).toBe(2.5)
+    expect(overloadIncrement(squat)).toBe(5)
   })
 })
