@@ -4,7 +4,7 @@ import { supersetSets } from '../logic/session'
 import { uid } from '../logic/util'
 import { ExercisePicker } from './ExercisePicker'
 import { NumInput, Sheet } from './kit'
-import { IconPlus, IconTrash, IconX } from './icons'
+import { IconDown, IconPlus, IconTrash, IconUp, IconX } from './icons'
 
 /** Exercice du catalogue → exercice de superset (répétitions de sa série de travail, charge de travail). */
 function toPart(ex: ProgramExercise): SupersetPart {
@@ -39,6 +39,11 @@ export function SupersetEditor({
   const [rounds, setRounds] = useState(initial?.sets.length ?? 3)
   const [rest, setRest] = useState(initial?.restSec ?? defaultRest)
   const [picking, setPicking] = useState(!initial)
+  const move = (i: number, d: number) => {
+    const next = [...parts]
+    ;[next[i], next[i + d]] = [next[i + d], next[i]]
+    setParts(next)
+  }
   const patch = (i: number, p: Partial<SupersetPart>) => setParts(parts.map((x, k) => (k === i ? { ...x, ...p } : x)))
 
   const save = () => {
@@ -80,6 +85,10 @@ export function SupersetEditor({
                       <><NumInput value={p.weight} width={56} placeholder="kg" onChange={(v) => patch(i, { weight: v })} /><span className="small faint">kg</span></>
                     )}
                   </div>
+                </div>
+                <div className="stack" style={{ gap: 0 }}>
+                  <button className="icon-btn" style={{ height: 30 }} aria-label={`Monter ${p.name}`} disabled={i === 0} onClick={() => move(i, -1)}><IconUp /></button>
+                  <button className="icon-btn" style={{ height: 30 }} aria-label={`Descendre ${p.name}`} disabled={i === parts.length - 1} onClick={() => move(i, 1)}><IconDown /></button>
                 </div>
                 <button className="icon-btn" aria-label={`Retirer ${p.name}`} onClick={() => setParts(parts.filter((_, k) => k !== i))}><IconX /></button>
               </div>
