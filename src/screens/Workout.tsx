@@ -5,13 +5,13 @@ import type { ActiveSession, FinisherType, SessionExercise } from '../data/types
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
-import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, nextPending, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
+import { PREP_SEC, addSet, buildIntervals, chainsInSuperset, supersetGroups, supersetLabel, completeSet, extendRest, nextPending, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
 import { IntervalTimerView } from '../ui/IntervalTimer'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { Empty, NumInput, Sheet, Toggle, TopBar, confirmAction } from '../ui/kit'
-import { IconCheck, IconChevron, IconFlame, IconMinus, IconPlay, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
+import { IconCheck, IconChevron, IconFlame, IconLink, IconMinus, IconPlay, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
 import { useNow } from '../ui/useNow'
 
 export function WorkoutScreen() {
@@ -82,7 +82,9 @@ export function WorkoutScreen() {
       let next = completeSet(a, ex.id, i)
       const up = nextPending(next)
       if (up) {
-        const sameEx = up.exercise.id === ex.id
+        if (chainsInSuperset(next.exercises, ex.id, up.exercise.id)) return { ...next, rest: undefined }
+        // Nouveau tour d'un superset : repos du superset, comme entre deux séries d'un même exercice.
+        const sameEx = up.exercise.id === ex.id || chainsInSuperset(next.exercises, up.exercise.id, ex.id)
         // Repos préconisé après cette série ; entre deux exercices, au moins le repos par défaut.
         const base = set.restSec ?? ex.restSec
         const secs = sameEx ? base : Math.max(base, getData().settings.defaultRestSec)
@@ -139,19 +141,31 @@ export function WorkoutScreen() {
           <div style={{ width: `${st.setsTotal ? (st.setsDone / st.setsTotal) * 100 : 0}%` }} />
         </div>
 
-        {s.exercises.map((ex) => (
-          <ExerciseCard
-            key={ex.id}
-            cardRef={(el) => (el ? cards.current.set(ex.id, el) : cards.current.delete(ex.id))}
-            ex={ex}
-            current={up?.exercise.id === ex.id ? up.index : -1}
-            onCheck={(i) => onCheck(ex, i)}
-            onPatch={(i, patch) => apply((a) => patchSet(a, ex.id, i, patch))}
-            onAddSet={() => apply((a) => addSet(a, ex.id))}
-            onRemoveSet={(i) => removeWithUndo('Série retirée', (a) => removeSet(a, ex.id, i))}
-            onRemove={() => removeWithUndo(`${ex.name} retiré`, (a) => ({ ...a, exercises: a.exercises.filter((e) => e.id !== ex.id) }))}
-          />
-        ))}
+        {supersetGroups(s.exercises).map((g) => {
+          const cardsOf = g.map((i) => s.exercises[i]).map((ex) => (
+            <ExerciseCard
+              key={ex.id}
+              cardRef={(el) => (el ? cards.current.set(ex.id, el) : cards.current.delete(ex.id))}
+              ex={ex}
+              chainTo={ex.linkNext ? s.exercises[s.exercises.indexOf(ex) + 1]?.name : undefined}
+              current={up?.exercise.id === ex.id ? up.index : -1}
+              onCheck={(i) => onCheck(ex, i)}
+              onPatch={(i, patch) => apply((a) => patchSet(a, ex.id, i, patch))}
+              onAddSet={() => apply((a) => addSet(a, ex.id))}
+              onRemoveSet={(i) => removeWithUndo('Série retirée', (a) => removeSet(a, ex.id, i))}
+              onRemove={() => removeWithUndo(`${ex.name} retiré`, (a) => ({ ...a, exercises: a.exercises.filter((e) => e.id !== ex.id) }))}
+            />
+          ))
+          if (g.length < 2) return cardsOf
+          return (
+            <div key={s.exercises[g[0]].id} className="superset">
+              <div className="superset-head">
+                <IconLink style={{ width: 16 }} /> {supersetLabel(g.length)} · on enchaîne sans repos, repos après le dernier
+              </div>
+              {cardsOf}
+            </div>
+          )
+        })}
 
         {!s.exercises.length && <Empty>Séance libre : ajoute les exercices au fur et à mesure.</Empty>}
 
@@ -237,7 +251,7 @@ export function WorkoutScreen() {
               </button>
             )}
             <button className="btn primary block big" onClick={() => onCheck(curEx, up.index)}>
-              <IconCheck /> <span className="ellipsis">Valider · {setLabels(curEx.sets)[up.index]}</span>
+              <IconCheck /> <span className="ellipsis">Valider · {inSuperset(s.exercises, curEx.id) ? `${curEx.name} · ${up.index + 1}/${curEx.sets.length}` : setLabels(curEx.sets)[up.index]}</span>
             </button>
           </>
         )}
@@ -245,6 +259,11 @@ export function WorkoutScreen() {
     )}
     </>
   )
+}
+
+const inSuperset = (list: SessionExercise[], id: string) => {
+  const i = list.findIndex((e) => e.id === id)
+  return !!(list[i]?.linkNext || list[i - 1]?.linkNext)
 }
 
 /** Réglage façon HIIT ME pour des séries en répétitions : temps de travail, de repos, et circuit sur les exercices suivants. */
@@ -341,6 +360,7 @@ function RestPanel({ rest, now, onAdd, onSkip }: { rest: NonNullable<ActiveSessi
 function ExerciseCard({
   cardRef,
   ex,
+  chainTo,
   current,
   onCheck,
   onPatch,
@@ -350,6 +370,8 @@ function ExerciseCard({
 }: {
   cardRef: (el: HTMLDivElement | null) => void
   ex: SessionExercise
+  /** Superset : exercice enchaîné juste après chaque série, sans repos. */
+  chainTo?: string
   current: number
   onCheck: (i: number) => void
   onPatch: (i: number, p: { reps?: number; weight?: number; durationSec?: number }) => void
@@ -399,7 +421,7 @@ function ExerciseCard({
               <div className="hint ellipsis">
                 {set.pct != null && ex.usesLoad !== false ? `${set.pct} % · ` : ''}
                 {set.toFailure ? 'jusqu’à l’échec · ' : ''}
-                {rest ? `repos ${formatDuration(rest)}` : ''}
+                {chainTo ? `puis ${chainTo}` : rest ? `repos ${formatDuration(rest)}` : ''}
               </div>
             </div>
             {timed ? (

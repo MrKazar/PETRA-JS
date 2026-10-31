@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useData } from '../data/store'
 import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
@@ -6,14 +6,14 @@ import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
 import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
-import { estimateDuration, formatEstimate } from '../logic/session'
+import { estimateDuration, formatEstimate, supersetGroups, supersetLabel } from '../logic/session'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { ShareSheet } from '../ui/Share'
 import { shareProgram } from '../logic/share'
 import { overloadSuggestion } from '../logic/progress'
 import { OverloadCard } from '../ui/Overload'
 import { Empty, NumInput, Sheet, TopBar, confirmAction, toast } from '../ui/kit'
-import { IconQr, IconCopy, IconDown, IconDumbbell, IconEdit, IconHistory, IconPlay, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
+import { IconQr, IconCopy, IconDown, IconDumbbell, IconEdit, IconHistory, IconLink, IconPlay, IconPlus, IconTrash, IconUp, IconX } from '../ui/icons'
 
 export function ProgramDetailScreen({ id }: { id: string }) {
   const data = useData()
@@ -96,7 +96,8 @@ export function ProgramDetailScreen({ id }: { id: string }) {
         {program.exercises.length ? (
           <div className="list">
             {program.exercises.map((e, i) => (
-              <div key={e.id} className="card tight">
+              <Fragment key={e.id}>
+              <div className={`card tight${e.linkNext || program.exercises[i - 1]?.linkNext ? ' ss-member' : ''}`}>
                 <div className="row">
                   <div className="grow" onClick={() => setEditingEx(e.id)} style={{ cursor: 'pointer' }}>
                     <div style={{ fontWeight: 600 }}>{e.name}</div>
@@ -126,6 +127,16 @@ export function ProgramDetailScreen({ id }: { id: string }) {
                   </div>
                 </div>
               </div>
+              {i < program.exercises.length - 1 && (
+                <button
+                  className={`ss-link${e.linkNext ? ' on' : ''}`}
+                  onClick={() => setExercises(program.exercises.map((x) => (x.id === e.id ? { ...x, linkNext: !x.linkNext || undefined } : x)))}
+                >
+                  <IconLink style={{ width: 15 }} />
+                  {e.linkNext ? `${supersetLabel(groupSize(program.exercises, i))} · enchaîné sans repos` : 'Lier en superset'}
+                </button>
+              )}
+              </Fragment>
             ))}
           </div>
         ) : (
@@ -188,6 +199,11 @@ export function ProgramDetailScreen({ id }: { id: string }) {
 const hasLoad = (e: ProgramExercise) => e.usesLoad !== false && e.sets.some((s) => s.durationSec == null)
 
 /** Volume total d'un exercice : répétitions cumulées, ou durée cumulée pour les séries en temps. */
+/** Taille du superset qui contient l'exercice i. */
+function groupSize(exercises: ProgramExercise[], i: number): number {
+  return supersetGroups(exercises).find((g) => g.includes(i))?.length ?? 1
+}
+
 function totalOf(e: ProgramExercise): string {
   const reps = e.sets.reduce((n, s) => n + (s.durationSec == null && !s.toFailure ? s.reps ?? 0 : 0), 0)
   const sec = e.sets.reduce((n, s) => n + (s.durationSec ?? 0), 0)

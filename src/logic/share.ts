@@ -14,7 +14,7 @@ export const SHARE_PREFIX = 'PETRA1:'
 export const MAX_QR_CHARS = 2300
 
 type PlainSet = Partial<PlannedSet>
-type PlainExercise = { c?: string; n?: string; g?: string; pc?: 1; pdc?: 1; l?: number; r: number; s: PlainSet[]; no?: string }
+type PlainExercise = { c?: string; n?: string; g?: string; pc?: 1; pdc?: 1; l?: number; r: number; s: PlainSet[]; no?: string; ss?: 1 }
 type PlainProgram = { n: string; no?: string; e: PlainExercise[] }
 type PlainFinisher = { t: Finisher['type']; n: string; i: FinisherItem[] }
 /** Planning : 7 cases (lundi → dimanche), numéro de séance dans `p` ou -1 pour repos. */
@@ -46,6 +46,7 @@ function plainExercise(e: ProgramExercise): PlainExercise {
   if (e.usesLoad === false) out.pdc = 1
   if (e.workLoad != null) out.l = e.workLoad
   if (e.note) out.no = e.note
+  if (e.linkNext) out.ss = 1
   return out
 }
 
@@ -64,6 +65,7 @@ function toExercise(x: PlainExercise): ProgramExercise {
     restSec: x.r ?? 90,
     sets: (x.s ?? []).map((s) => ({ ...s, phase: s.phase ?? 'travail' }) as PlannedSet),
     ...(x.no ? { note: x.no } : {}),
+    ...(x.ss ? { linkNext: true } : {}),
   }
 }
 

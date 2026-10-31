@@ -42,6 +42,8 @@ export interface ProgramExercise {
   restSec: number
   sets: PlannedSet[]
   note?: string
+  /** Enchaîné avec l'exercice suivant (superset) : les séries alternent, repos après le dernier du groupe. */
+  linkNext?: boolean
 }
 
 export interface Program {
