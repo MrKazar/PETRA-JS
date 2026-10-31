@@ -521,7 +521,7 @@ function SupersetCard({
               const v = set.parts?.[k] ?? {}
               return (
                 <div key={k} className="ss-line">
-                  <span className="ss-letter">{String.fromCharCode(65 + k)}</span>
+                  <span className="ss-dot" />
                   <span className="grow ellipsis small">{p.name}</span>
                   {v.durationSec != null ? (
                     <><NumInput value={v.durationSec} width={48} onChange={(n) => setPart(i, k, { durationSec: n ?? 0 })} /><span className="unit">s</span></>

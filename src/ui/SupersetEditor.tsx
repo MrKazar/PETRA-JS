@@ -58,7 +58,7 @@ export function SupersetEditor({
     <>
       <Sheet open={!picking} onClose={onClose} title={initial ? 'Modifier le superset' : 'Nouveau superset'}>
         <div className="stack">
-          <p className="muted small" style={{ margin: 0 }}>Les exercices s’enchaînent sans pause (A, puis B, puis C) ; un seul Valider par tour, puis repos.</p>
+          <p className="muted small" style={{ margin: 0 }}>Les exercices s’enchaînent sans pause ; un seul Valider par tour, puis repos.</p>
           <label className="field">
             <span>Nom</span>
             <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex. Épaules poulie" />
@@ -67,7 +67,7 @@ export function SupersetEditor({
           <div className="list">
             {parts.map((p, i) => (
               <div key={i} className="list-item" style={{ alignItems: 'center' }}>
-                <span className="ss-letter">{String.fromCharCode(65 + i)}</span>
+                <span className="ss-dot" />
                 <div className="grow" style={{ minWidth: 0 }}>
                   <div className="ellipsis" style={{ fontWeight: 600 }}>{p.name}</div>
                   <div className="row" style={{ gap: 4, marginTop: 4 }}>
