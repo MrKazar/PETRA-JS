@@ -68,45 +68,12 @@ export function extendRest(s: ActiveSession, seconds: number, now = Date.now()):
   return { ...s, rest: { ...s.rest, endsAt: base + seconds * 1000 } }
 }
 
-/** Groupes de superset : indices des exercices enchaînés (un exercice seul forme un groupe d'un). */
-export function supersetGroups(exercises: Pick<ProgramExercise, 'linkNext'>[]): number[][] {
-  const groups: number[][] = []
-  exercises.forEach((_, i) => {
-    if (i > 0 && exercises[i - 1].linkNext) groups[groups.length - 1].push(i)
-    else groups.push([i])
-  })
-  return groups
-}
-
-/** Nom d'un groupe selon sa taille. */
-export const supersetLabel = (n: number) => (n === 2 ? 'Superset' : n === 3 ? 'Triset' : 'Circuit')
-
-/**
- * Prochaine série à faire. Dans un superset, les exercices alternent :
- * A1, B1, A2, B2… (celui qui a le moins de séries faites passe en premier).
- */
 export function nextPending(s: Pick<Session, 'exercises'>): { exercise: SessionExercise; index: number } | undefined {
-  for (const group of supersetGroups(s.exercises)) {
-    let best: { exercise: SessionExercise; index: number; done: number } | undefined
-    for (const i of group) {
-      const exercise = s.exercises[i]
-      const index = exercise.sets.findIndex((x) => !x.done)
-      if (index < 0) continue
-      const done = exercise.sets.filter((x) => x.done).length
-      if (!best || done < best.done) best = { exercise, index, done }
-    }
-    if (best) return { exercise: best.exercise, index: best.index }
+  for (const exercise of s.exercises) {
+    const index = exercise.sets.findIndex((x) => !x.done)
+    if (index >= 0) return { exercise, index }
   }
   return undefined
-}
-
-/** Vrai quand on enchaîne vers un exercice plus loin dans le même superset (pas de repos entre les deux). */
-export function chainsInSuperset(exercises: SessionExercise[], fromId: string, toId: string): boolean {
-  const from = exercises.findIndex((e) => e.id === fromId)
-  const to = exercises.findIndex((e) => e.id === toId)
-  if (from < 0 || to <= from) return false
-  for (let i = from; i < to; i++) if (!exercises[i].linkNext) return false
-  return true
 }
 
 export function describeSet(set: PlannedSet, parCote = false): string {
@@ -214,8 +181,6 @@ export function estimateDuration(program: Pick<Program, 'exercises'>, defaultRes
       total += work * (ex.parCote && set.durationSec == null ? 2 : 1)
       const lastOfEx = i === ex.sets.length - 1
       if (lastOfEx && e === program.exercises.length - 1) return
-      // Dans un superset, on enchaîne sans repos vers l'exercice suivant du groupe.
-      if (ex.linkNext && e < program.exercises.length - 1) return
       const rest = set.restSec ?? ex.restSec
       total += lastOfEx ? Math.max(rest, defaultRestSec) : rest
     })
