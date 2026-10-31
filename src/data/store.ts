@@ -13,6 +13,7 @@ export const DEFAULT_SETTINGS: Settings = {
   weekAAnchor: thisMonday(),
   finishersEnabled: false,
   vibrate: true,
+  timerSound: true,
   keepAwake: true,
   name: '',
   theme: 'militaire',

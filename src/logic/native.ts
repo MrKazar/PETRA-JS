@@ -80,6 +80,70 @@ export async function cancelRestEnd() {
   }
 }
 
+const INTERVAL_BASE = 2000
+const INTERVAL_MAX = 60
+let intervalCount = 0
+
+/** Une notification à chaque changement d'étape du minuteur : il guide aussi écran verrouillé. */
+export async function scheduleIntervals(items: { at: number; title: string; body: string }[]) {
+  await cancelIntervals()
+  const future = items.filter((x) => x.at > Date.now() + 500).slice(0, INTERVAL_MAX)
+  if (!future.length || !(await ensurePermission())) return
+  await ensureChannels()
+  try {
+    await LocalNotifications.schedule({
+      notifications: future.map((x, i) => ({
+        id: INTERVAL_BASE + i,
+        title: x.title,
+        body: x.body,
+        channelId: 'repos',
+        schedule: { at: new Date(x.at), allowWhileIdle: true },
+      })),
+    })
+    intervalCount = future.length
+  } catch {
+    /* le minuteur à l'écran reste la référence */
+  }
+}
+
+export async function cancelIntervals() {
+  if (!native || !intervalCount) return
+  const n = intervalCount
+  intervalCount = 0
+  try {
+    await LocalNotifications.cancel({ notifications: Array.from({ length: n }, (_, i) => ({ id: INTERVAL_BASE + i })) })
+  } catch {
+    /* rien */
+  }
+}
+
+let audio: AudioContext | undefined
+/** Bip court (décompte) ou long (changement d'étape), comme une appli HIIT. */
+export function beep(long = false) {
+  try {
+    audio ??= new AudioContext()
+    if (audio.state === 'suspended') void audio.resume()
+    const o = audio.createOscillator()
+    const g = audio.createGain()
+    o.frequency.value = long ? 1320 : 880
+    const t = audio.currentTime
+    const d = long ? 0.45 : 0.15
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.exponentialRampToValueAtTime(0.5, t + 0.01)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + d)
+    o.connect(g).connect(audio.destination)
+    o.start(t)
+    o.stop(t + d + 0.02)
+  } catch {
+    /* pas de son */
+  }
+}
+
+export function buzzStep() {
+  if (native) Haptics.vibrate({ duration: 400 }).catch(() => {})
+  else if ('vibrate' in navigator) navigator.vibrate?.(400)
+}
+
 /** Notification permanente « séance en cours ». */
 export async function showOngoing(title: string, body: string) {
   if (!(await ensurePermission())) return
@@ -97,6 +161,7 @@ export async function hideOngoing() {
   if (!native) return
   try {
     await LocalNotifications.cancel({ notifications: [{ id: ONGOING_ID }, { id: REST_ID }] })
+    await cancelIntervals()
   } catch {
     /* rien */
   }

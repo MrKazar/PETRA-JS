@@ -1,4 +1,4 @@
-import type { ActiveSession, PlannedSet, Program, ProgramExercise, Session, SessionExercise, SessionSet } from '../data/types'
+import type { ActiveSession, IntervalStep, IntervalTimer, PlannedSet, Program, ProgramExercise, Session, SessionExercise, SessionSet } from '../data/types'
 import { uid } from './util'
 
 export function startFrom(program: Program | null, now = Date.now()): ActiveSession {
@@ -115,8 +115,9 @@ export function statsOf(s: Session, now = Date.now()): SessionStats {
 
 /** Termine la séance : garde seulement les exercices et séries réalisés. */
 export function finalize(s: ActiveSession, now = Date.now()): Session {
-  const { rest: _rest, ...rest } = s
+  const { rest: _rest, timer: _timer, ...rest } = s
   void _rest
+  void _timer
   return {
     ...rest,
     endedAt: now,
@@ -191,4 +192,111 @@ export function estimateDuration(program: Pick<Program, 'exercises'>, defaultRes
 export function formatEstimate(sec: number): string {
   const min = Math.max(5, Math.round(sec / 300) * 5)
   return min < 60 ? `~${min} min` : `~${Math.floor(min / 60)} h${min % 60 ? ` ${String(min % 60).padStart(2, '0')}` : ''}`
+}
+
+/* ---------- Minuteur d'intervalles (façon HIIT) ---------- */
+
+export const PREP_SEC = 10
+
+/**
+ * Enchaînement des séries en durée à partir de la prochaine série : tant qu'elles sont chronométrées,
+ * même sur plusieurs exercices (circuit). Préparation, puis travail / repos ; pas de repos après la dernière.
+ */
+export function buildIntervals(s: Pick<Session, 'exercises'>): IntervalStep[] {
+  const work: IntervalStep[] = []
+  const rests: number[] = []
+  let started = false
+  outer: for (const ex of s.exercises) {
+    for (let i = 0; i < ex.sets.length; i++) {
+      const set = ex.sets[i]
+      if (set.done) {
+        if (started) break outer
+        continue
+      }
+      if (set.durationSec == null || set.durationSec <= 0) {
+        if (started || work.length === 0) break outer
+      }
+      started = true
+      work.push({ kind: 'work', sec: set.durationSec!, exId: ex.id, index: i, name: ex.name })
+      rests.push(set.restSec ?? ex.restSec)
+    }
+  }
+  if (!work.length) return []
+  const steps: IntervalStep[] = [{ kind: 'prep', sec: PREP_SEC, name: work[0].name }]
+  work.forEach((w, i) => {
+    steps.push(w)
+    if (i < work.length - 1 && rests[i] > 0) steps.push({ kind: 'rest', sec: rests[i], name: work[i + 1].name })
+  })
+  return steps
+}
+
+export function startTimer(s: ActiveSession, now = Date.now()): ActiveSession {
+  const steps = buildIntervals(s)
+  if (steps.length < 2) return s
+  return { ...s, rest: undefined, timer: { steps, startedAt: now, pausedMs: 0 } }
+}
+
+export interface TimerPosition {
+  /** Étape en cours (steps.length quand tout est fini). */
+  index: number
+  /** Secondes restantes dans l'étape en cours. */
+  left: number
+  /** Secondes restantes au total. */
+  totalLeft: number
+}
+
+export function timerPosition(t: IntervalTimer, now = Date.now()): TimerPosition {
+  let elapsed = ((t.pausedAt ?? now) - t.startedAt - t.pausedMs) / 1000
+  const total = t.steps.reduce((a, x) => a + x.sec, 0)
+  const totalLeft = Math.max(0, total - elapsed)
+  for (let i = 0; i < t.steps.length; i++) {
+    if (elapsed < t.steps[i].sec) return { index: i, left: t.steps[i].sec - elapsed, totalLeft }
+    elapsed -= t.steps[i].sec
+  }
+  return { index: t.steps.length, left: 0, totalLeft: 0 }
+}
+
+/** Valide les séries dont l'étape de travail est passée ; retire le minuteur une fois fini. */
+export function syncTimer(s: ActiveSession, now = Date.now()): ActiveSession {
+  const t = s.timer
+  if (!t) return s
+  const pos = timerPosition(t, now)
+  let next = s
+  let at = t.startedAt + t.pausedMs
+  t.steps.forEach((step, i) => {
+    at += step.sec * 1000
+    if (i >= pos.index || step.kind !== 'work' || step.exId == null || step.index == null) return
+    const set = next.exercises.find((e) => e.id === step.exId)?.sets[step.index]
+    if (set && !set.done) next = patchSet(next, step.exId, step.index, { done: true, doneAt: Math.min(at, now) })
+  })
+  if (pos.index >= t.steps.length) next = { ...next, timer: undefined }
+  return next
+}
+
+export function pauseTimer(s: ActiveSession, now = Date.now()): ActiveSession {
+  if (!s.timer || s.timer.pausedAt) return s
+  return { ...s, timer: { ...s.timer, pausedAt: now } }
+}
+
+export function resumeTimer(s: ActiveSession, now = Date.now()): ActiveSession {
+  if (!s.timer?.pausedAt) return s
+  const { pausedAt, ...t } = s.timer
+  return { ...s, timer: { ...t, pausedMs: t.pausedMs + (now - pausedAt) } }
+}
+
+/** Passe à l'étape suivante (la série en cours est validée comme faite). */
+export function skipStep(s: ActiveSession, now = Date.now()): ActiveSession {
+  if (!s.timer) return s
+  const { left } = timerPosition(s.timer, now)
+  return syncTimer({ ...s, timer: { ...s.timer, startedAt: s.timer.startedAt - left * 1000 } }, now)
+}
+
+/** Quand chaque étape commence, en heure réelle (pour les notifications écran verrouillé). */
+export function timerSchedule(t: IntervalTimer): { at: number; step: IntervalStep; i: number }[] {
+  let at = t.startedAt + t.pausedMs
+  return t.steps.map((step, i) => {
+    const out = { at, step, i }
+    at += step.sec * 1000
+    return out
+  })
 }

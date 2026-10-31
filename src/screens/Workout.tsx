@@ -5,12 +5,13 @@ import type { ActiveSession, FinisherType, SessionExercise } from '../data/types
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
-import { addSet, completeSet, extendRest, nextPending, patchSet, removeSet, startRest, statsOf, toSessionExercise } from '../logic/session'
+import { addSet, buildIntervals, completeSet, extendRest, nextPending, patchSet, pauseTimer, removeSet, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
+import { IntervalTimerView } from '../ui/IntervalTimer'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { Empty, NumInput, Sheet, TopBar, confirmAction } from '../ui/kit'
-import { IconCheck, IconChevron, IconFlame, IconMinus, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
+import { IconCheck, IconChevron, IconFlame, IconMinus, IconPlay, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
 import { useNow } from '../ui/useNow'
 
 export function WorkoutScreen() {
@@ -23,11 +24,18 @@ export function WorkoutScreen() {
   const [undo, setUndo] = useState<{ label: string; prev: ActiveSession }>()
   const undoTimer = useRef<number | undefined>(undefined)
   const cards = useRef(new Map<string, HTMLDivElement>())
-  const upId = s ? nextPending(s)?.exercise.id : undefined
+  const upId = s && !s.timer ? nextPending(s)?.exercise.id : undefined
   // Après chaque série validée, l'exercice en cours remonte en haut de l'écran.
   useEffect(() => {
     if (upId) cards.current.get(upId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [upId])
+  // Minuteur d'intervalles : les séries dont le temps est passé sont validées au fil de l'eau.
+  useEffect(() => {
+    const cur = getData().active
+    if (!cur?.timer) return
+    const next = syncTimer(cur, now)
+    if (next !== cur) setActive(next, cur)
+  }, [now])
 
   if (!s) {
     return (
@@ -85,6 +93,9 @@ export function WorkoutScreen() {
 
   const st = statsOf(s, now)
   const up = nextPending(s)
+  const circuit = s.timer ? [] : buildIntervals(s).filter((x) => x.kind !== 'prep')
+  const circuitWork = circuit.filter((x) => x.kind === 'work')
+  const circuitSec = circuit.reduce((a, x) => a + x.sec, 0)
 
   const askFinish = () => {
     if (st.setsDone === 0 && !confirmAction('Aucune série validée. Terminer quand même ?')) return
@@ -171,6 +182,19 @@ export function WorkoutScreen() {
       {finishing && <FinisherSheet finishers={finishersOf(data)} lastByType={data.lastFinisher} onClose={() => setFinishing(false)} onDone={complete} />}
     </div>
 
+    {s.timer && (
+      <IntervalTimerView
+        timer={s.timer}
+        now={now}
+        sound={data.settings.timerSound}
+        vibrate={data.settings.vibrate}
+        onPause={() => apply((a) => pauseTimer(a))}
+        onResume={() => apply((a) => resumeTimer(a))}
+        onSkip={() => apply((a) => skipStep(a))}
+        onStop={() => apply((a) => ({ ...syncTimer(a), timer: undefined }))}
+      />
+    )}
+
     {(undo || (curEx && curSet)) && (
       <div className="dock">
         {undo && (
@@ -189,6 +213,11 @@ export function WorkoutScreen() {
               )}
               {curEx.usesLoad !== false && !isCardio(curEx) && <Stepper label="kg" value={curSet.weight} step={2.5} onChange={(v) => step({ weight: v })} />}
             </div>
+            {circuitWork.length >= 2 && (
+              <button className="btn block big" onClick={() => { tap(); apply((a) => startTimer(a)) }}>
+                <IconPlay /> <span className="ellipsis">Minuteur · {circuitWork.length} tours · {formatDuration(circuitSec)}</span>
+              </button>
+            )}
             <button className="btn primary block big" onClick={() => onCheck(curEx, up.index)}>
               <IconCheck /> <span className="ellipsis">Valider · {setLabels(curEx.sets)[up.index]}</span>
             </button>

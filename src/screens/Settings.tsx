@@ -123,6 +123,13 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
           </div>
           <div className="row">
             <div className="grow">
+              <div style={{ fontWeight: 600 }}>Bips du minuteur d’intervalles</div>
+              <div className="small muted">Décompte 3-2-1 et bip à chaque changement</div>
+            </div>
+            <Toggle on={s.timerSound} onChange={(v) => saveSettings({ timerSound: v })} label="Bips" />
+          </div>
+          <div className="row">
+            <div className="grow">
               <div style={{ fontWeight: 600 }}>Écran allumé pendant la séance</div>
             </div>
             <Toggle on={s.keepAwake} onChange={(v) => saveSettings({ keepAwake: v })} label="Écran allumé" />

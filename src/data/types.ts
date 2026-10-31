@@ -85,8 +85,27 @@ export interface Rest {
   label: string
 }
 
+/** Étape du minuteur d'intervalles : préparation, travail (une série en durée) ou repos. */
+export interface IntervalStep {
+  kind: 'prep' | 'work' | 'rest'
+  sec: number
+  /** Exercice et série validés à la fin d'une étape de travail. */
+  exId?: string
+  index?: number
+  name: string
+}
+
+/** Minuteur façon HIIT : les étapes s'enchaînent seules à partir de startedAt (pauses déduites). */
+export interface IntervalTimer {
+  steps: IntervalStep[]
+  startedAt: number
+  pausedMs: number
+  pausedAt?: number
+}
+
 export interface ActiveSession extends Session {
   rest?: Rest
+  timer?: IntervalTimer
 }
 
 export type Recurrence =
@@ -116,6 +135,8 @@ export interface Settings {
   weekAAnchor: string
   finishersEnabled: boolean
   vibrate: boolean
+  /** Bips du minuteur d'intervalles (décompte et changement d'étape). */
+  timerSound: boolean
   keepAwake: boolean
   name: string
   /** Thème graphique : couleurs, polices et logo. */

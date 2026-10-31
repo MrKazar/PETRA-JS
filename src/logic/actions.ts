@@ -2,10 +2,11 @@ import { writeBackup } from './backup'
 import { getData, update } from '../data/store'
 import { finishersOf, type Finisher } from '../data/finishers'
 import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
-import { cancelRestEnd, hideOngoing, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
-import { describeSet, finalize, nextPending, startFrom, statsOf } from './session'
+import { cancelIntervals, cancelRestEnd, hideOngoing, scheduleIntervals, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
+import { describeSet, finalize, nextPending, startFrom, statsOf, timerSchedule } from './session'
 import { withWorkLoad } from '../data/catalog'
 import type { OverloadSuggestion } from './progress'
+import { formatDuration } from './util'
 
 export function saveSettings(patch: Partial<Settings>) {
   update((d) => ({ ...d, settings: { ...d.settings, ...patch } }))
@@ -79,6 +80,19 @@ export function setActive(next: ActiveSession, prev?: ActiveSession) {
       const up = nextPending(next)
       scheduleRestEnd(next.rest.endsAt, up ? `À toi : ${up.exercise.name} · ${describeSet(up.exercise.sets[up.index], up.exercise.parCote)}` : 'Série suivante !')
     } else cancelRestEnd()
+  }
+  const t = next.timer
+  const p = prev?.timer
+  if (t?.startedAt !== p?.startedAt || t?.pausedMs !== p?.pausedMs || t?.pausedAt !== p?.pausedAt) {
+    if (t && !t.pausedAt) {
+      scheduleIntervals(
+        timerSchedule(t).slice(1).map(({ at, step, i }) => {
+          const after = t.steps[i + 1]
+          if (step.kind === 'work') return { at, title: `GO · ${step.name}`, body: `${formatDuration(step.sec)} de travail${after?.kind === 'rest' ? `, puis ${formatDuration(after.sec)} de repos` : ''}` }
+          return { at, title: `Repos · ${formatDuration(step.sec)}`, body: `Ensuite : ${step.name}` }
+        }).concat([{ at: timerSchedule(t).at(-1)!.at + t.steps.at(-1)!.sec * 1000, title: 'Minuteur terminé', body: 'Bien joué !' }]),
+      )
+    } else cancelIntervals()
   }
   refreshOngoing(next)
 }
