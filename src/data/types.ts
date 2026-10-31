@@ -141,6 +141,17 @@ export interface Settings {
   name: string
   /** Thème graphique : couleurs, polices et logo. */
   theme: ThemeId
+  /** Notifications de séance. */
+  notifRestEnd: boolean
+  notifOngoing: boolean
+  notifIntervals: boolean
+  /** Rappel quotidien de séance, à l'heure notifDailyTime (HH:MM). */
+  notifDaily: boolean
+  notifDailyTime: string
+  /** Rappel seulement les jours où une séance est prévue au planning. */
+  notifDailyPlannedOnly: boolean
+  /** Rappel des tâches qui ont une heure fixe. */
+  notifRoutines: boolean
   /** Date de la dernière sauvegarde automatique (fichier dans Documents/PETRA). */
   lastBackupAt?: number
 }

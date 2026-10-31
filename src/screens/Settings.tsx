@@ -2,12 +2,13 @@ import { useRef, useState } from 'react'
 import { emptyData, getData, setData, update, useData } from '../data/store'
 import { BACKUP_KEEP, parseBackup, restoreBackup, writeBackup } from '../logic/backup'
 import { useNav } from '../nav'
+import type { Settings } from '../data/types'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
 import { UpdateBody } from '../ui/UpdateCard'
 import { activeTheme } from '../ui/theme'
 import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
-import { IconBook, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser } from '../ui/icons'
+import { IconBell, IconBook, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser } from '../ui/icons'
 
 const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
@@ -52,6 +53,7 @@ export function SettingsScreen() {
         <div className="list">
           {row('Utilisateur', s.name ? s.name : 'Prénom pour l’accueil', <IconUser />, () => nav.push({ name: 'settingsSection', section: 'user' }))}
           {row('Séances', `Repos ${s.defaultRestSec} s${s.vibrate ? ' · vibration' : ''}${s.keepAwake ? ' · écran allumé' : ''}`, <IconClock />, () => nav.push({ name: 'settingsSection', section: 'sessions' }))}
+          {row('Notifications', notifSummary(s), <IconBell />, () => nav.push({ name: 'settingsSection', section: 'notifications' }))}
           {row('Données', s.lastBackupAt ? `Dernière sauvegarde : ${when(s.lastBackupAt)}` : 'Sauvegarde et restauration', <IconBook />, () => nav.push({ name: 'settingsSection', section: 'data' }))}
         </div>
 
@@ -84,9 +86,9 @@ export function SettingsScreen() {
   )
 }
 
-export type SettingsSection = 'user' | 'sessions' | 'data'
+export type SettingsSection = 'user' | 'sessions' | 'notifications' | 'data'
 
-const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', data: 'Données' }
+const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', notifications: 'Notifications', data: 'Données' }
 
 /** Sous-pages de Paramètres. */
 export function SettingsSectionScreen({ section }: { section: SettingsSection }) {
@@ -136,9 +138,55 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
           </div>
         </div>
         )}
+        {section === 'notifications' && <NotificationsSection />}
         {section === 'data' && <DataSection />}
       </div>
     </div>
+  )
+}
+
+function notifSummary(s: Settings): string {
+  const on = [s.notifRestEnd && 'fin du repos', s.notifIntervals && 'minuteur', s.notifDaily && `rappel ${s.notifDailyTime}`, s.notifRoutines && 'tâches'].filter(Boolean)
+  return on.length ? on.join(' · ') : 'Aucune'
+}
+
+function NotifRow({ title, sub, on, onChange }: { title: string; sub: string; on: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="row">
+      <div className="grow">
+        <div style={{ fontWeight: 600 }}>{title}</div>
+        <div className="small muted">{sub}</div>
+      </div>
+      <Toggle on={on} onChange={onChange} label={title} />
+    </div>
+  )
+}
+
+function NotificationsSection() {
+  const s = useData().settings
+  return (
+    <>
+      <SectionTitle>Pendant la séance</SectionTitle>
+      <div className="card stack">
+        <NotifRow title="Fin du repos" sub="Une notification à chaque série quand la pause est finie" on={s.notifRestEnd} onChange={(v) => saveSettings({ notifRestEnd: v })} />
+        <NotifRow title="Étapes du minuteur" sub="Travail / repos annoncés, même écran verrouillé" on={s.notifIntervals} onChange={(v) => saveSettings({ notifIntervals: v })} />
+        <NotifRow title="Séance en cours" sub="Notification permanente avec la série suivante" on={s.notifOngoing} onChange={(v) => saveSettings({ notifOngoing: v })} />
+      </div>
+      <SectionTitle>Rappels</SectionTitle>
+      <div className="card stack">
+        <NotifRow title="Rappel quotidien" sub="Un rappel chaque jour à heure fixe" on={s.notifDaily} onChange={(v) => saveSettings({ notifDaily: v })} />
+        {s.notifDaily && (
+          <>
+            <label className="row">
+              <span className="grow" style={{ fontWeight: 600 }}>Heure</span>
+              <input className="input" type="time" style={{ width: 140 }} value={s.notifDailyTime} onChange={(e) => e.target.value && saveSettings({ notifDailyTime: e.target.value })} />
+            </label>
+            <NotifRow title="Seulement les jours de séance" sub="Selon ton planning ; rien si la séance est déjà faite" on={s.notifDailyPlannedOnly} onChange={(v) => saveSettings({ notifDailyPlannedOnly: v })} />
+          </>
+        )}
+        <NotifRow title="Tâches à heure fixe" sub="Un rappel à l’heure de chaque tâche qui en a une" on={s.notifRoutines} onChange={(v) => saveSettings({ notifRoutines: v })} />
+      </div>
+    </>
   )
 }
 

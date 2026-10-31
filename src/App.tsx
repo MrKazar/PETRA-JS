@@ -2,7 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { App as CapApp } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
 import { NavContext, type Nav, type Route, type Tab } from './nav'
-import { useData } from './data/store'
+import { getData, useData } from './data/store'
+import { computeReminders } from './logic/reminders'
+import { scheduleReminders } from './logic/native'
+import { dateKey } from './logic/util'
 import { ToastHost } from './ui/kit'
 import { IconBook, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
 import { TodayScreen } from './screens/Today'
@@ -63,6 +66,15 @@ export default function App() {
   useEffect(() => {
     if (Capacitor.isNativePlatform()) checkOnLaunch()
   }, [])
+
+  // Rappels (séance du jour, tâches à heure fixe) reprogrammés quand le planning ou les réglages changent.
+  const st = data.settings
+  const reminderKey = JSON.stringify([st.notifDaily, st.notifDailyTime, st.notifDailyPlannedOnly, st.notifRoutines, st.abWeeks, st.weekAAnchor, data.routines, data.weekPlan, data.weekPlanB, data.planOverrides, data.programs.map((p) => [p.id, p.name]), data.sessions[0]?.startedAt, dateKey()])
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+    const id = window.setTimeout(() => scheduleReminders(computeReminders(getData())), 800)
+    return () => window.clearTimeout(id)
+  }, [reminderKey])
 
   const theme = activeTheme(data.settings).id
   useEffect(() => {

@@ -2,7 +2,7 @@ import { writeBackup } from './backup'
 import { getData, update } from '../data/store'
 import { finishersOf, type Finisher } from '../data/finishers'
 import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
-import { cancelIntervals, cancelRestEnd, hideOngoing, scheduleIntervals, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
+import { cancelIntervals, cancelRestEnd, hideOngoing, hideOngoingOnly, scheduleIntervals, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
 import { describeSet, finalize, nextPending, startFrom, statsOf, timerSchedule } from './session'
 import { withWorkLoad } from '../data/catalog'
 import type { OverloadSuggestion } from './progress'
@@ -76,7 +76,7 @@ export function setActive(next: ActiveSession, prev?: ActiveSession) {
   update((d) => ({ ...d, active: next }))
   const restChanged = prev?.rest?.endsAt !== next.rest?.endsAt
   if (restChanged) {
-    if (next.rest && next.rest.endsAt > Date.now()) {
+    if (next.rest && next.rest.endsAt > Date.now() && getData().settings.notifRestEnd) {
       const up = nextPending(next)
       scheduleRestEnd(next.rest.endsAt, up ? `À toi : ${up.exercise.name} · ${describeSet(up.exercise.sets[up.index], up.exercise.parCote)}` : 'Série suivante !')
     } else cancelRestEnd()
@@ -84,7 +84,7 @@ export function setActive(next: ActiveSession, prev?: ActiveSession) {
   const t = next.timer
   const p = prev?.timer
   if (t?.startedAt !== p?.startedAt || t?.pausedMs !== p?.pausedMs || t?.pausedAt !== p?.pausedAt) {
-    if (t && !t.pausedAt) {
+    if (t && !t.pausedAt && getData().settings.notifIntervals) {
       scheduleIntervals(
         timerSchedule(t).slice(1).map(({ at, step, i }) => {
           const after = t.steps[i + 1]
@@ -98,6 +98,7 @@ export function setActive(next: ActiveSession, prev?: ActiveSession) {
 }
 
 function refreshOngoing(s: ActiveSession) {
+  if (!getData().settings.notifOngoing) return hideOngoingOnly()
   const st = statsOf(s)
   const up = nextPending(s)
   const body = up ? `Suivant : ${up.exercise.name} (série ${up.index + 1}/${up.exercise.sets.length})` : 'Toutes les séries sont faites'

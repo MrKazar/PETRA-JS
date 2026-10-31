@@ -37,6 +37,14 @@ async function ensureChannels() {
       visibility: 1,
     })
     await LocalNotifications.createChannel({
+      id: 'rappels',
+      name: 'Rappels',
+      description: 'Rappel de séance et tâches à heure fixe',
+      importance: 4,
+      vibration: true,
+      visibility: 1,
+    })
+    await LocalNotifications.createChannel({
       id: 'seance',
       name: 'Séance en cours',
       description: 'Affiche la séance en cours',
@@ -144,6 +152,37 @@ export function buzzStep() {
   else if ('vibrate' in navigator) navigator.vibrate?.(400)
 }
 
+const REMINDER_BASE = 3000
+const REMINDER_MAX = 60
+
+/** Remplace tous les rappels programmés (séance du jour, tâches à heure fixe). */
+export async function scheduleReminders(items: { at: number; title: string; body: string }[]) {
+  if (!native) return
+  try {
+    const pending = await LocalNotifications.getPending()
+    const old = pending.notifications.filter((n) => n.id >= REMINDER_BASE && n.id < REMINDER_BASE + REMINDER_MAX)
+    if (old.length) await LocalNotifications.cancel({ notifications: old.map((n) => ({ id: n.id })) })
+  } catch {
+    /* rien */
+  }
+  const future = items.filter((x) => x.at > Date.now()).slice(0, REMINDER_MAX)
+  if (!future.length || !(await ensurePermission())) return
+  await ensureChannels()
+  try {
+    await LocalNotifications.schedule({
+      notifications: future.map((x, i) => ({
+        id: REMINDER_BASE + i,
+        title: x.title,
+        body: x.body,
+        channelId: 'rappels',
+        schedule: { at: new Date(x.at), allowWhileIdle: true },
+      })),
+    })
+  } catch {
+    /* rien */
+  }
+}
+
 /** Notification permanente « séance en cours ». */
 export async function showOngoing(title: string, body: string) {
   if (!(await ensurePermission())) return
@@ -162,6 +201,15 @@ export async function hideOngoing() {
   try {
     await LocalNotifications.cancel({ notifications: [{ id: ONGOING_ID }, { id: REST_ID }] })
     await cancelIntervals()
+  } catch {
+    /* rien */
+  }
+}
+
+export async function hideOngoingOnly() {
+  if (!native) return
+  try {
+    await LocalNotifications.cancel({ notifications: [{ id: ONGOING_ID }] })
   } catch {
     /* rien */
   }
