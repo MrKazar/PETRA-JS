@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
-import type { ActiveSession, FinisherType, SessionExercise } from '../data/types'
+import type { ActiveSession, FinisherType, PartSet, SessionExercise } from '../data/types'
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
@@ -9,6 +9,7 @@ import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, nextPending,
 import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
 import { IntervalTimerView } from '../ui/IntervalTimer'
+import { SupersetEditor } from '../ui/SupersetEditor'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { Empty, NumInput, Sheet, Toggle, TopBar, confirmAction } from '../ui/kit'
 import { IconCheck, IconChevron, IconFlame, IconMinus, IconPlay, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
@@ -22,6 +23,7 @@ export function WorkoutScreen() {
   const [picking, setPicking] = useState(false)
   const [finishing, setFinishing] = useState(false)
   const [setupTimer, setSetupTimer] = useState(false)
+  const [addingSuperset, setAddingSuperset] = useState(false)
   const [undo, setUndo] = useState<{ label: string; prev: ActiveSession }>()
   const undoTimer = useRef<number | undefined>(undefined)
   const cards = useRef(new Map<string, HTMLDivElement>())
@@ -155,9 +157,14 @@ export function WorkoutScreen() {
 
         {!s.exercises.length && <Empty>Séance libre : ajoute les exercices au fur et à mesure.</Empty>}
 
-        <button className="btn block" onClick={() => setPicking(true)}>
-          <IconPlus /> Ajouter un exercice
-        </button>
+        <div className="row">
+          <button className="btn grow" onClick={() => setPicking(true)}>
+            <IconPlus /> Exercice
+          </button>
+          <button className="btn grow" onClick={() => setAddingSuperset(true)}>
+            <IconPlus /> Superset
+          </button>
+        </div>
 
         <label className="field">
           <span>Notes de séance</span>
@@ -179,6 +186,17 @@ export function WorkoutScreen() {
           setPicking(false)
         }}
       />
+
+      {addingSuperset && (
+        <SupersetEditor
+          defaultRest={data.settings.defaultRestSec}
+          onClose={() => setAddingSuperset(false)}
+          onSave={(ex) => {
+            apply((a) => ({ ...a, exercises: [...a.exercises, toSessionExercise(ex)] }))
+            setAddingSuperset(false)
+          }}
+        />
+      )}
 
       {setupTimer && (
         <TimerSetupSheet
@@ -218,14 +236,14 @@ export function WorkoutScreen() {
         )}
         {curEx && curSet && up && (
           <>
-            <div className="dock-steppers">
+            {!curEx.parts && <div className="dock-steppers">
               {curSet.durationSec != null ? (
                 <Stepper label="durée" value={curSet.durationSec} unit="s" step={curSet.durationSec >= 180 ? 60 : 5} onChange={(v) => step({ durationSec: v })} />
               ) : (
                 <Stepper label={curSet.unit ?? (curEx.parCote ? 'reps / côté' : 'reps')} value={curSet.reps} step={1} onChange={(v) => step({ reps: v })} />
               )}
               {curEx.usesLoad !== false && !isCardio(curEx) && <Stepper label="kg" value={curSet.weight} step={2.5} onChange={(v) => step({ weight: v })} />}
-            </div>
+            </div>}
             {circuitWork.length < 2 && repCircuit(s, false).length > 0 && (
               <button className="btn block big" onClick={() => setSetupTimer(true)}>
                 <IconPlay /> <span className="ellipsis">Faire au minuteur</span>
@@ -237,7 +255,7 @@ export function WorkoutScreen() {
               </button>
             )}
             <button className="btn primary block big" onClick={() => onCheck(curEx, up.index)}>
-              <IconCheck /> <span className="ellipsis">Valider · {setLabels(curEx.sets)[up.index]}</span>
+              <IconCheck /> <span className="ellipsis">Valider · {curEx.parts ? `superset · tour ${up.index + 1}/${curEx.sets.length}` : setLabels(curEx.sets)[up.index]}</span>
             </button>
           </>
         )}
@@ -352,7 +370,7 @@ function ExerciseCard({
   ex: SessionExercise
   current: number
   onCheck: (i: number) => void
-  onPatch: (i: number, p: { reps?: number; weight?: number; durationSec?: number }) => void
+  onPatch: (i: number, p: { reps?: number; weight?: number; durationSec?: number; parts?: PartSet[] }) => void
   onAddSet: () => void
   onRemoveSet: (i: number) => void
   onRemove: () => void
@@ -361,13 +379,16 @@ function ExerciseCard({
   const [editing, setEditing] = useState(false)
   const [open, setOpen] = useState(false)
   const labels = setLabels(ex.sets)
+  if (ex.parts && !(allDone && !open && !editing)) {
+    return <SupersetCard cardRef={cardRef} ex={ex} current={current} editing={editing} setEditing={setEditing} onCheck={onCheck} onPatch={onPatch} onAddSet={onAddSet} onRemoveSet={onRemoveSet} onRemove={onRemove} allDone={allDone} />
+  }
   // Exercice terminé : replié sur une ligne, un appui le rouvre.
   if (allDone && !open && !editing) {
     return (
       <div ref={cardRef} className="card tight clickable row" style={{ opacity: 0.75 }} onClick={() => setOpen(true)}>
         <IconCheck style={{ width: 18, color: 'var(--success)', flex: 'none' }} />
         <span className="grow ellipsis" style={{ fontWeight: 600 }}>{ex.name}</span>
-        <span className="small muted">{ex.sets.length} série{ex.sets.length > 1 ? 's' : ''}</span>
+        <span className="small muted">{ex.sets.length} {ex.parts ? 'tour' : 'série'}{ex.sets.length > 1 ? 's' : ''}</span>
         <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
       </div>
     )
@@ -447,6 +468,84 @@ function ExerciseCard({
             <IconTrash style={{ width: 16 }} /> Retirer
           </button>
         )}
+      </div>
+    </div>
+  )
+}
+
+/** Superset : un tour = A, B, C enchaînés, un seul bouton pour valider le tour. */
+function SupersetCard({
+  cardRef,
+  ex,
+  current,
+  editing,
+  setEditing,
+  onCheck,
+  onPatch,
+  onAddSet,
+  onRemoveSet,
+  onRemove,
+  allDone,
+}: {
+  cardRef: (el: HTMLDivElement | null) => void
+  ex: SessionExercise
+  current: number
+  editing: boolean
+  setEditing: (v: boolean) => void
+  onCheck: (i: number) => void
+  onPatch: (i: number, p: { parts?: PartSet[] }) => void
+  onAddSet: () => void
+  onRemoveSet: (i: number) => void
+  onRemove: () => void
+  allDone: boolean
+}) {
+  const parts = ex.parts ?? []
+  const setPart = (i: number, k: number, p: PartSet) => onPatch(i, { parts: (ex.sets[i].parts ?? []).map((x, j) => (j === k ? { ...x, ...p } : x)) })
+  return (
+    <div ref={cardRef} className={`card${current >= 0 ? ' accent' : ''}`} style={{ opacity: allDone ? 0.75 : 1, scrollMarginTop: 120 }}>
+      <div className="row" style={{ marginBottom: 6 }}>
+        <div className="grow">
+          <h3><span className="ss-tag">Superset</span>{ex.name} {allDone && <IconCheck style={{ width: 16, color: 'var(--success)', verticalAlign: -2 }} />}</h3>
+          <div className="small muted">{parts.length} exercices enchaînés sans pause</div>
+        </div>
+        <button className={`btn sm${editing ? ' primary' : ' ghost'}`} onClick={() => setEditing(!editing)}>{editing ? 'OK' : 'Modifier'}</button>
+      </div>
+      {ex.sets.map((set, i) => (
+        <div key={i} className={`ss-round${set.done ? ' done' : ''}${i === current ? ' current' : ''}`}>
+          <div className="ss-round-head">
+            <div className="lbl">Tour {i + 1}/{ex.sets.length}</div>
+            <div className="hint">{set.restSec ?? ex.restSec ? `puis repos ${formatDuration(set.restSec ?? ex.restSec)}` : 'sans repos'}</div>
+          </div>
+          <div className="ss-round-body">
+            {parts.map((p, k) => {
+              const v = set.parts?.[k] ?? {}
+              return (
+                <div key={k} className="ss-line">
+                  <span className="ss-letter">{String.fromCharCode(65 + k)}</span>
+                  <span className="grow ellipsis small">{p.name}</span>
+                  {v.durationSec != null ? (
+                    <><NumInput value={v.durationSec} width={48} onChange={(n) => setPart(i, k, { durationSec: n ?? 0 })} /><span className="unit">s</span></>
+                  ) : (
+                    <><NumInput value={v.reps} width={44} onChange={(n) => setPart(i, k, { reps: n })} /><span className="unit">{p.parCote ? '/côté' : 'rép'}</span></>
+                  )}
+                  {p.usesLoad !== false && v.durationSec == null && (
+                    <><NumInput value={v.weight} width={52} placeholder="—" onChange={(n) => setPart(i, k, { weight: n })} /><span className="unit">kg</span></>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+          {editing ? (
+            <button className="icon-btn" style={{ width: 40, height: 40 }} aria-label="Retirer le tour" onClick={() => onRemoveSet(i)}><IconX /></button>
+          ) : (
+            <button className={`check${set.done ? ' on' : ''}`} aria-label={set.done ? 'Annuler le tour' : 'Valider le tour'} onClick={() => onCheck(i)}><IconCheck /></button>
+          )}
+        </div>
+      ))}
+      <div className="row" style={{ marginTop: 6 }}>
+        <button className="btn sm ghost" onClick={onAddSet}><IconPlus style={{ width: 16 }} /> Tour</button>
+        <span className="grow" />
+        {editing && <button className="btn sm danger" onClick={onRemove}><IconTrash style={{ width: 16 }} /> Retirer</button>}
       </div>
     </div>
   )

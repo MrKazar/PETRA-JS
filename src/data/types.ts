@@ -27,6 +27,26 @@ export interface PlannedSet {
   pct?: number
   /** Repos après la série ; à défaut, celui de l'exercice. */
   restSec?: number
+  /** Superset : répétitions / charge de chaque exercice du combiné pour ce tour (même ordre que parts). */
+  parts?: PartSet[]
+}
+
+export interface PartSet {
+  reps?: number
+  weight?: number
+  durationSec?: number
+}
+
+/** Exercice d'un superset (combiné A + B + C enchaînés, un seul Valider par tour). */
+export interface SupersetPart {
+  catalogId?: string
+  name: string
+  group: string
+  parCote: boolean
+  usesLoad?: boolean
+  reps?: number
+  weight?: number
+  durationSec?: number
 }
 
 export interface ProgramExercise {
@@ -42,6 +62,8 @@ export interface ProgramExercise {
   restSec: number
   sets: PlannedSet[]
   note?: string
+  /** Présent pour un superset : les exercices du combiné ; chaque série est un tour. */
+  parts?: SupersetPart[]
 }
 
 export interface Program {

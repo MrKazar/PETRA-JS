@@ -6,7 +6,8 @@ import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
 import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
-import { estimateDuration, formatEstimate } from '../logic/session'
+import { describePart, estimateDuration, formatEstimate } from '../logic/session'
+import { SupersetEditor } from '../ui/SupersetEditor'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { ShareSheet } from '../ui/Share'
 import { shareProgram } from '../logic/share'
@@ -23,6 +24,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
   const [sharing, setSharing] = useState(false)
   const [editingEx, setEditingEx] = useState<string | null>(null)
   const [renaming, setRenaming] = useState(false)
+  const [superset, setSuperset] = useState<'new' | null>(null)
 
   if (!program) {
     return (
@@ -99,11 +101,20 @@ export function ProgramDetailScreen({ id }: { id: string }) {
               <div key={e.id} className="card tight">
                 <div className="row">
                   <div className="grow" onClick={() => setEditingEx(e.id)} style={{ cursor: 'pointer' }}>
-                    <div style={{ fontWeight: 600 }}>{e.name}</div>
+                    <div style={{ fontWeight: 600 }}>{e.parts && <span className="ss-tag">Superset</span>}{e.name}</div>
+                    {e.parts ? (
+                      <>
+                        <div className="small muted">{e.sets.length} tour{e.sets.length > 1 ? 's' : ''} · repos {formatDuration(e.restSec)} entre les tours</div>
+                        <ol className="ss-parts">
+                          {e.parts.map((p, k) => <li key={k}><span className="ellipsis">{p.name}</span><b>{describePart(e.sets[0]?.parts?.[k] ?? p)}</b></li>)}
+                        </ol>
+                      </>
+                    ) : (
                     <div className="small muted">
                       {groupLabel(e.group)} · {e.sets.length} série{e.sets.length > 1 ? 's' : ''}{totalOf(e)}
                       {e.usesLoad === false ? ' · poids du corps' : ''}
                     </div>
+                    )}
                     {hasLoad(e) && (
                       <div className="row" style={{ marginTop: 8, gap: 6 }} onClick={(ev) => ev.stopPropagation()}>
                         <span className="small" style={{ color: 'var(--khaki)' }}>Charge de travail</span>
@@ -132,9 +143,14 @@ export function ProgramDetailScreen({ id }: { id: string }) {
           <Empty icon={<IconDumbbell />}>Ajoute des exercices depuis le catalogue (260 exercices) ou crée les tiens.</Empty>
         )}
 
-        <button className="btn block" onClick={() => setPicking(true)}>
-          <IconPlus /> Ajouter un exercice
-        </button>
+        <div className="row">
+          <button className="btn grow" onClick={() => setPicking(true)}>
+            <IconPlus /> Exercice
+          </button>
+          <button className="btn grow" onClick={() => setSuperset('new')}>
+            <IconPlus /> Superset
+          </button>
+        </div>
 
         <label className="field">
           <span>Notes</span>
@@ -167,7 +183,27 @@ export function ProgramDetailScreen({ id }: { id: string }) {
         }}
       />
 
-      {editing && (
+      {(superset === 'new' || editing?.parts) && (
+        <SupersetEditor
+          initial={superset === 'new' ? undefined : editing}
+          defaultRest={data.settings.defaultRestSec}
+          onClose={() => {
+            setSuperset(null)
+            setEditingEx(null)
+          }}
+          onSave={(ex) => {
+            setExercises(program.exercises.some((x) => x.id === ex.id) ? program.exercises.map((x) => (x.id === ex.id ? ex : x)) : [...program.exercises, ex])
+            setSuperset(null)
+            setEditingEx(null)
+          }}
+          onDelete={editing ? () => {
+            setExercises(program.exercises.filter((x) => x.id !== editing.id))
+            setEditingEx(null)
+          } : undefined}
+        />
+      )}
+
+      {editing && !editing.parts && (
         <ExerciseEditor
           exercise={editing}
           onClose={() => setEditingEx(null)}
@@ -185,7 +221,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
   )
 }
 
-const hasLoad = (e: ProgramExercise) => e.usesLoad !== false && e.sets.some((s) => s.durationSec == null)
+const hasLoad = (e: ProgramExercise) => !e.parts && e.usesLoad !== false && e.sets.some((s) => s.durationSec == null)
 
 /** Volume total d'un exercice : répétitions cumulées, ou durée cumulée pour les séries en temps. */
 function totalOf(e: ProgramExercise): string {

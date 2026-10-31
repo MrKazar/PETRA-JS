@@ -123,11 +123,12 @@ export function SessionDetailScreen({ id }: { id: string }) {
 
         {s.exercises.map((e) => (
           <div key={e.id} className="card tight">
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>{e.name}</div>
+            <div style={{ fontWeight: 700, marginBottom: e.parts ? 0 : 6 }}>{e.parts ? `Superset · ${e.name}` : e.name}</div>
+            {e.parts && <div className="small muted" style={{ marginBottom: 6 }}>{e.parts.map((p, k) => `${String.fromCharCode(65 + k)}. ${p.name}`).join(' · ')}</div>}
             {e.sets.map((set, i) => (
               <div key={i} className="row small" style={{ padding: '4px 0', borderTop: i ? '1px solid var(--line)' : undefined }}>
                 <span className="faint" style={{ width: 20, fontWeight: 700 }}>{i + 1}</span>
-                <span className="muted grow">{PHASE_LABEL[set.phase]}</span>
+                <span className="muted grow">{e.parts ? 'Tour' : PHASE_LABEL[set.phase]}</span>
                 <span style={{ fontWeight: 600 }}>{describeSet(set, e.parCote)}</span>
               </div>
             ))}

@@ -1,4 +1,4 @@
-import type { ActiveSession, IntervalStep, IntervalTimer, PlannedSet, Program, ProgramExercise, Session, SessionExercise, SessionSet } from '../data/types'
+import type { ActiveSession, IntervalStep, IntervalTimer, PartSet, PlannedSet, SupersetPart, Program, ProgramExercise, Session, SessionExercise, SessionSet } from '../data/types'
 import { uid } from './util'
 
 export function startFrom(program: Program | null, now = Date.now()): ActiveSession {
@@ -33,7 +33,7 @@ export function addSet(s: ActiveSession, exId: string): ActiveSession {
     exercises: s.exercises.map((e) => {
       if (e.id !== exId) return e
       const last: PlannedSet = e.sets[e.sets.length - 1] ?? { phase: 'travail', reps: 10 }
-      return { ...e, sets: [...e.sets, { phase: last.phase, reps: last.reps, weight: last.weight, durationSec: last.durationSec, unit: last.unit, toFailure: last.toFailure, pct: last.pct, restSec: last.restSec, done: false }] }
+      return { ...e, sets: [...e.sets, { phase: last.phase, reps: last.reps, weight: last.weight, durationSec: last.durationSec, unit: last.unit, toFailure: last.toFailure, pct: last.pct, restSec: last.restSec, parts: last.parts?.map((p) => ({ ...p })), done: false }] }
     }),
   }
 }
@@ -53,6 +53,10 @@ export function completeSet(s: ActiveSession, exId: string, index: number, now =
   const following = ex?.sets[index + 1]
   if (done && following && !following.done && following.weight == null && done.weight != null && following.phase === done.phase) {
     next = patchSet(next, exId, index + 1, { weight: done.weight })
+  }
+  // Superset : la charge de chaque exercice est reportée au tour suivant quand elle est vide.
+  if (done?.parts && following?.parts && !following.done && following.parts.some((p, i) => p.weight == null && done.parts![i]?.weight != null)) {
+    next = patchSet(next, exId, index + 1, { parts: following.parts.map((p, i) => (p.weight == null ? { ...p, weight: done.parts![i]?.weight } : p)) })
   }
   return next
 }
@@ -77,6 +81,7 @@ export function nextPending(s: Pick<Session, 'exercises'>): { exercise: SessionE
 }
 
 export function describeSet(set: PlannedSet, parCote = false): string {
+  if (set.parts) return set.parts.map(describePart).join(' + ')
   if (set.durationSec != null) {
     const m = Math.floor(set.durationSec / 60)
     const sec = set.durationSec % 60
@@ -84,6 +89,21 @@ export function describeSet(set: PlannedSet, parCote = false): string {
   }
   const reps = set.reps != null ? `${set.reps} ${set.unit ?? 'reps'}${parCote ? '/côté' : ''}` : set.toFailure ? 'max' : '—'
   return set.weight != null && set.weight > 0 ? `${reps} × ${set.weight} kg` : reps
+}
+
+export function describePart(p: PartSet): string {
+  if (p.durationSec != null) return `${p.durationSec} s`
+  const reps = p.reps != null ? `${p.reps}` : '—'
+  return p.weight ? `${reps} × ${p.weight} kg` : reps
+}
+
+/** Tours d'un superset générés à partir de ses exercices (répétitions / charge par défaut de chacun). */
+export function supersetSets(parts: SupersetPart[], rounds: number, restSec: number): PlannedSet[] {
+  return Array.from({ length: Math.max(1, rounds) }, () => ({
+    phase: 'serie' as const,
+    restSec,
+    parts: parts.map((p) => (p.durationSec != null ? { durationSec: p.durationSec } : { reps: p.reps ?? 10, weight: p.weight })),
+  }))
 }
 
 export interface SessionStats {
@@ -107,6 +127,9 @@ export function statsOf(s: Session, now = Date.now()): SessionStats {
       any = true
       setsDone++
       if (set.reps && set.weight) volumeKg += set.reps * set.weight * (e.parCote ? 2 : 1)
+      set.parts?.forEach((p, i) => {
+        if (p.reps && p.weight) volumeKg += p.reps * p.weight * (e.parts?.[i]?.parCote ? 2 : 1)
+      })
     }
     if (any) exercisesDone++
   }
@@ -177,7 +200,9 @@ export function estimateDuration(program: Pick<Program, 'exercises'>, defaultRes
   let total = 0
   program.exercises.forEach((ex, e) => {
     ex.sets.forEach((set, i) => {
-      const work = set.durationSec ?? Math.max(MIN_SET_SEC, (set.toFailure ? 12 : set.reps ?? 10) * SEC_PER_REP)
+      const work = set.parts
+        ? Math.max(MIN_SET_SEC, set.parts.reduce((n, p, k) => n + (p.durationSec ?? (p.reps ?? 10) * SEC_PER_REP * (ex.parts?.[k]?.parCote ? 2 : 1)), 0))
+        : set.durationSec ?? Math.max(MIN_SET_SEC, (set.toFailure ? 12 : set.reps ?? 10) * SEC_PER_REP)
       total += work * (ex.parCote && set.durationSec == null ? 2 : 1)
       const lastOfEx = i === ex.sets.length - 1
       if (lastOfEx && e === program.exercises.length - 1) return
