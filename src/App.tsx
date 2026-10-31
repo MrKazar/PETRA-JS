@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core'
 import { NavContext, type Nav, type Route, type Tab } from './nav'
 import { getData, useData } from './data/store'
 import { computeReminders } from './logic/reminders'
-import { scheduleReminders } from './logic/native'
+import { scheduleReminders, setNotifVibration } from './logic/native'
 import { dateKey } from './logic/util'
 import { ToastHost } from './ui/kit'
 import { IconBook, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
@@ -69,7 +69,8 @@ export default function App() {
 
   // Rappels (séance du jour, tâches à heure fixe) reprogrammés quand le planning ou les réglages changent.
   const st = data.settings
-  const reminderKey = JSON.stringify([st.notifDaily, st.notifDailyTime, st.notifDailyPlannedOnly, st.notifRoutines, st.abWeeks, st.weekAAnchor, data.routines, data.weekPlan, data.weekPlanB, data.planOverrides, data.programs.map((p) => [p.id, p.name]), data.sessions[0]?.startedAt, dateKey()])
+  setNotifVibration(st.notifVibrate)
+  const reminderKey = JSON.stringify([st.notifVibrate, st.notifDaily, st.notifDailyTime, st.notifDailyPlannedOnly, st.notifRoutines, st.abWeeks, st.weekAAnchor, data.routines, data.weekPlan, data.weekPlanB, data.planOverrides, data.programs.map((p) => [p.id, p.name]), data.sessions[0]?.startedAt, dateKey()])
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
     const id = window.setTimeout(() => scheduleReminders(computeReminders(getData())), 800)

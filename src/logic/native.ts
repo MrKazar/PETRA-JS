@@ -5,6 +5,13 @@ import { KeepAwake } from '@capacitor-community/keep-awake'
 
 const native = Capacitor.isNativePlatform()
 
+let vibrateNotifs = true
+/** Réglage « vibration des notifications » : choisit le canal avec ou sans vibration. */
+export function setNotifVibration(on: boolean) {
+  vibrateNotifs = on
+}
+const channel = (id: 'repos' | 'rappels') => (vibrateNotifs ? id : `${id}_muet`)
+
 const REST_ID = 1001
 const ONGOING_ID = 1002
 let permissionAsked = false
@@ -44,6 +51,23 @@ async function ensureChannels() {
       vibration: true,
       visibility: 1,
     })
+    // Android fige la vibration d'un canal : un canal « sans vibration » pour chaque type.
+    await LocalNotifications.createChannel({
+      id: 'repos_muet',
+      name: 'Fin du repos (sans vibration)',
+      description: 'Fin du repos et minuteur, sans vibrer',
+      importance: 5,
+      vibration: false,
+      visibility: 1,
+    })
+    await LocalNotifications.createChannel({
+      id: 'rappels_muet',
+      name: 'Rappels (sans vibration)',
+      description: 'Rappels, sans vibrer',
+      importance: 4,
+      vibration: false,
+      visibility: 1,
+    })
     await LocalNotifications.createChannel({
       id: 'seance',
       name: 'Séance en cours',
@@ -69,7 +93,7 @@ export async function scheduleRestEnd(at: number, body: string) {
           id: REST_ID,
           title: 'Repos terminé',
           body,
-          channelId: 'repos',
+          channelId: channel('repos'),
           schedule: { at: new Date(at), allowWhileIdle: true },
         },
       ],
@@ -104,7 +128,7 @@ export async function scheduleIntervals(items: { at: number; title: string; body
         id: INTERVAL_BASE + i,
         title: x.title,
         body: x.body,
-        channelId: 'repos',
+        channelId: channel('repos'),
         schedule: { at: new Date(x.at), allowWhileIdle: true },
       })),
     })
@@ -174,7 +198,7 @@ export async function scheduleReminders(items: { at: number; title: string; body
         id: REMINDER_BASE + i,
         title: x.title,
         body: x.body,
-        channelId: 'rappels',
+        channelId: channel('rappels'),
         schedule: { at: new Date(x.at), allowWhileIdle: true },
       })),
     })

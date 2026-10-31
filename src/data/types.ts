@@ -145,6 +145,8 @@ export interface Settings {
   notifRestEnd: boolean
   notifOngoing: boolean
   notifIntervals: boolean
+  /** Les notifications font vibrer le téléphone. */
+  notifVibrate: boolean
   /** Rappel quotidien de séance, à l'heure notifDailyTime (HH:MM). */
   notifDaily: boolean
   notifDailyTime: string

@@ -17,6 +17,7 @@ export const DEFAULT_SETTINGS: Settings = {
   notifRestEnd: true,
   notifOngoing: true,
   notifIntervals: true,
+  notifVibrate: true,
   notifDaily: false,
   notifDailyTime: '18:00',
   notifDailyPlannedOnly: true,

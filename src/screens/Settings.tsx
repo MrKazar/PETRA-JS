@@ -166,6 +166,9 @@ function NotificationsSection() {
   const s = useData().settings
   return (
     <>
+      <div className="card stack">
+        <NotifRow title="Vibration" sub="Les notifications font vibrer le téléphone" on={s.notifVibrate} onChange={(v) => saveSettings({ notifVibrate: v })} />
+      </div>
       <SectionTitle>Pendant la séance</SectionTitle>
       <div className="card stack">
         <NotifRow title="Fin du repos" sub="Une notification à chaque série quand la pause est finie" on={s.notifRestEnd} onChange={(v) => saveSettings({ notifRestEnd: v })} />
