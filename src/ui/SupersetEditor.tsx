@@ -111,6 +111,7 @@ export function SupersetEditor({
         </div>
       </Sheet>
       <ExercisePicker
+        forSuperset
         open={picking}
         defaultRest={defaultRest}
         onClose={() => (parts.length || initial ? setPicking(false) : onClose())}

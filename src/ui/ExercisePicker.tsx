@@ -138,7 +138,8 @@ export function CatalogRow({ e, onClick }: { e: CatalogExercise; onClick: () => 
 }
 
 /** Fiche d'un exercice du catalogue, avec saisie de la charge de travail avant l'ajout. */
-export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter' }: { ex: CatalogExercise; onAdd: (p: ProgramExercise) => void; addLabel?: string }) {
+/** bare : sans les séries préconisées ni la charge (choix d'un exercice de superset, réglé ensuite). */
+export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false }: { ex: CatalogExercise; onAdd: (p: ProgramExercise) => void; addLabel?: string; bare?: boolean }) {
   const [load, setLoad] = useState<number>()
   return (
     <div className="stack">
@@ -148,13 +149,13 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter' }: { ex: Catalog
           {ex.muscles_secondaires.map((m) => <span key={m} className="badge">{groupLabel(m)}</span>)}
         </div>
       )}
-      <div className="card tight">
+      {!bare && <div className="card tight">
         <div className="eyebrow" style={{ marginBottom: 8 }}>{ex.cardio ? (ex.cardio.mode === 'duree' ? 'Durée conseillée' : ex.cardio.mode === 'intervalles' ? 'Fractionné conseillé' : 'Répétitions conseillées') : ex.pdc ? 'Séries conseillées' : 'Cycle préconisé'}</div>
         <Prescription ex={ex} workLoad={load} />
-      </div>
-      {ex.cardio && <div className="small muted">{ex.cardio.consigne} Intensité {ex.cardio.intensite}. Durée et tours se règlent ensuite dans le programme.</div>}
-      {ex.pdc && <div className="small muted">Au poids du corps : pas de chauffe ni d’hypertrophie. Séries, répétitions (ou temps, ou échec) et repos se règlent ensuite dans le programme.</div>}
-      {ex.charge && !ex.cardio && (
+      </div>}
+      {!bare && ex.cardio && <div className="small muted">{ex.cardio.consigne} Intensité {ex.cardio.intensite}. Durée et tours se règlent ensuite dans le programme.</div>}
+      {!bare && ex.pdc && <div className="small muted">Au poids du corps : pas de chauffe ni d’hypertrophie. Séries, répétitions (ou temps, ou échec) et repos se règlent ensuite dans le programme.</div>}
+      {!bare && ex.charge && !ex.cardio && (
         <div className="row">
           <div className="grow">
             <div style={{ fontWeight: 600 }}>Charge de travail</div>
@@ -171,7 +172,7 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter' }: { ex: Catalog
   )
 }
 
-export function ExercisePicker({ open, onClose, onPick, defaultRest }: { open: boolean; onClose: () => void; onPick: (ex: ProgramExercise) => void; defaultRest: number }) {
+export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset = false }: { open: boolean; onClose: () => void; onPick: (ex: ProgramExercise) => void; defaultRest: number; forSuperset?: boolean }) {
   const search = useCatalogSearch()
   const [detail, setDetail] = useState<CatalogExercise>()
 
@@ -200,10 +201,12 @@ export function ExercisePicker({ open, onClose, onPick, defaultRest }: { open: b
   }
 
   return (
-    <Sheet open={open} onClose={detail ? () => setDetail(undefined) : close} title={detail ? detail.nom : 'Ajouter un exercice'}>
+    <Sheet open={open} onClose={detail ? () => setDetail(undefined) : close} title={detail ? detail.nom : forSuperset ? 'Exercice du superset' : 'Ajouter un exercice'}>
       {detail ? (
         <CatalogDetail
           ex={detail}
+          bare={forSuperset}
+          addLabel={forSuperset ? 'Ajouter au superset' : undefined}
           onAdd={(p) => {
             setDetail(undefined)
             onPick(p)
