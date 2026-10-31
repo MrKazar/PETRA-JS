@@ -300,3 +300,31 @@ export function timerSchedule(t: IntervalTimer): { at: number; step: IntervalSte
     return out
   })
 }
+
+/** Exercices au poids du corps (ou cardio) en répétitions qui se suivent à partir de la prochaine série : le circuit à chronométrer. */
+export function repCircuit(s: Pick<Session, 'exercises'>, withFollowing: boolean): SessionExercise[] {
+  const up = nextPending(s)
+  if (!up) return []
+  const start = s.exercises.indexOf(up.exercise)
+  const out: SessionExercise[] = []
+  for (let i = start; i < s.exercises.length; i++) {
+    const ex = s.exercises[i]
+    const pending = ex.sets.filter((x) => !x.done)
+    if (ex.usesLoad !== false || !pending.length || pending.some((x) => x.durationSec != null)) break
+    out.push(ex)
+    if (!withFollowing) break
+  }
+  return out
+}
+
+/** Passe les séries restantes de ces exercices en temps (travail / repos), façon HIIT. */
+export function toTimed(s: ActiveSession, exIds: string[], workSec: number, restSec: number): ActiveSession {
+  return {
+    ...s,
+    exercises: s.exercises.map((e) =>
+      !exIds.includes(e.id)
+        ? e
+        : { ...e, restSec, sets: e.sets.map((x) => (x.done ? x : { ...x, durationSec: workSec, restSec, reps: undefined, unit: undefined, toFailure: undefined })) },
+    ),
+  }
+}

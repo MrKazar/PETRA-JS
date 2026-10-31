@@ -36,3 +36,16 @@ describe('minuteur d’intervalles', () => {
     expect(s.exercises[0].sets.every((x) => x.done)).toBe(true)
   })
 })
+
+describe('minuteur sur des séries en répétitions', () => {
+  it('passe un circuit au poids du corps en temps puis lance le minuteur', async () => {
+    const { repCircuit, toTimed } = await import('../session')
+    const bw = (id: string) => ({ ...ex(id, 3, undefined, 60), usesLoad: false })
+    const s = session(bw('Burpees'), bw('Pompes'), { ...ex('Squat', 3, undefined, 90), usesLoad: true })
+    expect(repCircuit(s, true).map((e) => e.name)).toEqual(['Burpees', 'Pompes'])
+    expect(repCircuit(s, false).map((e) => e.name)).toEqual(['Burpees'])
+    const t = startTimer(toTimed(s, ['Burpees', 'Pompes'], 30, 15), 0)
+    expect(t.timer!.steps.filter((x) => x.kind === 'work')).toHaveLength(6)
+    expect(t.timer!.steps.filter((x) => x.kind === 'rest').every((x) => x.sec === 15)).toBe(true)
+  })
+})

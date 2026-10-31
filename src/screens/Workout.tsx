@@ -5,12 +5,12 @@ import type { ActiveSession, FinisherType, SessionExercise } from '../data/types
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
-import { addSet, buildIntervals, completeSet, extendRest, nextPending, patchSet, pauseTimer, removeSet, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise } from '../logic/session'
+import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, nextPending, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
 import { IntervalTimerView } from '../ui/IntervalTimer'
 import { ExercisePicker } from '../ui/ExercisePicker'
-import { Empty, NumInput, Sheet, TopBar, confirmAction } from '../ui/kit'
+import { Empty, NumInput, Sheet, Toggle, TopBar, confirmAction } from '../ui/kit'
 import { IconCheck, IconChevron, IconFlame, IconMinus, IconPlay, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
 import { useNow } from '../ui/useNow'
 
@@ -21,6 +21,7 @@ export function WorkoutScreen() {
   const now = useNow(250, !!s)
   const [picking, setPicking] = useState(false)
   const [finishing, setFinishing] = useState(false)
+  const [setupTimer, setSetupTimer] = useState(false)
   const [undo, setUndo] = useState<{ label: string; prev: ActiveSession }>()
   const undoTimer = useRef<number | undefined>(undefined)
   const cards = useRef(new Map<string, HTMLDivElement>())
@@ -179,6 +180,18 @@ export function WorkoutScreen() {
         }}
       />
 
+      {setupTimer && (
+        <TimerSetupSheet
+          session={s}
+          onClose={() => setSetupTimer(false)}
+          onStart={(ids, work, rest) => {
+            setSetupTimer(false)
+            tap()
+            apply((a) => startTimer(toTimed(a, ids, work, rest)))
+          }}
+        />
+      )}
+
       {finishing && <FinisherSheet finishers={finishersOf(data)} lastByType={data.lastFinisher} onClose={() => setFinishing(false)} onDone={complete} />}
     </div>
 
@@ -213,6 +226,11 @@ export function WorkoutScreen() {
               )}
               {curEx.usesLoad !== false && !isCardio(curEx) && <Stepper label="kg" value={curSet.weight} step={2.5} onChange={(v) => step({ weight: v })} />}
             </div>
+            {circuitWork.length < 2 && repCircuit(s, false).length > 0 && (
+              <button className="btn block big" onClick={() => setSetupTimer(true)}>
+                <IconPlay /> <span className="ellipsis">Faire au minuteur</span>
+              </button>
+            )}
             {circuitWork.length >= 2 && (
               <button className="btn block big" onClick={() => { tap(); apply((a) => startTimer(a)) }}>
                 <IconPlay /> <span className="ellipsis">Minuteur · {circuitWork.length} tours · {formatDuration(circuitSec)}</span>
@@ -226,6 +244,41 @@ export function WorkoutScreen() {
       </div>
     )}
     </>
+  )
+}
+
+/** Réglage façon HIIT ME pour des séries en répétitions : temps de travail, de repos, et circuit sur les exercices suivants. */
+function TimerSetupSheet({ session, onClose, onStart }: { session: ActiveSession; onClose: () => void; onStart: (ids: string[], work: number, rest: number) => void }) {
+  const [work, setWork] = useState(30)
+  const [rest, setRest] = useState(15)
+  const [chain, setChain] = useState(true)
+  const all = repCircuit(session, true)
+  const picked = chain ? all : all.slice(0, 1)
+  const rounds = picked.reduce((a, e) => a + e.sets.filter((x) => !x.done).length, 0)
+  const total = rounds * work + Math.max(0, rounds - 1) * rest + PREP_SEC
+  return (
+    <Sheet open onClose={onClose} title="Minuteur">
+      <div className="stack">
+        <p className="muted small" style={{ margin: 0 }}>Les séries restantes passent en temps : travail puis repos, enchaînés tout seuls.</p>
+        <div className="dock-steppers">
+          <Stepper label="travail" value={work} unit="s" step={5} onChange={(v) => setWork(Math.max(5, v))} />
+          <Stepper label="repos" value={rest} unit="s" step={5} onChange={setRest} />
+        </div>
+        {all.length > 1 && (
+          <div className="row">
+            <div className="grow">
+              <div style={{ fontWeight: 600 }}>Enchaîner les exercices suivants</div>
+              <div className="small muted ellipsis">{all.map((e) => e.name).join(' · ')}</div>
+            </div>
+            <Toggle on={chain} onChange={setChain} label="Enchaîner" />
+          </div>
+        )}
+        <div className="small muted">{picked.map((e) => `${e.name} × ${e.sets.filter((x) => !x.done).length}`).join(' · ')}</div>
+        <button className="btn primary block big" onClick={() => onStart(picked.map((e) => e.id), work, rest)}>
+          <IconPlay /> Lancer · {rounds} tours · {formatDuration(total)}
+        </button>
+      </div>
+    </Sheet>
   )
 }
 
