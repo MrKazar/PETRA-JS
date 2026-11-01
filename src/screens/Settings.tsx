@@ -6,15 +6,17 @@ import type { Settings } from '../data/types'
 import { saveSettings } from '../logic/actions'
 import { personalRecords } from '../logic/session'
 import { UpdateBody } from '../ui/UpdateCard'
+import { ScanSheet } from '../ui/Share'
 import { activeTheme } from '../ui/theme'
 import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
-import { IconBell, IconBook, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser } from '../ui/icons'
+import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser } from '../ui/icons'
 
 const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
 export function SettingsScreen() {
   const data = useData()
   const nav = useNav()
+  const [scanning, setScanning] = useState(false)
   const s = data.settings
   const totalSec = data.sessions.reduce((n, x) => n + ((x.endedAt ?? x.startedAt) - x.startedAt) / 1000, 0)
   const row = (label: string, sub: string, icon: React.ReactNode, onClick: () => void) => (
@@ -32,6 +34,7 @@ export function SettingsScreen() {
     <div className="screen">
       <div className="screen-inner">
         <Header title="Paramètres" />
+        {scanning && <ScanSheet onClose={() => setScanning(false)} />}
         <div className="card">
           <LogoFull />
           <div className="stat-grid" style={{ marginTop: 14 }}>
@@ -54,6 +57,7 @@ export function SettingsScreen() {
           {row('Utilisateur', s.name ? s.name : 'Prénom pour l’accueil', <IconUser />, () => nav.push({ name: 'settingsSection', section: 'user' }))}
           {row('Séances', `Repos ${s.defaultRestSec} s${s.vibrate ? ' · vibration' : ''}${s.keepAwake ? ' · écran allumé' : ''}`, <IconClock />, () => nav.push({ name: 'settingsSection', section: 'sessions' }))}
           {row('Notifications', notifSummary(s), <IconBell />, () => nav.push({ name: 'settingsSection', section: 'notifications' }))}
+          {row('Scanner un QR code', 'Importer une séance, une semaine ou un finisher', <IconQr />, () => setScanning(true))}
           {row('Données', s.lastBackupAt ? `Dernière sauvegarde : ${when(s.lastBackupAt)}` : 'Sauvegarde et restauration', <IconBook />, () => nav.push({ name: 'settingsSection', section: 'data' }))}
         </div>
 
