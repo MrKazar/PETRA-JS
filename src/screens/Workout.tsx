@@ -99,6 +99,9 @@ export function WorkoutScreen() {
   const circuit = s.timer ? [] : buildIntervals(s).filter((x) => x.kind !== 'prep')
   const circuitWork = circuit.filter((x) => x.kind === 'work')
   const circuitSec = circuit.reduce((a, x) => a + x.sec, 0)
+  // Exercices chronométrés qui suivent : proposés en option pour un circuit.
+  const chained = s.timer || !circuitWork.length ? [] : buildIntervals(s, true).filter((x) => x.kind === 'work')
+  const nextNames = [...new Set(chained.slice(circuitWork.length).map((x) => x.name))]
 
   const askFinish = () => {
     if (st.setsDone === 0 && !confirmAction('Aucune série validée. Terminer quand même ?')) return
@@ -205,7 +208,7 @@ export function WorkoutScreen() {
           onStart={(ids, work, rest) => {
             setSetupTimer(false)
             tap()
-            apply((a) => startTimer(toTimed(a, ids, work, rest)))
+            apply((a) => startTimer(toTimed(a, ids, work, rest), Date.now(), ids.length > 1))
           }}
         />
       )}
@@ -252,6 +255,11 @@ export function WorkoutScreen() {
             {circuitWork.length >= 2 && (
               <button className="btn block big" onClick={() => { tap(); apply((a) => startTimer(a)) }}>
                 <IconPlay /> <span className="ellipsis">Minuteur · {circuitWork.length} tours · {formatDuration(circuitSec)}</span>
+              </button>
+            )}
+            {circuitWork.length >= 1 && nextNames.length > 0 && (
+              <button className="btn sm ghost block" onClick={() => { tap(); apply((a) => startTimer(a, Date.now(), true)) }}>
+                <span className="ellipsis">Minuteur en circuit avec {nextNames.join(', ')} ({chained.length} tours)</span>
               </button>
             )}
             <button className="btn primary block big" onClick={() => onCheck(curEx, up.index)}>

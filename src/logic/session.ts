@@ -227,11 +227,13 @@ export const PREP_SEC = 10
  * Enchaînement des séries en durée à partir de la prochaine série : tant qu'elles sont chronométrées,
  * même sur plusieurs exercices (circuit). Préparation, puis travail / repos ; pas de repos après la dernière.
  */
-export function buildIntervals(s: Pick<Session, 'exercises'>): IntervalStep[] {
+export function buildIntervals(s: Pick<Session, 'exercises'>, withFollowing = false): IntervalStep[] {
   const work: IntervalStep[] = []
   const rests: number[] = []
   let started = false
   outer: for (const ex of s.exercises) {
+    // Par défaut, seulement l'exercice en cours ; les suivants sur demande (circuit).
+    if (started && !withFollowing) break
     for (let i = 0; i < ex.sets.length; i++) {
       const set = ex.sets[i]
       if (set.done) {
@@ -255,8 +257,8 @@ export function buildIntervals(s: Pick<Session, 'exercises'>): IntervalStep[] {
   return steps
 }
 
-export function startTimer(s: ActiveSession, now = Date.now()): ActiveSession {
-  const steps = buildIntervals(s)
+export function startTimer(s: ActiveSession, now = Date.now(), withFollowing = false): ActiveSession {
+  const steps = buildIntervals(s, withFollowing)
   if (steps.length < 2) return s
   return { ...s, rest: undefined, timer: { steps, startedAt: now, pausedMs: 0 } }
 }

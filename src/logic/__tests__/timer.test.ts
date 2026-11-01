@@ -10,10 +10,16 @@ const session = (...exercises: SessionExercise[]): ActiveSession => ({ id: 's', 
 
 describe('minuteur d’intervalles', () => {
   it('enchaîne plusieurs exercices chronométrés et s’arrête à une série en répétitions', () => {
-    const steps = buildIntervals(session(ex('Step', 2, 30, 15), ex('Burpees', 2, 30, 15), ex('Pompes', 3, undefined, 60)))
+    const steps = buildIntervals(session(ex('Step', 2, 30, 15), ex('Burpees', 2, 30, 15), ex('Pompes', 3, undefined, 60)), true)
     expect(steps.map((x) => `${x.kind}:${x.name}:${x.sec}`)).toEqual([
       `prep:Step:${PREP_SEC}`, 'work:Step:30', 'rest:Step:15', 'work:Step:30', 'rest:Burpees:15', 'work:Burpees:30', 'rest:Burpees:15', 'work:Burpees:30',
     ])
+  })
+
+  it('par défaut, seulement l’exercice en cours (10 tours de battle ropes, pas 26)', () => {
+    const steps = buildIntervals(session(ex('Battle ropes', 10, 15, 30), ex('Planche', 4, 45, 30), ex('Corde', 12, 20, 10)))
+    expect(steps.filter((x) => x.kind === 'work')).toHaveLength(10)
+    expect(steps.filter((x) => x.kind === 'rest').every((x) => x.sec === 30)).toBe(true)
   })
 
   it('rien à chronométrer quand la prochaine série est en répétitions', () => {
@@ -44,7 +50,7 @@ describe('minuteur sur des séries en répétitions', () => {
     const s = session(bw('Burpees'), bw('Pompes'), { ...ex('Squat', 3, undefined, 90), usesLoad: true })
     expect(repCircuit(s, true).map((e) => e.name)).toEqual(['Burpees', 'Pompes'])
     expect(repCircuit(s, false).map((e) => e.name)).toEqual(['Burpees'])
-    const t = startTimer(toTimed(s, ['Burpees', 'Pompes'], 30, 15), 0)
+    const t = startTimer(toTimed(s, ['Burpees', 'Pompes'], 30, 15), 0, true)
     expect(t.timer!.steps.filter((x) => x.kind === 'work')).toHaveLength(6)
     expect(t.timer!.steps.filter((x) => x.kind === 'rest').every((x) => x.sec === 15)).toBe(true)
   })
