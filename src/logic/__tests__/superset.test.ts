@@ -37,3 +37,13 @@ describe('superset combiné', () => {
     expect(JSON.stringify(back)).toContain('Oiseau poulie')
   })
 })
+
+describe('QR sans charges', () => {
+  it('ne transporte ni la charge de travail, ni les charges des séries et des supersets', async () => {
+    const ex = { id: 'e', name: 'Squat', group: 'quadriceps', parCote: false, restSec: 120, workLoad: 100, sets: [{ phase: 'travail' as const, reps: 8, weight: 100, restSec: 120 }] }
+    const text = JSON.stringify(await decodeShare(await encodeShare(shareProgram({ id: 'p', name: 'Jambes', exercises: [ex, ss], createdAt: 0 }))))
+    expect(text).not.toContain('"weight"')
+    expect(text).not.toContain('"workLoad"')
+    expect(text).toContain('Oiseau poulie')
+  })
+})

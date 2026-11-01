@@ -30,9 +30,10 @@ const catalogName = (id?: string) => (id ? CATALOG.find((c) => c.id === id) : un
 
 function plainSet(s: PlannedSet): PlainSet {
   const out: PlainSet = { phase: s.phase }
-  for (const k of ['reps', 'weight', 'durationSec', 'unit', 'pct', 'restSec'] as const) if (s[k] != null) (out as Record<string, unknown>)[k] = s[k]
+  // Les charges ne voyagent pas : celui qui scanne n'a pas les mêmes performances.
+  for (const k of ['reps', 'durationSec', 'unit', 'pct', 'restSec'] as const) if (s[k] != null) (out as Record<string, unknown>)[k] = s[k]
   if (s.toFailure) out.toFailure = true
-  if (s.parts) out.parts = s.parts
+  if (s.parts) out.parts = s.parts.map(({ weight: _w, ...p }) => p)
   return out
 }
 
@@ -45,9 +46,8 @@ function plainExercise(e: ProgramExercise): PlainExercise {
   if (!cat || cat.groupe_musculaire !== e.group) out.g = e.group
   if (e.parCote) out.pc = 1
   if (e.usesLoad === false) out.pdc = 1
-  if (e.workLoad != null) out.l = e.workLoad
   if (e.note) out.no = e.note
-  if (e.parts) out.p = e.parts
+  if (e.parts) out.p = e.parts.map(({ weight: _w, ...p }) => p)
   return out
 }
 

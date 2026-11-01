@@ -8,7 +8,7 @@ import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, overloadIncrement, overloadSuggestion } from '../progress'
 import { THEMES, activeTheme, themeOf, themesFor } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
-import type { Program, Routine } from '../../data/types'
+import type { PlannedSet, Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS } from '../../data/store'
 import { backupName, backupsToPrune, parseBackup } from '../backup'
 import { MAX_QR_CHARS, applyShare, decodeShare, encodeShare, shareProgram, shareWeeksAB } from '../share'
@@ -324,7 +324,10 @@ describe('partage par QR code', () => {
     const back = await decodeShare(await encodeShare(shareProgram(p)))
     const { data } = applyShare({ ...DATA0(), programs: [] }, back)
     expect(data.programs[0].name).toBe('Push')
-    expect(data.programs[0].exercises.map((e) => [e.name, e.sets])).toEqual(p.exercises.map((e) => [e.name, e.sets]))
+    // Les charges ne voyagent pas dans le QR code.
+    const noLoad = (sets: PlannedSet[]) => sets.map(({ weight: _w, ...x }) => x)
+    expect(data.programs[0].exercises.map((e) => [e.name, noLoad(e.sets)])).toEqual(p.exercises.map((e) => [e.name, noLoad(e.sets)]))
+    expect(data.programs[0].exercises.every((e) => e.workLoad == null)).toBe(true)
   })
   it('tient dans un QR code pour 6 séances de 8 exercices en semaines A / B', async () => {
     const programs = [0, 8, 16, 24, 32, 40].map((n, i) => prog(`S${i}`, n))
