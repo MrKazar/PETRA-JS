@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { getData, normalize, onDataChange, setData } from '../data/store'
 import { toast } from '../ui/kit'
 import type { AppData } from '../data/types'
@@ -14,6 +15,12 @@ export interface PairingState extends PairInfo {
   error?: string
 }
 
+export type UpdateState =
+  | { kind: 'idle' | 'checking' | 'none' }
+  | { kind: 'downloading'; version?: string; percent: number }
+  | { kind: 'ready'; version: string }
+  | { kind: 'error'; message: string }
+
 interface PctraBridge {
   /** Version de PCTRA (indépendante de celle de PETRA). */
   version: string
@@ -21,9 +28,11 @@ interface PctraBridge {
   newToken(): Promise<PairingState>
   onSync(cb: (id: number, payload: { data?: Partial<AppData> }) => void): void
   reply(id: number, result: { data?: AppData; error?: string }): void
-  /** Mise à jour déjà téléchargée (installée à la fermeture), s'il y en a une. */
-  updateState(): Promise<{ version: string } | undefined>
-  onUpdateReady(cb: (info: { version: string }) => void): void
+  /** État des mises à jour de PCTRA. */
+  updateState(): Promise<UpdateState>
+  onUpdateState(cb: (state: UpdateState) => void): void
+  /** Cherche une nouvelle version (elle se télécharge toute seule si elle existe). */
+  checkUpdate(): void
   /** Redémarre PCTRA sur la nouvelle version. */
   installUpdate(): void
   /** Révision actuelle des données, que le téléphone consulte pour la synchro instantanée. */
@@ -92,3 +101,21 @@ export function startDesktop() {
     }
   })
 }
+
+/** État des mises à jour de PCTRA, pour l'écran (bandeau, Paramètres). */
+export function useUpdateState(): UpdateState {
+  const [state, setState] = useState<UpdateState>({ kind: 'idle' })
+  useEffect(() => {
+    if (!desktop) return
+    let alive = true
+    void desktop.updateState().then((s) => alive && setState(s))
+    updateListeners.add(setState)
+    return () => {
+      alive = false
+      updateListeners.delete(setState)
+    }
+  }, [])
+  return state
+}
+const updateListeners = new Set<(s: UpdateState) => void>()
+desktop?.onUpdateState((s) => updateListeners.forEach((l) => l(s)))

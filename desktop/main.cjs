@@ -84,25 +84,47 @@ ipcMain.handle('pctra:new-token', () => {
 })
 /* ---------- Mises à jour automatiques (releases GitHub de PETRA-JS, fichier latest.yml) ---------- */
 
-let updateReady
+/**
+ * État des mises à jour, envoyé à la page à chaque changement :
+ * idle | checking | none (à jour) | downloading (percent) | ready (version) | error (message).
+ */
+let update = { kind: 'idle' }
+function setUpdate(next) {
+  update = next
+  win?.webContents.send('pctra:update-state', update)
+}
+let checking = false
+async function checkUpdates() {
+  if (!app.isPackaged) return setUpdate({ kind: 'error', message: 'Mises à jour disponibles seulement dans PCTRA installé.' })
+  if (checking || update.kind === 'downloading' || update.kind === 'ready') return
+  checking = true
+  try {
+    await autoUpdater.checkForUpdates()
+  } catch {
+    /* l'événement « error » a déjà prévenu */
+  } finally {
+    checking = false
+  }
+}
 function setupUpdates() {
   if (!app.isPackaged) return
   autoUpdater.autoDownload = true
   autoUpdater.autoInstallOnAppQuit = true
-  autoUpdater.on('update-downloaded', (info) => {
-    updateReady = { version: info.version }
-    win?.webContents.send('pctra:update-ready', updateReady)
+  autoUpdater.on('checking-for-update', () => setUpdate({ kind: 'checking' }))
+  autoUpdater.on('update-not-available', () => setUpdate({ kind: 'none' }))
+  autoUpdater.on('update-available', (info) => setUpdate({ kind: 'downloading', version: info.version, percent: 0 }))
+  autoUpdater.on('download-progress', (p) => setUpdate({ kind: 'downloading', version: update.version, percent: Math.round(p.percent) }))
+  autoUpdater.on('update-downloaded', (info) => setUpdate({ kind: 'ready', version: info.version }))
+  autoUpdater.on('error', (e) => {
+    if (update.kind !== 'ready') setUpdate({ kind: 'error', message: /net::|ENOTFOUND|ETIMEDOUT|ECONN/.test(String(e?.message)) ? 'Pas de connexion Internet.' : 'Vérification impossible pour le moment.' })
   })
-  autoUpdater.on('error', () => {
-    /* pas de réseau, release sans PCTRA… : on réessaiera plus tard */
-  })
-  const check = () => autoUpdater.checkForUpdates().catch(() => {})
-  check()
-  setInterval(check, 6 * 3600 * 1000)
+  void checkUpdates()
+  setInterval(checkUpdates, 6 * 3600 * 1000)
 }
-ipcMain.handle('pctra:update-state', () => updateReady)
+ipcMain.handle('pctra:update-state', () => update)
+ipcMain.on('pctra:check-update', () => void checkUpdates())
 ipcMain.on('pctra:install-update', () => {
-  if (updateReady) autoUpdater.quitAndInstall(true, true)
+  if (update.kind === 'ready') autoUpdater.quitAndInstall(true, true)
 })
 
 ipcMain.on('pctra:version', (e) => {

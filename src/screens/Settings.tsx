@@ -13,7 +13,7 @@ import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle
 import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor } from '../ui/icons'
 import { syncNow, unpair } from '../logic/pcsync'
 import { encodePairing } from '../logic/sync'
-import { desktop, isDesktop, lastPhoneSync, onPhoneSync, type PairingState } from '../logic/desktop'
+import { desktop, isDesktop, lastPhoneSync, onPhoneSync, useUpdateState, type PairingState } from '../logic/desktop'
 
 const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
@@ -165,13 +165,25 @@ function pcSummary(s: Settings): string {
 }
 
 function DesktopVersion() {
+  const u = useUpdateState()
+  const status =
+    u.kind === 'checking' ? 'Recherche d’une mise à jour…'
+    : u.kind === 'none' ? 'Tu as la dernière version.'
+    : u.kind === 'downloading' ? `Téléchargement de la ${u.version ?? 'nouvelle version'}… ${u.percent} %`
+    : u.kind === 'ready' ? `La ${u.version} est prête : elle s’installe à la fermeture de PCTRA.`
+    : u.kind === 'error' ? u.message
+    : 'Mises à jour automatiques depuis GitHub'
   return (
     <div className="row">
       <div className="grow">
         <div style={{ fontWeight: 600 }}>PCTRA {desktop?.version}</div>
-        <div className="small muted">Appli PC de PETRA {__APP_VERSION__}</div>
+        <div className="small muted">{status}</div>
       </div>
-      <button className="btn sm" onClick={() => window.open('https://github.com/MrKazar/PETRA-JS/releases/latest', '_blank')}>Dernière version</button>
+      {u.kind === 'ready' ? (
+        <button className="btn sm primary" onClick={() => desktop?.installUpdate()}>Redémarrer</button>
+      ) : (
+        <button className="btn sm" disabled={u.kind === 'checking' || u.kind === 'downloading'} onClick={() => desktop?.checkUpdate()}>Vérifier</button>
+      )}
     </div>
   )
 }
