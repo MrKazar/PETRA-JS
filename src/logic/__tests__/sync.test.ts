@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { emptyData } from '../../data/store'
 import type { AppData, Program, Session } from '../../data/types'
-import { decodePairing, encodePairing, isPairingCode, merge, toWire, track } from '../sync'
+import { decodePairing, encodePairing, isPairingCode, merge, revOf, toWire, track } from '../sync'
 
 const prog = (id: string, name = id): Program => ({ id, name, createdAt: 0, exercises: [] })
 const sess = (id: string, startedAt: number): Session => ({ id, programName: 'X', startedAt, endedAt: startedAt + 1, exercises: [] })
@@ -69,6 +69,18 @@ describe('synchro PC : fusion', () => {
     expect(onPc.programs.map((p) => p.name)).toEqual(['A tel', 'B pc'])
     expect(onPhone.programs.map((p) => p.name)).toEqual(['A tel', 'B pc'])
     expect(onPc.sync).toEqual(onPhone.sync)
+  })
+
+  it('après une synchro, le téléphone et le PC ont la même révision', () => {
+    const base = edit(emptyData(), (x) => ({ ...x, programs: [prog('a'), prog('b')] }), 10)
+    const phone = edit(base, (x) => ({ ...x, programs: [x.programs[0]] }), 40)
+    const pc = edit(base, (x) => ({ ...x, settings: { ...x.settings, theme: 'pompier' } }), 30)
+    const onPc = merge(pc, phone, 1000, { preferRemote: true })
+    const onPhone = merge(phone, toWire(onPc), 1000)
+    expect(revOf(onPc)).toBe(40)
+    expect(revOf(onPhone)).toBe(revOf(onPc))
+    expect(onPhone.settings.theme).toBe('pompier')
+    expect(revOf(edit(onPc, (x) => ({ ...x, settings: { ...x.settings, theme: 'neon' } }), 50))).toBe(50)
   })
 
   it('une suppression se propage, sauf si l’autre côté a modifié après', () => {

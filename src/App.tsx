@@ -25,7 +25,7 @@ import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
 import { activeTheme, applyTheme } from './ui/theme'
 import { syncAppIcon } from './logic/appIcon'
-import { autoSync } from './logic/pcsync'
+import { autoSync, startLiveSync } from './logic/pcsync'
 import { desktop, isDesktop, startDesktop } from './logic/desktop'
 
 const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
@@ -76,6 +76,7 @@ export default function App() {
       }
     }
     if (isDesktop) startDesktop()
+    else startLiveSync()
   }, [])
 
   // Rappels (séance du jour, tâches à heure fixe) reprogrammés quand le planning ou les réglages changent.

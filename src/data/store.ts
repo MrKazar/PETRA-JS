@@ -85,13 +85,33 @@ export function getData(): AppData {
  * `track: false` pour appliquer le résultat d'une synchro (déjà daté).
  */
 export function setData(next: AppData, opts: { track?: boolean } = {}) {
+  let tracked = false
   if (opts.track !== false) {
     const sync = track(state, next)
+    tracked = sync !== state.sync
     if (sync !== next.sync) next = { ...next, sync }
   }
   state = next
   persist()
   listeners.forEach((l) => l())
+  if (tracked) localChangeListeners.forEach((l) => l())
+}
+
+const localChangeListeners = new Set<() => void>()
+/** Prévient quand l'utilisateur modifie des données partagées avec l'autre appareil (pas après une synchro). */
+export function onLocalChange(l: () => void) {
+  localChangeListeners.add(l)
+  return () => {
+    localChangeListeners.delete(l)
+  }
+}
+
+/** Prévient à chaque changement des données, quelle qu'en soit l'origine. */
+export function onDataChange(l: () => void) {
+  listeners.add(l)
+  return () => {
+    listeners.delete(l)
+  }
 }
 
 export function update(fn: (d: AppData) => AppData) {
