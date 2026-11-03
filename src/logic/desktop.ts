@@ -61,7 +61,8 @@ export function startDesktop() {
   desktop.onSync((id, payload) => {
     try {
       if (!payload?.data || !Array.isArray(payload.data.programs)) throw new Error('format')
-      const merged = merge(getData(), normalize(payload.data))
+      // Le téléphone fait foi pour ce qui n'a jamais été modifié depuis l'arrivée de la synchro.
+      const merged = merge(getData(), normalize(payload.data), Date.now(), { preferRemote: true })
       setData(merged, { track: false })
       desktop.reply(id, { data: toWire(merged) })
       const at = Date.now()

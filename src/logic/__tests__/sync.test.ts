@@ -48,6 +48,18 @@ describe('synchro PC : fusion', () => {
     expect(m.sessions.map((s) => s.id)).toEqual(['s1'])
   })
 
+  it('première synchro : le planning et le prénom du téléphone, jamais modifiés depuis, arrivent sur le PC', () => {
+    // Données d'avant la synchro : rien n'est daté.
+    const phone = { ...emptyData(), weekPlan: { 0: 'p1' }, weekPlanB: { 2: 'p2' }, settings: { ...emptyData().settings, name: 'Léo', weekAAnchor: '2026-10-05', abWeeks: true } }
+    const pc = { ...emptyData(), settings: { ...emptyData().settings, weekAAnchor: '2026-11-02' } }
+    const onPc = merge(pc, phone, 1000, { preferRemote: true })
+    expect(onPc.weekPlan).toEqual({ 0: 'p1' })
+    expect(onPc.weekPlanB).toEqual({ 2: 'p2' })
+    expect(onPc.settings).toMatchObject({ name: 'Léo', weekAAnchor: '2026-10-05', abWeeks: true })
+    // Le téléphone garde le sien en recevant la réponse.
+    expect(merge(phone, onPc, 1000).weekPlan).toEqual({ 0: 'p1' })
+  })
+
   it('la version modifiée le plus récemment gagne, dans les deux sens', () => {
     const base = edit(emptyData(), (x) => ({ ...x, programs: [prog('a', 'A'), prog('b', 'B')] }), 10)
     const phone = edit(base, (x) => ({ ...x, programs: [{ ...x.programs[0], name: 'A tel' }, x.programs[1]] }), 20)
