@@ -6,6 +6,7 @@ const fs = require('node:fs')
 const os = require('node:os')
 const crypto = require('node:crypto')
 const { startSyncServer, localAddresses } = require('./server.cjs')
+const { autoUpdater } = require('electron-updater')
 
 const PORT = 47123
 app.setName('PCTRA')
@@ -77,6 +78,29 @@ ipcMain.handle('pctra:new-token', () => {
   writeConfig({ ...readConfig(), token: newToken() })
   return pairing()
 })
+/* ---------- Mises à jour automatiques (releases GitHub de PETRA-JS, fichier latest.yml) ---------- */
+
+let updateReady
+function setupUpdates() {
+  if (!app.isPackaged) return
+  autoUpdater.autoDownload = true
+  autoUpdater.autoInstallOnAppQuit = true
+  autoUpdater.on('update-downloaded', (info) => {
+    updateReady = { version: info.version }
+    win?.webContents.send('pctra:update-ready', updateReady)
+  })
+  autoUpdater.on('error', () => {
+    /* pas de réseau, release sans PCTRA… : on réessaiera plus tard */
+  })
+  const check = () => autoUpdater.checkForUpdates().catch(() => {})
+  check()
+  setInterval(check, 6 * 3600 * 1000)
+}
+ipcMain.handle('pctra:update-state', () => updateReady)
+ipcMain.on('pctra:install-update', () => {
+  if (updateReady) autoUpdater.quitAndInstall(true, true)
+})
+
 ipcMain.on('pctra:version', (e) => {
   e.returnValue = app.getVersion()
 })
@@ -111,6 +135,7 @@ app.on('second-instance', () => {
 
 app.whenReady().then(async () => {
   createWindow()
+  setupUpdates()
   try {
     await startSyncServer({ port: PORT, getToken: token, handle: handleSync })
   } catch (e) {
