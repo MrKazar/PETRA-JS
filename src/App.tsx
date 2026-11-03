@@ -26,7 +26,7 @@ import { checkOnLaunch } from './logic/updates'
 import { activeTheme, applyTheme } from './ui/theme'
 import { syncAppIcon } from './logic/appIcon'
 import { autoSync, startLiveSync } from './logic/pcsync'
-import { desktop, isDesktop, startDesktop } from './logic/desktop'
+import { desktop, isDesktop, startDesktop, useUpdateState } from './logic/desktop'
 
 const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
   { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
@@ -135,16 +135,11 @@ export default function App() {
 
 /** PCTRA : la nouvelle version est téléchargée, elle s'installe à la fermeture ou tout de suite. */
 function PctraUpdateBanner() {
-  const [ready, setReady] = useState<{ version: string }>()
-  useEffect(() => {
-    if (!desktop) return
-    void desktop.updateState().then((r) => r && setReady(r))
-    desktop.onUpdateReady(setReady)
-  }, [])
-  if (!ready) return null
+  const update = useUpdateState()
+  if (update.kind !== 'ready') return null
   return (
     <div className="update-banner">
-      <span className="grow">PCTRA {ready.version} est prête. Elle s’installera à la fermeture.</span>
+      <span className="grow">PCTRA {update.version} est prête. Elle s’installera à la fermeture.</span>
       <button className="btn sm primary" onClick={() => desktop?.installUpdate()}>Redémarrer maintenant</button>
     </div>
   )

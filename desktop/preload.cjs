@@ -8,7 +8,8 @@ contextBridge.exposeInMainWorld('pctra', {
   onSync: (cb) => ipcRenderer.on('pctra:sync', (_e, id, payload) => cb(id, payload)),
   reply: (id, result) => ipcRenderer.send('pctra:sync-reply', id, result),
   updateState: () => ipcRenderer.invoke('pctra:update-state'),
-  onUpdateReady: (cb) => ipcRenderer.on('pctra:update-ready', (_e, info) => cb(info)),
+  onUpdateState: (cb) => ipcRenderer.on('pctra:update-state', (_e, state) => cb(state)),
+  checkUpdate: () => ipcRenderer.send('pctra:check-update'),
   installUpdate: () => ipcRenderer.send('pctra:install-update'),
   setRev: (rev) => ipcRenderer.send('pctra:rev', rev),
 })
