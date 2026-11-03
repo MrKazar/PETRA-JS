@@ -75,11 +75,13 @@ export function track(prev: AppData, next: AppData, now = Date.now()): SyncMeta 
 }
 
 /**
- * Fusionne les données d'un autre appareil dans les données locales. Symétrique : les deux
- * appareils obtiennent le même résultat. La séance en cours et les réglages propres à l'appareil
- * restent ceux de `local`.
+ * Fusionne les données d'un autre appareil dans les données locales. La séance en cours et les
+ * réglages propres à l'appareil restent ceux de `local`.
+ *
+ * À égalité (élément jamais modifié depuis l'arrivée de la synchro, des deux côtés), `local` gagne,
+ * sauf avec `preferRemote` : le PC l'utilise pour que le téléphone, qui a l'historique, fasse foi.
  */
-export function merge(local: AppData, remote: AppData, now = Date.now()): AppData {
+export function merge(local: AppData, remote: AppData, now = Date.now(), opts: { preferRemote?: boolean } = {}): AppData {
   const L = local.sync ?? emptyMeta()
   const R = remote.sync ?? emptyMeta()
   const out = emptyMeta()
@@ -96,7 +98,8 @@ export function merge(local: AppData, remote: AppData, now = Date.now()): AppDat
     }
     if (pt === -Infinity) return null
     if (pt > 0) out.stamps[key] = pt
-    return lt >= rt ? 'l' : 'r'
+    if (lt !== rt) return lt > rt ? 'l' : 'r'
+    return opts.preferRemote ? 'r' : 'l'
   }
 
   const result: AppData = { ...local, settings: { ...local.settings } }
