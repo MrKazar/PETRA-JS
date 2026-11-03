@@ -85,3 +85,56 @@ jobs:
           else
             gh release create "v$VERSION" "out/PETRA-$VERSION.apk" --title "PETRA $VERSION" --notes "APK Android de PETRA $VERSION. Depuis l'appli : Paramètres > Application > Installer. Sinon, télécharge PETRA-$VERSION.apk sur ton téléphone et ouvre-le."
           fi
+
+  # PCTRA : l'appli PC (Windows) construite à partir du même code web.
+  windows:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            desktop/package-lock.json
+
+      - name: Construire l'appli web
+        run: |
+          npm ci
+          npm run build
+
+      - name: Construire PCTRA (installateur Windows)
+        working-directory: desktop
+        run: |
+          npm ci
+          npm run dist
+
+      - name: Nom de l'installateur
+        id: exe
+        shell: bash
+        run: |
+          echo "petra=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          echo "pctra=$(node -p "require('./desktop/package.json').version")" >> "$GITHUB_OUTPUT"
+          ls desktop/release/*.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PCTRA-${{ steps.exe.outputs.pctra }}
+          path: desktop/release/*.exe
+
+      # Ajouté à la release de PETRA du même commit (créée par le job « build »).
+      - name: Joindre PCTRA à la release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.exe.outputs.petra }}
+        run: |
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            gh release upload "v$VERSION" desktop/release/*.exe --clobber
+          else
+            echo "::warning::Pas de release v$VERSION : PCTRA construit mais pas publié."
+          fi
