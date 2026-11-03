@@ -72,6 +72,10 @@ function handleSync(payload) {
   })
 }
 
+let dataRev = 0
+ipcMain.on('pctra:rev', (_e, rev) => {
+  if (typeof rev === 'number') dataRev = rev
+})
 ipcMain.on('pctra:sync-reply', (_e, id, result) => pending.get(id)?.(result))
 ipcMain.handle('pctra:pairing', () => pairing())
 ipcMain.handle('pctra:new-token', () => {
@@ -137,7 +141,7 @@ app.whenReady().then(async () => {
   createWindow()
   setupUpdates()
   try {
-    await startSyncServer({ port: PORT, getToken: token, handle: handleSync })
+    await startSyncServer({ port: PORT, getToken: token, handle: handleSync, getRev: () => dataRev })
   } catch (e) {
     serverError =
       e?.code === 'EADDRINUSE'

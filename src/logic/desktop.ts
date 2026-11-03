@@ -1,7 +1,7 @@
-import { getData, normalize, setData } from '../data/store'
+import { getData, normalize, onDataChange, setData } from '../data/store'
 import { toast } from '../ui/kit'
 import type { AppData } from '../data/types'
-import { merge, toWire, type PairInfo } from './sync'
+import { merge, revOf, toWire, type PairInfo } from './sync'
 
 /**
  * Côté PC (PCTRA) : l'appli Electron expose `window.pctra` (voir desktop/preload.cjs). Le
@@ -26,6 +26,8 @@ interface PctraBridge {
   onUpdateReady(cb: (info: { version: string }) => void): void
   /** Redémarre PCTRA sur la nouvelle version. */
   installUpdate(): void
+  /** Révision actuelle des données, que le téléphone consulte pour la synchro instantanée. */
+  setRev(rev: number): void
 }
 
 declare global {
@@ -63,6 +65,13 @@ let started = false
 export function startDesktop() {
   if (!desktop || started) return
   started = true
+  // Le téléphone consulte cette révision : dès qu'elle change, il se synchronise.
+  let rev = revOf(getData())
+  desktop.setRev(rev)
+  onDataChange(() => {
+    const r = revOf(getData())
+    if (r !== rev) desktop?.setRev((rev = r))
+  })
   desktop.onSync((id, payload) => {
     try {
       if (!payload?.data || !Array.isArray(payload.data.programs)) throw new Error('format')

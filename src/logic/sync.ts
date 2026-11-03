@@ -11,6 +11,8 @@ import type { AppData, Settings, SyncMeta } from '../data/types'
 export const PC_PORT = 47123
 export const SYNC_PATH = '/petra/sync'
 export const PING_PATH = '/petra/ping'
+/** Révision actuelle des données du PC : le téléphone la consulte pour savoir s'il doit se synchroniser. */
+export const REV_PATH = '/petra/rev'
 /** Préfixe du QR code d'association affiché par l'appli PC. */
 export const PAIR_PREFIX = 'PETRA-PC:'
 /** Une suppression est oubliée au bout d'un an (l'autre appareil a eu le temps de la recevoir). */
@@ -87,7 +89,9 @@ export function merge(local: AppData, remote: AppData, now = Date.now(), opts: {
   const out = emptyMeta()
 
   /** Qui garde l'élément `key` : local, distant, ou personne (supprimé). */
+  const decided = new Set<string>()
   const pick = (key: string, lHas: boolean, rHas: boolean): 'l' | 'r' | null => {
+    decided.add(key)
     const lt = lHas ? (L.stamps[key] ?? 0) : -Infinity
     const rt = rHas ? (R.stamps[key] ?? 0) : -Infinity
     const dt = Math.max(L.gone[key] ?? -Infinity, R.gone[key] ?? -Infinity)
@@ -133,8 +137,26 @@ export function merge(local: AppData, remote: AppData, now = Date.now(), opts: {
   for (const f of FIELDS) if (pick(`f:${f}`, true, true) === 'r') (result as unknown as Record<string, unknown>)[f] = remote[f]
   for (const k of SYNCED_SETTINGS) if (pick(`set:${k}`, true, true) === 'r' && remote.settings[k] !== undefined) (result.settings as unknown as Record<string, unknown>)[k] = remote.settings[k]
 
+  // Suppressions d'éléments absents des deux côtés : on les garde quand même (sinon un appareil qui a
+  // encore l'élément le ferait revenir, et les deux révisions ne seraient plus les mêmes).
+  for (const [key, t] of [...Object.entries(L.gone), ...Object.entries(R.gone)]) {
+    if (decided.has(key) || now - t >= GONE_TTL) continue
+    out.gone[key] = Math.max(out.gone[key] ?? 0, t)
+  }
+
   result.sync = out
   return result
+}
+
+/**
+ * Révision des données : la date de la dernière modification ou suppression connue. Après une
+ * synchro, les deux appareils ont la même ; elle change dès qu'un des deux modifie quelque chose.
+ */
+export function revOf(d: AppData): number {
+  let rev = 0
+  for (const t of Object.values(d.sync?.stamps ?? {})) if (t > rev) rev = t
+  for (const t of Object.values(d.sync?.gone ?? {})) if (t > rev) rev = t
+  return rev
 }
 
 /** Ce qu'un appareil envoie à l'autre : tout sauf la séance en cours et l'association au PC. */

@@ -5,6 +5,7 @@ const os = require('node:os')
 
 const SYNC_PATH = '/petra/sync'
 const PING_PATH = '/petra/ping'
+const REV_PATH = '/petra/rev'
 const MAX_BODY = 50 * 1024 * 1024
 
 /** Adresses IPv4 du PC sur le réseau local (box, Wi-Fi), les plus probables en premier. */
@@ -42,13 +43,16 @@ function send(res, status, body) {
  * Démarre le serveur. `getToken()` donne le jeton d'association actuel, `handle(payload)` fusionne
  * les données reçues et renvoie `{ data }` (ou `{ error }`).
  */
-function startSyncServer({ port, host = '0.0.0.0', getToken, handle, name = os.hostname() }) {
+function startSyncServer({ port, host = '0.0.0.0', getToken, handle, getRev = () => 0, name = os.hostname() }) {
   const server = http.createServer((req, res) => {
     const url = (req.url ?? '').split('?')[0]
     if (req.method === 'OPTIONS') return send(res, 204)
     if (req.method === 'GET' && url === PING_PATH) return send(res, 200, { app: 'PCTRA', name })
-    if (req.method !== 'POST' || url !== SYNC_PATH) return send(res, 404, { error: 'introuvable' })
+    if (url !== SYNC_PATH && url !== REV_PATH) return send(res, 404, { error: 'introuvable' })
     if (!sameToken(req.headers['x-petra-token'], getToken())) return send(res, 401, { error: 'jeton refusé' })
+    // Révision des données : le téléphone la consulte souvent pour savoir s'il doit se synchroniser.
+    if (url === REV_PATH) return req.method === 'GET' ? send(res, 200, { rev: getRev() }) : send(res, 405, { error: 'GET seulement' })
+    if (req.method !== 'POST') return send(res, 405, { error: 'POST seulement' })
     const chunks = []
     let size = 0
     req.on('data', (c) => {
@@ -80,4 +84,4 @@ function startSyncServer({ port, host = '0.0.0.0', getToken, handle, name = os.h
   })
 }
 
-module.exports = { startSyncServer, localAddresses, SYNC_PATH, PING_PATH }
+module.exports = { startSyncServer, localAddresses, SYNC_PATH, PING_PATH, REV_PATH }
