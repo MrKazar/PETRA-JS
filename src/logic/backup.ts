@@ -64,6 +64,6 @@ async function writeLocal(at: Date, json: string): Promise<boolean> {
 
 /** Remplace toutes les données par une sauvegarde, en gardant l'état des sauvegardes de ce téléphone. */
 export function restoreBackup(data: AppData) {
-  const { lastBackupAt } = getData().settings
-  setData({ ...data, settings: { ...data.settings, lastBackupAt } })
+  const { lastBackupAt, pc } = getData().settings
+  setData({ ...data, settings: { ...data.settings, lastBackupAt, pc } })
 }

@@ -25,6 +25,8 @@ import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
 import { activeTheme, applyTheme } from './ui/theme'
 import { syncAppIcon } from './logic/appIcon'
+import { autoSync } from './logic/pcsync'
+import { isDesktop, startDesktop } from './logic/desktop'
 
 const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
   { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
@@ -64,7 +66,16 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    if (Capacitor.isNativePlatform()) checkOnLaunch()
+    if (Capacitor.isNativePlatform()) {
+      checkOnLaunch()
+      autoSync()
+      // Synchro avec le PC aussi quand on revient dans l'appli.
+      const sub = CapApp.addListener('resume', autoSync)
+      return () => {
+        sub.then((h) => h.remove())
+      }
+    }
+    if (isDesktop) startDesktop()
   }, [])
 
   // Rappels (séance du jour, tâches à heure fixe) reprogrammés quand le planning ou les réglages changent.
@@ -97,17 +108,19 @@ export default function App() {
 
   return (
     <NavContext.Provider value={nav}>
-      <div className="app">
+      <div className={`app${isDesktop ? ' desktop' : ''}`}>
         <Screen route={route} key={JSON.stringify(route)} />
         {data.active && route.name !== 'workout' && <LiveBanner name={data.active.programName} startedAt={data.active.startedAt} restEnd={data.active.rest?.endsAt} onOpen={() => nav.push({ name: 'workout' })} />}
         {showTabs && (
           <nav className="tabbar">
+            {isDesktop && <div className="tabbar-brand">PCTRA</div>}
             {TABS.map(({ tab, label, Icon }) => (
               <button key={tab} className={`tab${rootTab === tab ? ' on' : ''}`} onClick={() => nav.reset({ name: tab })}>
                 <span className="pill">
                   <Icon />
+                  {isDesktop && label}
                 </span>
-                {label}
+                {!isDesktop && label}
               </button>
             ))}
           </nav>

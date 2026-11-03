@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 import type { AppData, Settings } from './types'
 import { addDays, dateKey, weekday } from '../logic/util'
 import { migrateExercise } from './catalog'
+import { track } from '../logic/sync'
 
 const KEY = 'petra.data.v1'
 
@@ -79,7 +80,15 @@ export function getData(): AppData {
   return state
 }
 
-export function setData(next: AppData) {
+/**
+ * Remplace les données. Par défaut, note ce qui a changé pour la synchro avec l'appli PC ;
+ * `track: false` pour appliquer le résultat d'une synchro (déjà daté).
+ */
+export function setData(next: AppData, opts: { track?: boolean } = {}) {
+  if (opts.track !== false) {
+    const sync = track(state, next)
+    if (sync !== next.sync) next = { ...next, sync }
+  }
   state = next
   persist()
   listeners.forEach((l) => l())

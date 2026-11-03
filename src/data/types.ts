@@ -178,6 +178,31 @@ export interface Settings {
   notifRoutines: boolean
   /** Date de la dernière sauvegarde automatique (fichier dans Documents/PETRA). */
   lastBackupAt?: number
+  /** Appli PC associée (synchro par le Wi-Fi local). Propre à cet appareil, jamais synchronisé. */
+  pc?: PcLink
+}
+
+/** Appli PC associée en scannant son QR code. */
+export interface PcLink {
+  /** Adresses IP du PC sur le réseau local, la dernière qui a marché en premier. */
+  hosts: string[]
+  port: number
+  token: string
+  /** Nom du PC, pour l'affichage. */
+  name: string
+  lastAt?: number
+  /** Message de la dernière synchro ratée (effacé à la suivante réussie). */
+  lastError?: string
+}
+
+/**
+ * Suivi des modifications pour la synchro avec l'appli PC : date de dernière modification et de
+ * suppression de chaque élément (« p:<id> » programme, « s:<id> » séance, « r:<id> » routine,
+ * « log:<date> », « ov:<date> », « f:<champ> », « set:<réglage> »).
+ */
+export interface SyncMeta {
+  stamps: Record<string, number>
+  gone: Record<string, number>
 }
 
 export interface AppData {
@@ -198,4 +223,6 @@ export interface AppData {
   /** Finishers personnalisés ; absent tant que l'utilisateur garde ceux par défaut. */
   finishers?: Finisher[]
   settings: Settings
+  /** Dates de modification pour fusionner avec l'appli PC (absent tant que rien n'a changé). */
+  sync?: SyncMeta
 }

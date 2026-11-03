@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import QRCode from 'qrcode'
 import { emptyData, getData, setData, update, useData } from '../data/store'
 import { BACKUP_KEEP, parseBackup, restoreBackup, writeBackup } from '../logic/backup'
 import { useNav } from '../nav'
@@ -9,7 +10,10 @@ import { UpdateBody } from '../ui/UpdateCard'
 import { ScanSheet } from '../ui/Share'
 import { activeTheme } from '../ui/theme'
 import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
-import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser } from '../ui/icons'
+import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor } from '../ui/icons'
+import { syncNow, unpair } from '../logic/pcsync'
+import { encodePairing } from '../logic/sync'
+import { desktop, isDesktop, lastPhoneSync, onPhoneSync, type PairingState } from '../logic/desktop'
 
 const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
@@ -57,6 +61,7 @@ export function SettingsScreen() {
           {row('Utilisateur', s.name ? s.name : 'Prénom pour l’accueil', <IconUser />, () => nav.push({ name: 'settingsSection', section: 'user' }))}
           {row('Séances', `Repos ${s.defaultRestSec} s${s.vibrate ? ' · vibration' : ''}${s.keepAwake ? ' · écran allumé' : ''}`, <IconClock />, () => nav.push({ name: 'settingsSection', section: 'sessions' }))}
           {row('Notifications', notifSummary(s), <IconBell />, () => nav.push({ name: 'settingsSection', section: 'notifications' }))}
+          {row(isDesktop ? 'Téléphone' : 'Appli PC', pcSummary(s), <IconMonitor />, () => nav.push({ name: 'settingsSection', section: 'pc' }))}
           {row('Scanner un QR code', 'Importer une séance, une semaine ou un finisher', <IconQr />, () => setScanning(true))}
           {row('Données', s.lastBackupAt ? `Dernière sauvegarde : ${when(s.lastBackupAt)}` : 'Sauvegarde et restauration', <IconBook />, () => nav.push({ name: 'settingsSection', section: 'data' }))}
         </div>
@@ -81,7 +86,7 @@ export function SettingsScreen() {
 
         <SectionTitle>Application</SectionTitle>
         <div className="card">
-          <UpdateBody />
+          {isDesktop ? <DesktopVersion /> : <UpdateBody />}
         </div>
         <div className="center faint small">Plus fort aujourd’hui, plus utile demain.</div>
       </div>
@@ -90,9 +95,9 @@ export function SettingsScreen() {
   )
 }
 
-export type SettingsSection = 'user' | 'sessions' | 'notifications' | 'data'
+export type SettingsSection = 'user' | 'sessions' | 'notifications' | 'data' | 'pc'
 
-const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', notifications: 'Notifications', data: 'Données' }
+const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', notifications: 'Notifications', data: 'Données', pc: isDesktop ? 'Téléphone' : 'Appli PC' }
 
 /** Sous-pages de Paramètres. */
 export function SettingsSectionScreen({ section }: { section: SettingsSection }) {
@@ -144,7 +149,117 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
         )}
         {section === 'notifications' && <NotificationsSection />}
         {section === 'data' && <DataSection />}
+        {section === 'pc' && (isDesktop ? <PhoneLinkSection /> : <PcLinkSection />)}
       </div>
+    </div>
+  )
+}
+
+function pcSummary(s: Settings): string {
+  if (isDesktop) {
+    const at = lastPhoneSync()
+    return at ? `Dernière synchro : ${when(at)}` : 'Associer PETRA sur le téléphone'
+  }
+  if (!s.pc) return 'Synchroniser avec PCTRA sur ton PC'
+  return s.pc.lastAt ? `${s.pc.name} · ${when(s.pc.lastAt)}` : s.pc.name
+}
+
+function DesktopVersion() {
+  return (
+    <div className="row">
+      <div className="grow">
+        <div style={{ fontWeight: 600 }}>PCTRA {desktop?.version}</div>
+        <div className="small muted">Appli PC de PETRA {__APP_VERSION__}</div>
+      </div>
+      <button className="btn sm" onClick={() => window.open('https://github.com/MrKazar/PETRA-JS/releases/latest', '_blank')}>Dernière version</button>
+    </div>
+  )
+}
+
+/** Téléphone : association avec PCTRA (QR code) et synchro. */
+function PcLinkSection() {
+  const pc = useData().settings.pc
+  const [scanning, setScanning] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const sync = async () => {
+    setBusy(true)
+    const r = await syncNow()
+    setBusy(false)
+    toast(r.ok ? 'Synchronisé avec le PC' : r.error)
+  }
+  return (
+    <>
+      {scanning && <ScanSheet onClose={() => setScanning(false)} />}
+      <div className="card stack">
+        <div className="small muted">
+          PCTRA est l’appli PETRA pour Windows. Le téléphone et le PC échangent leurs données directement par le Wi-Fi de la maison, sans cloud ni compte.
+        </div>
+        {pc ? (
+          <>
+            <div>
+              <div style={{ fontWeight: 600 }}>Associé à {pc.name}</div>
+              <div className="small" style={{ color: pc.lastError ? 'var(--fr-red)' : 'var(--khaki)' }}>
+                {pc.lastError ?? (pc.lastAt ? `Dernière synchro : ${when(pc.lastAt)}` : 'Pas encore synchronisé')}
+              </div>
+            </div>
+            <button className="btn primary block" disabled={busy} onClick={sync}>{busy ? 'Synchronisation…' : 'Synchroniser maintenant'}</button>
+            <div className="small faint">Synchro automatique à l’ouverture de PETRA et après chaque séance, quand le PC est allumé avec PCTRA ouvert.</div>
+            <div className="row">
+              <button className="btn ghost sm grow" onClick={() => setScanning(true)}>Scanner un autre QR code</button>
+              <button className="btn danger sm" onClick={() => confirmAction(`Ne plus synchroniser avec ${pc.name} ? Tes données restent sur les deux appareils.`) && unpair()}>Oublier ce PC</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <ol className="small" style={{ margin: 0, paddingLeft: 18 }}>
+              <li>Ouvre PCTRA sur ton PC, Paramètres › Téléphone.</li>
+              <li>Mets le téléphone sur le même Wi-Fi que le PC.</li>
+              <li>Scanne le QR code affiché par PCTRA.</li>
+            </ol>
+            <button className="btn primary block" onClick={() => setScanning(true)}>Scanner le QR code de PCTRA</button>
+          </>
+        )}
+      </div>
+    </>
+  )
+}
+
+/** PC : QR code d'association à scanner avec PETRA. */
+function PhoneLinkSection() {
+  const [pairing, setPairing] = useState<PairingState>()
+  const [img, setImg] = useState<string>()
+  const [last, setLast] = useState(lastPhoneSync())
+  useEffect(() => {
+    void desktop?.pairing().then(setPairing)
+    return onPhoneSync(setLast)
+  }, [])
+  useEffect(() => {
+    if (!pairing || pairing.error || !pairing.hosts.length) return
+    void QRCode.toDataURL(encodePairing(pairing), { margin: 2, width: 640, color: { dark: '#000000', light: '#ffffff' } }).then(setImg)
+  }, [pairing])
+  const renew = async () => {
+    if (!desktop || !confirmAction('Changer le code ? Le téléphone déjà associé devra scanner le nouveau QR code.')) return
+    setPairing(await desktop.newToken())
+  }
+  return (
+    <div className="card stack">
+      {pairing?.error ? (
+        <div className="small" style={{ color: 'var(--fr-red)' }}>{pairing.error}</div>
+      ) : pairing && !pairing.hosts.length ? (
+        <div className="small muted">Ce PC n’est connecté à aucun réseau. Branche-le au Wi-Fi ou à la box, puis reviens sur cette page.</div>
+      ) : img ? (
+        <img src={img} alt="QR code d’association" className="qr-img" />
+      ) : (
+        <div className="qr-img" />
+      )}
+      <ol className="small" style={{ margin: 0, paddingLeft: 18 }}>
+        <li>Sur le téléphone : PETRA › Paramètres › Appli PC › Scanner le QR code.</li>
+        <li>Le téléphone doit être sur le même Wi-Fi (ou la même box) que ce PC.</li>
+        <li>Au premier lancement, Windows demande d’autoriser PCTRA sur le réseau : accepte pour les réseaux privés.</li>
+      </ol>
+      <div className="small" style={{ color: last ? 'var(--khaki)' : 'var(--faint)' }}>{last ? `Dernière synchro avec le téléphone : ${when(last)}` : 'Aucun téléphone synchronisé pour l’instant'}</div>
+      {pairing && <div className="small faint">Adresse : {pairing.hosts.join(', ') || '—'} · port {pairing.port} · {pairing.name}</div>}
+      <button className="btn ghost sm" onClick={renew}>Changer le code d’association</button>
     </div>
   )
 }

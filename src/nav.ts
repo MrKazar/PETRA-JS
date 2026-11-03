@@ -11,7 +11,7 @@ export type Route =
   | { name: 'records' }
   | { name: 'routines' }
   | { name: 'appearance' }
-  | { name: 'settingsSection'; section: 'user' | 'sessions' | 'notifications' | 'data' }
+  | { name: 'settingsSection'; section: 'user' | 'sessions' | 'notifications' | 'data' | 'pc' }
   | { name: 'progress'; id: string }
 
 export interface Nav {

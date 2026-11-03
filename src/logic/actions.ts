@@ -1,4 +1,5 @@
 import { writeBackup } from './backup'
+import { autoSync } from './pcsync'
 import { getData, update } from '../data/store'
 import { finishersOf, type Finisher } from '../data/finishers'
 import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
@@ -118,6 +119,7 @@ export function finishSession(finisher?: DoneFinisher): string | undefined {
   hideOngoing()
   setKeepAwake(false)
   void writeBackup()
+  autoSync()
   return done.id
 }
 

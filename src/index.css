@@ -447,3 +447,17 @@ textarea.input { min-height: 90px; resize: vertical; }
 .ss-round > .check, .ss-round > .icon-btn { grid-area: check; }
 .ss-line { display: flex; align-items: center; gap: 6px; }
 .ss-line .unit { font-size: 11px; color: var(--faint); }
+
+/* PCTRA (appli PC) : menu à gauche, contenu plus large */
+.tabbar-brand { display: none; }
+.app.desktop { flex-direction: row; }
+.app.desktop > .screen { order: 2; }
+.app.desktop > .live-banner { position: fixed; right: 20px; bottom: 20px; margin: 0; z-index: 30; max-width: 360px; }
+.app.desktop .tabbar { order: 1; flex-direction: column; justify-content: flex-start; gap: 4px; width: 220px; flex: none; padding: 18px 12px; border-top: 0; border-right: 1px solid var(--line); }
+.app.desktop .tabbar-brand { display: block; font-family: var(--font-head); font-weight: var(--head-weight); font-size: 26px; letter-spacing: 0.16em; color: var(--khaki); padding: 4px 12px 18px; }
+.app.desktop .tab { flex: none; flex-direction: row; justify-content: flex-start; gap: 0; font-size: 15px; padding: 0; border-radius: 999px; }
+.app.desktop .tab .pill { padding: 8px 14px; gap: 12px; display: flex; align-items: center; width: 100%; }
+.app.desktop .tab:hover:not(.on) .pill { background: var(--surface-2); }
+.app.desktop .screen { padding: 8px 32px 32px; }
+.app.desktop .screen-inner { max-width: 1040px; }
+.app.desktop .dock > *, .app.desktop .hiit-actions { max-width: 1040px; }

@@ -4,6 +4,8 @@ import jsQR from 'jsqr'
 import { getData, setData } from '../data/store'
 import { MAX_QR_CHARS, applyShare, decodeShare, describeShare, encodeShare, type SharePayload } from '../logic/share'
 import { Sheet, confirmAction, toast } from './kit'
+import { decodePairing, isPairingCode } from '../logic/sync'
+import { pairWith } from '../logic/pcsync'
 
 /** Affiche le QR code d'un partage, à scanner avec PETRA sur l'autre téléphone. */
 export function ShareSheet({ payload, title, onClose }: { payload: SharePayload; title: string; onClose: () => void }) {
@@ -58,6 +60,20 @@ export function ScanSheet({ onClose, onImported }: { onClose: () => void; onImpo
   const [paste, setPaste] = useState('')
 
   const read = async (text: string) => {
+    // QR code affiché par l'appli PC : association puis première synchro.
+    if (isPairingCode(text)) {
+      try {
+        const info = decodePairing(text)
+        onClose()
+        toast(`Association avec ${info.name}…`)
+        const r = await pairWith(info)
+        toast(r.ok ? `Associé à ${info.name} et synchronisé` : r.error)
+        return true
+      } catch (e) {
+        toast((e as Error).message)
+        return false
+      }
+    }
     try {
       setFound(await decodeShare(text))
       return true
