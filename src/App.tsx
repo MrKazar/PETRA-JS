@@ -26,7 +26,7 @@ import { checkOnLaunch } from './logic/updates'
 import { activeTheme, applyTheme } from './ui/theme'
 import { syncAppIcon } from './logic/appIcon'
 import { autoSync } from './logic/pcsync'
-import { isDesktop, startDesktop } from './logic/desktop'
+import { desktop, isDesktop, startDesktop } from './logic/desktop'
 
 const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
   { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
@@ -111,6 +111,7 @@ export default function App() {
       <div className={`app${isDesktop ? ' desktop' : ''}`}>
         <Screen route={route} key={JSON.stringify(route)} />
         {data.active && route.name !== 'workout' && <LiveBanner name={data.active.programName} startedAt={data.active.startedAt} restEnd={data.active.rest?.endsAt} onOpen={() => nav.push({ name: 'workout' })} />}
+        {isDesktop && <PctraUpdateBanner />}
         {showTabs && (
           <nav className="tabbar">
             {isDesktop && <div className="tabbar-brand">PCTRA</div>}
@@ -128,6 +129,23 @@ export default function App() {
         <ToastHost />
       </div>
     </NavContext.Provider>
+  )
+}
+
+/** PCTRA : la nouvelle version est téléchargée, elle s'installe à la fermeture ou tout de suite. */
+function PctraUpdateBanner() {
+  const [ready, setReady] = useState<{ version: string }>()
+  useEffect(() => {
+    if (!desktop) return
+    void desktop.updateState().then((r) => r && setReady(r))
+    desktop.onUpdateReady(setReady)
+  }, [])
+  if (!ready) return null
+  return (
+    <div className="update-banner">
+      <span className="grow">PCTRA {ready.version} est prête. Elle s’installera à la fermeture.</span>
+      <button className="btn sm primary" onClick={() => desktop?.installUpdate()}>Redémarrer maintenant</button>
+    </div>
   )
 }
 

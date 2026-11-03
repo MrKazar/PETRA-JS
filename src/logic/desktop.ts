@@ -21,6 +21,11 @@ interface PctraBridge {
   newToken(): Promise<PairingState>
   onSync(cb: (id: number, payload: { data?: Partial<AppData> }) => void): void
   reply(id: number, result: { data?: AppData; error?: string }): void
+  /** Mise à jour déjà téléchargée (installée à la fermeture), s'il y en a une. */
+  updateState(): Promise<{ version: string } | undefined>
+  onUpdateReady(cb: (info: { version: string }) => void): void
+  /** Redémarre PCTRA sur la nouvelle version. */
+  installUpdate(): void
 }
 
 declare global {

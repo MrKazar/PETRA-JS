@@ -123,7 +123,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: PCTRA-${{ steps.exe.outputs.pctra }}
-          path: desktop/release/*.exe
+          path: |
+            desktop/release/*.exe
+            desktop/release/*.blockmap
+            desktop/release/latest.yml
 
       # Ajouté à la release de PETRA du même commit (créée par le job « build »).
       - name: Joindre PCTRA à la release
@@ -134,7 +137,8 @@ jobs:
           VERSION: ${{ steps.exe.outputs.petra }}
         run: |
           if gh release view "v$VERSION" >/dev/null 2>&1; then
-            gh release upload "v$VERSION" desktop/release/*.exe --clobber
+            # latest.yml + blockmap : PCTRA s'en sert pour se mettre à jour tout seul.
+            gh release upload "v$VERSION" desktop/release/*.exe desktop/release/*.blockmap desktop/release/latest.yml --clobber
           else
             echo "::warning::Pas de release v$VERSION : PCTRA construit mais pas publié."
           fi
