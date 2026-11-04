@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useData } from '../data/store'
 import { BodyFigure } from '../ui/BodyMap'
-import { Header } from '../ui/kit'
-import { LEVELS, REGIONS, doneWork, levelOf, plannedDays, plannedWork, regionLabel, scaleWork, weekStart, type BodyWork, type RegionId } from '../logic/body'
+import { Header, toast } from '../ui/kit'
+import { exerciseFromCatalog, type CatalogExercise } from '../data/catalog'
+import type { AppData } from '../data/types'
+import { saveProgram } from '../logic/actions'
+import { LEVELS, REGIONS, doneWork, levelOf, plannedDays, plannedPrograms, plannedWork, regionLabel, scaleWork, suggestFor, weekStart, type BodyWork, type RegionId } from '../logic/body'
 
 type View = 'week' | 'month' | 'program'
 
@@ -109,15 +112,11 @@ export function BodyScreen() {
 
             {total > 0 && neglected.size > 0 && (
               <div className="card stack" style={{ gap: 6 }}>
-                <div className="section-title" style={{ margin: 0 }}>Muscles négligés</div>
-                <div className="chips">
-                  {REGIONS.filter((r) => neglected.has(r.id)).map((r) => (
-                    <button key={r.id} className={`chip${selected === r.id ? ' on' : ''}`} onClick={() => setSelected(r.id)}>
-                      {r.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="small faint">Moins de 4 séries{perWeek || ' sur la période'}. Repère utile, pas une obligation : à toi de voir si c’est voulu.</div>
+                <div className="section-title" style={{ margin: 0 }}>Muscles négligés · quoi ajouter</div>
+                <div className="small faint">Moins de 4 séries{perWeek || ' sur la période'}. Repère utile, pas une obligation : à toi de voir si c’est voulu. Clique sur un exercice pour l’ajouter à la séance choisie.</div>
+                {REGIONS.filter((r) => neglected.has(r.id)).map((r) => (
+                  <SuggestionRow key={r.id} data={data} region={r.id} selected={selected === r.id} onSelect={() => setSelected(r.id)} />
+                ))}
               </div>
             )}
 
@@ -143,6 +142,47 @@ export function BodyScreen() {
         <div className="small faint">
           Une série compte entière pour le muscle principal de l’exercice et pour moitié pour ses muscles secondaires. Les séries de chauffe et le cardio ne comptent pas. Repère courant : 10 à 20 séries par semaine et par muscle pour progresser.
         </div>
+      </div>
+    </div>
+  )
+}
+
+/** Un muscle négligé : des exercices qui le ciblent et la séance où les ajouter (modifiable). */
+function SuggestionRow({ data, region, selected, onSelect }: { data: AppData; region: RegionId; selected: boolean; onSelect: () => void }) {
+  const sug = useMemo(() => suggestFor(region, data), [region, data])
+  const programs = plannedPrograms(data)
+  const [target, setTarget] = useState<string>()
+  const program = data.programs.find((p) => p.id === (target ?? sug.program?.id))
+  // Pas les exercices déjà dans la séance choisie.
+  const inProgram = new Set(program?.exercises.flatMap((e) => (e.parts?.length ? e.parts.map((x) => x.catalogId) : [e.catalogId])))
+  const choices = sug.exercises.filter((e) => !inProgram.has(e.id)).slice(0, 3)
+  const add = (e: CatalogExercise) => {
+    if (!program) return
+    saveProgram({ ...program, exercises: [...program.exercises, exerciseFromCatalog(e)] })
+    toast(`${e.nom} ajouté à ${program.name}`)
+  }
+  return (
+    <div className={`bm-sug${selected ? ' sel' : ''}`}>
+      <div className="row wrap" style={{ gap: 6 }}>
+        <button className="bm-sug-name" onClick={onSelect}>{regionLabel(region)}</button>
+        {programs.length > 0 && (
+          <label className="small muted row" style={{ gap: 6, marginLeft: 'auto' }}>
+            dans
+            <select className="bm-select" value={program?.id ?? ''} onChange={(ev) => setTarget(ev.target.value)} aria-label={`Séance où ajouter un exercice pour : ${regionLabel(region)}`}>
+              {!program && <option value="">choisir une séance</option>}
+              {programs.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
+      <div className="chips">
+        {choices.map((e) => (
+          <button key={e.id} className="chip" disabled={!program} onClick={() => add(e)} title={program ? `Ajouter à ${program.name}` : 'Crée d’abord un programme'}>
+            + {e.nom}
+          </button>
+        ))}
       </div>
     </div>
   )
