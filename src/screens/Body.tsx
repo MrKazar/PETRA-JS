@@ -172,7 +172,7 @@ function SuggestionRow({ data, region, selected, onSelect }: { data: AppData; re
   const choices = sug.exercises.filter((e) => !inProgram.has(e.id)).slice(0, 3)
   const add = (e: CatalogExercise) => {
     if (!program) return
-    saveProgram({ ...program, exercises: [...program.exercises, exerciseFromCatalog(e)] })
+    saveProgram({ ...program, exercises: [...program.exercises, exerciseFromCatalog(e, undefined, data.settings.exerciseMode)] })
     toast(`${e.nom} ajouté à ${program.name}`)
   }
   return (

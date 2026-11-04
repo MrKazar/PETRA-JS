@@ -5,13 +5,15 @@ import type { ActiveSession, FinisherType, PartSet, SessionExercise } from '../d
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
-import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, nextPending, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
+import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, lastTime, matchingSet, moveToEnd, nextPending, replaceExercise, shortenRest, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
 import { IntervalTimerView } from '../ui/IntervalTimer'
 import { SupersetEditor } from '../ui/SupersetEditor'
 import { ExercisePicker } from '../ui/ExercisePicker'
-import { Empty, NumInput, Sheet, Toggle, TopBar, confirmAction } from '../ui/kit'
+import { ReplaceSheet } from '../ui/ReplaceSheet'
+import { stepLoad } from '../logic/loads'
+import { Empty, NumInput, Sheet, Toggle, TopBar, confirmAction, toast } from '../ui/kit'
 import { IconCheck, IconChevron, IconFlame, IconMinus, IconPlay, IconPlus, IconSkip, IconTrash, IconX } from '../ui/icons'
 import { useNow } from '../ui/useNow'
 
@@ -24,6 +26,7 @@ export function WorkoutScreen() {
   const [finishing, setFinishing] = useState(false)
   const [setupTimer, setSetupTimer] = useState(false)
   const [addingSuperset, setAddingSuperset] = useState(false)
+  const [replacing, setReplacing] = useState<SessionExercise>()
   const [undo, setUndo] = useState<{ label: string; prev: ActiveSession }>()
   const undoTimer = useRef<number | undefined>(undefined)
   const cards = useRef(new Map<string, HTMLDivElement>())
@@ -132,7 +135,7 @@ export function WorkoutScreen() {
           right={<span className="badge gold" style={{ fontSize: 14, padding: '4px 10px', fontVariantNumeric: 'tabular-nums' }}>{formatClock((now - s.startedAt) / 1000)}</span>}
         />
 
-        {s.rest && <RestPanel rest={s.rest} now={now} onAdd={() => apply((a) => extendRest(a, 15))} onSkip={() => apply((a) => ({ ...a, rest: undefined }))} />}
+        {s.rest && <RestPanel rest={s.rest} now={now} onAdd={() => apply((a) => extendRest(a, 15))} onLess={() => apply((a) => shortenRest(a, 15))} onSkip={() => apply((a) => ({ ...a, rest: undefined }))} />}
 
         <div className="row small muted between">
           <span>
@@ -149,6 +152,9 @@ export function WorkoutScreen() {
             key={ex.id}
             cardRef={(el) => (el ? cards.current.set(ex.id, el) : cards.current.delete(ex.id))}
             ex={ex}
+            last={lastTime(data.sessions, ex, s.startedAt)}
+            onLater={() => { apply((a) => moveToEnd(a, ex.id)); toast(`${ex.name} : à la fin de la séance`) }}
+            onReplace={() => setReplacing(ex)}
             current={up?.exercise.id === ex.id ? up.index : -1}
             onCheck={(i) => onCheck(ex, i)}
             onPatch={(i, patch) => apply((a) => patchSet(a, ex.id, i, patch))}
@@ -180,7 +186,22 @@ export function WorkoutScreen() {
         <button className="btn ghost block" onClick={abandon}>Abandonner</button>
       </div>
 
+      {replacing && (
+        <ReplaceSheet
+          ex={replacing}
+          mode={data.settings.exerciseMode ?? 'guidee'}
+          defaultRest={data.settings.defaultRestSec}
+          onClose={() => setReplacing(undefined)}
+          onPick={(next) => {
+            apply((a) => replaceExercise(a, replacing.id, next))
+            toast(`${replacing.name} remplacé par ${next.name}`)
+            setReplacing(undefined)
+          }}
+        />
+      )}
+
       <ExercisePicker
+        mode={data.settings.exerciseMode}
         open={picking}
         onClose={() => setPicking(false)}
         defaultRest={data.settings.defaultRestSec}
@@ -245,7 +266,7 @@ export function WorkoutScreen() {
               ) : (
                 <Stepper label={curSet.unit ?? (curEx.parCote ? 'reps / côté' : 'reps')} value={curSet.reps} step={1} onChange={(v) => step({ reps: v })} />
               )}
-              {curEx.usesLoad !== false && !isCardio(curEx) && <Stepper label="kg" value={curSet.weight} step={2.5} onChange={(v) => step({ weight: v })} />}
+              {curEx.usesLoad !== false && !isCardio(curEx) && <Stepper label="kg" value={curSet.weight} step={2.5} next={(v, dir) => stepLoad(curEx, v, dir)} onChange={(v) => step({ weight: v })} />}
             </div>}
             {circuitWork.length < 2 && repCircuit(s, false).length > 0 && (
               <button className="btn block big" onClick={() => setSetupTimer(true)}>
@@ -308,23 +329,31 @@ function TimerSetupSheet({ session, onClose, onStart }: { session: ActiveSession
   )
 }
 
+/** Série de la dernière fois en court : « 6 × 77,5 kg », « 45 s », « 12 ». */
+function shortSet(x: { reps?: number; weight?: number; durationSec?: number }): string {
+  if (x.durationSec != null) return formatDuration(x.durationSec)
+  const reps = x.reps != null ? String(x.reps) : '—'
+  return x.weight ? `${reps} × ${String(x.weight).replace('.', ',')} kg` : reps
+}
+
 /** Réglage au pouce : − valeur + (sans ouvrir le clavier). */
-function Stepper({ label, value, unit, step, onChange }: { label: string; value?: number; unit?: string; step: number; onChange: (v: number) => void }) {
+function Stepper({ label, value, unit, step, next, onChange }: { label: string; value?: number; unit?: string; step: number; next?: (v: number, dir: 1 | -1) => number; onChange: (v: number) => void }) {
   const v = value ?? 0
   const set = (n: number) => onChange(Math.max(0, Math.round(n * 100) / 100))
+  const move = (dir: 1 | -1) => set(next ? next(v, dir) : v + dir * step)
   return (
     <div className="stepper">
-      <button className="icon-btn" aria-label={`Moins (${label})`} onClick={() => set(v - step)}><IconMinus /></button>
+      <button className="icon-btn" aria-label={`Moins (${label})`} onClick={() => move(-1)}><IconMinus /></button>
       <div className="val">
         <b>{value == null ? '—' : v}{unit ? ` ${unit}` : ''}</b>
         <span>{label}</span>
       </div>
-      <button className="icon-btn" aria-label={`Plus (${label})`} onClick={() => set(v + step)}><IconPlus /></button>
+      <button className="icon-btn" aria-label={`Plus (${label})`} onClick={() => move(1)}><IconPlus /></button>
     </div>
   )
 }
 
-function RestPanel({ rest, now, onAdd, onSkip }: { rest: NonNullable<ActiveSession['rest']>; now: number; onAdd: () => void; onSkip: () => void }) {
+function RestPanel({ rest, now, onAdd, onLess, onSkip }: { rest: NonNullable<ActiveSession['rest']>; now: number; onAdd: () => void; onLess: () => void; onSkip: () => void }) {
   const left = (rest.endsAt - now) / 1000
   const total = (rest.endsAt - rest.startedAt) / 1000
   const over = left <= 0
@@ -346,9 +375,10 @@ function RestPanel({ rest, now, onAdd, onSkip }: { rest: NonNullable<ActiveSessi
         </div>
         <div className="stack" style={{ gap: 6 }}>
           {!over && (
-            <button className="btn sm" onClick={onAdd}>
-              +15 s
-            </button>
+            <div className="row" style={{ gap: 6 }}>
+              <button className="btn sm" onClick={onLess} aria-label="Retirer 15 secondes">−15 s</button>
+              <button className="btn sm" onClick={onAdd} aria-label="Ajouter 15 secondes">+15 s</button>
+            </div>
           )}
           <button className={`btn sm${over ? ' primary' : ''}`} onClick={onSkip}>
             {over ? 'OK' : <><IconSkip style={{ width: 16 }} /> Passer</>}
@@ -367,6 +397,9 @@ function RestPanel({ rest, now, onAdd, onSkip }: { rest: NonNullable<ActiveSessi
 function ExerciseCard({
   cardRef,
   ex,
+  last,
+  onLater,
+  onReplace,
   current,
   onCheck,
   onPatch,
@@ -376,6 +409,10 @@ function ExerciseCard({
 }: {
   cardRef: (el: HTMLDivElement | null) => void
   ex: SessionExercise
+  /** Le même exercice la dernière fois. */
+  last?: SessionExercise
+  onLater: () => void
+  onReplace: () => void
   current: number
   onCheck: (i: number) => void
   onPatch: (i: number, p: { reps?: number; weight?: number; durationSec?: number; parts?: PartSet[] }) => void
@@ -387,6 +424,7 @@ function ExerciseCard({
   const [editing, setEditing] = useState(false)
   const [open, setOpen] = useState(false)
   const labels = setLabels(ex.sets)
+  const started = ex.sets.some((x) => x.done)
   if (ex.parts && !(allDone && !open && !editing)) {
     return <SupersetCard cardRef={cardRef} ex={ex} current={current} editing={editing} setEditing={setEditing} onCheck={onCheck} onPatch={onPatch} onAddSet={onAddSet} onRemoveSet={onRemoveSet} onRemove={onRemove} allDone={allDone} />
   }
@@ -430,6 +468,10 @@ function ExerciseCard({
                 {set.toFailure ? 'jusqu’à l’échec · ' : ''}
                 {rest ? `repos ${formatDuration(rest)}` : ''}
               </div>
+              {(() => {
+                const prev = last && matchingSet(last.sets, ex.sets, i)
+                return prev ? <div className="hint" style={{ whiteSpace: 'normal', color: 'var(--khaki)' }}>Avant : {shortSet(prev)}</div> : null
+              })()}
             </div>
             {timed ? (
               <span className="row" style={{ gap: 2 }}>
@@ -471,6 +513,12 @@ function ExerciseCard({
           <IconPlus style={{ width: 16 }} /> Série
         </button>
         <span className="grow" />
+        {!started && !editing && (
+          <>
+            <button className="btn sm ghost" onClick={onLater} aria-label="Faire cet exercice plus tard">Plus tard</button>
+            <button className="btn sm ghost" onClick={onReplace} aria-label="Remplacer cet exercice">Remplacer</button>
+          </>
+        )}
         {editing && (
           <button className="btn sm danger" onClick={onRemove}>
             <IconTrash style={{ width: 16 }} /> Retirer

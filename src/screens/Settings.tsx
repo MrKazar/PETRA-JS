@@ -127,6 +127,18 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
             <NumInput value={s.defaultRestSec} onChange={(v) => saveSettings({ defaultRestSec: Math.max(0, Math.round(v ?? 0)) })} />
             <span className="small faint">s</span>
           </div>
+          <div className="stack" style={{ gap: 6 }}>
+            <div style={{ fontWeight: 600 }}>Construction des exercices</div>
+            <div className="seg">
+              <button className={(s.exerciseMode ?? 'guidee') === 'guidee' ? 'on' : ''} onClick={() => saveSettings({ exerciseMode: 'guidee' })}>Guidée</button>
+              <button className={s.exerciseMode === 'libre' ? 'on' : ''} onClick={() => saveSettings({ exerciseMode: 'libre' })}>Libre</button>
+            </div>
+            <div className="small muted">
+              {s.exerciseMode === 'libre'
+                ? 'Les nouveaux exercices arrivent en séries simples (répétitions × charge) : tu ajoutes toi-même chauffe et séries. Tes programmes actuels ne changent pas.'
+                : 'Les nouveaux exercices arrivent avec chauffe, 2 séries de travail et hypertrophie, charges calculées depuis la charge de travail. Tes programmes actuels ne changent pas.'}
+            </div>
+          </div>
           <div className="row">
             <div className="grow">
               <div style={{ fontWeight: 600 }}>Vibrer à la fin du repos</div>

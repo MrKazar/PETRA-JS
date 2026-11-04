@@ -1,6 +1,7 @@
 import raw from './exercices.json'
 import type { PlannedSet, ProgramExercise } from './types'
 import { formatDuration, uid } from '../logic/util'
+import { roundForEquipment } from '../logic/loads'
 
 interface Phase {
   reps: string
@@ -136,7 +137,8 @@ export function pdcSummary(p: PdcPlan, parCote = false): string {
   return `${p.series} × ${what}${p.repos_sec ? ` · repos ${formatDuration(p.repos_sec)}` : ''}`
 }
 
-export const isPdc = (e: Pick<ProgramExercise, 'sets'>) => e.sets.length > 0 && e.sets.every((s) => s.phase === 'serie')
+/** Poids du corps en séries simples (les séries simples avec charge du mode libre n'en sont pas). */
+export const isPdc = (e: Pick<ProgramExercise, 'sets' | 'usesLoad'>) => e.usesLoad === false && e.sets.length > 0 && e.sets.every((s) => s.phase === 'serie')
 
 /** Cycle fixe : 1 chauffe, 2 travail, 1 hypertrophie (le cardio et le poids du corps ont leur propre format). */
 export function buildCycle(ex: CatalogExercise): PlannedSet[] {
@@ -153,10 +155,11 @@ export function buildCycle(ex: CatalogExercise): PlannedSet[] {
 }
 
 /** Charge d'une série d'après la charge de travail. */
-export function loadFor(set: PlannedSet, workLoad: number | undefined): number | undefined {
+export function loadFor(set: PlannedSet, workLoad: number | undefined, ex?: Pick<ProgramExercise, 'catalogId' | 'loadStep'>): number | undefined {
   if (workLoad == null || workLoad <= 0) return undefined
   if (set.phase === 'travail') return roundLoad(workLoad)
-  if (set.pct != null) return roundLoad((workLoad * set.pct) / 100)
+  // Chauffe / hypertrophie : arrondi à ce que le matériel permet (haltères, barre, plaques de la machine).
+  if (set.pct != null) return ex ? roundForEquipment(ex, (workLoad * set.pct) / 100) : roundLoad((workLoad * set.pct) / 100)
   return undefined
 }
 
@@ -165,11 +168,21 @@ export function withWorkLoad(ex: ProgramExercise, workLoad: number | undefined):
   return {
     ...ex,
     workLoad,
-    sets: ex.sets.map((s) => (s.phase === 'travail' || s.pct != null ? { ...s, weight: loadFor(s, workLoad) } : s)),
+    sets: ex.sets.map((s) => (s.phase === 'travail' || s.pct != null ? { ...s, weight: loadFor(s, workLoad, ex) } : s)),
   }
 }
 
-export function exerciseFromCatalog(ex: CatalogExercise, workLoad?: number): ProgramExercise {
+/** Mode libre : séries simples (répétitions du travail, charge de travail sur chaque série), sans chauffe ni hypertrophie. */
+export function freeSets(ex: CatalogExercise, workLoad?: number, count = 3): PlannedSet[] {
+  const reps = ex.travail ? parseReps(ex.travail.reps) : { reps: 10 }
+  const load = workLoad && workLoad > 0 ? roundLoad(workLoad) : undefined
+  return Array.from({ length: count }, () => ({ phase: 'serie' as const, ...reps, weight: load, restSec: ex.travail?.repos_sec }))
+}
+
+/** Exercices avec des charges et des séries en répétitions (pas cardio ni poids du corps) : concernés par le mode libre. */
+export const isLoadedLift = (ex: CatalogExercise) => ex.charge && !ex.cardio && !ex.pdc && !!ex.travail
+
+export function exerciseFromCatalog(ex: CatalogExercise, workLoad?: number, mode: 'guidee' | 'libre' = 'guidee'): ProgramExercise {
   const base: ProgramExercise = {
     id: uid(),
     catalogId: ex.id,
@@ -178,9 +191,10 @@ export function exerciseFromCatalog(ex: CatalogExercise, workLoad?: number): Pro
     parCote: ex.par_cote,
     usesLoad: ex.charge,
     restSec: ex.travail?.repos_sec ?? ex.pdc?.repos_sec ?? (ex.cardio && ex.cardio.mode !== 'duree' ? ex.cardio.repos_sec : 0),
-    sets: buildCycle(ex),
+    sets: mode === 'libre' && isLoadedLift(ex) ? freeSets(ex, workLoad) : buildCycle(ex),
     note: ex.cardio ? `${ex.cardio.consigne} Intensité ${ex.cardio.intensite}.` : undefined,
   }
+  if (mode === 'libre' && isLoadedLift(ex)) return base
   return ex.charge ? withWorkLoad(base, workLoad) : base
 }
 

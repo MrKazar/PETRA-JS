@@ -1,4 +1,5 @@
-import { findCatalog } from '../data/catalog'
+import { findCatalog, roundLoad } from '../data/catalog'
+import { loadKind, needsStep, stepLoad } from './loads'
 import type { ProgramExercise, Session, SessionExercise } from '../data/types'
 
 /** Même exercice d'une séance à l'autre : par fiche du catalogue, sinon par nom. */
@@ -48,13 +49,27 @@ export const OVERLOAD_STREAK = 2
 
 const LOWER_BODY = new Set(['quadriceps', 'ischio_jambiers', 'fessiers', 'lombaires', 'corps_entier', 'adducteurs'])
 
-/** Pas d'augmentation : 5 kg sur les gros mouvements du bas du corps, 1 à 2 kg en isolation, 2,5 kg sinon. */
-export function overloadIncrement(e: ProgramExercise): number {
-  const profil = findCatalog(e.catalogId)?.profil
-  if (profil === 'poly_lourd' && LOWER_BODY.has(e.group)) return 5
-  if (profil === 'iso_petit') return 1
-  if (profil === 'iso' || profil === 'abdos_charge') return 2
-  return 2.5
+/**
+ * Prochaine charge de travail : un cran du matériel (haltères 1 kg puis 2 kg au-delà de 10 kg, barre 2,5 kg,
+ * machine / poulie l'écart entre deux plaques). Les gros mouvements du bas du corps à la barre montent de 5 kg.
+ */
+export function nextWorkLoad(e: ProgramExercise, from: number): number {
+  const k = loadKind(e)
+  if (k === 'barre' && !e.loadStep && findCatalog(e.catalogId)?.profil === 'poly_lourd' && LOWER_BODY.has(e.group)) return roundLoad(from + 5)
+  return stepLoad(e, from, 1)
+}
+
+/** Séries qui servent de référence : le travail, ou en mode libre les séries simples avec charge. */
+export function workSetsOf<T extends { phase: string }>(sets: T[]): T[] {
+  const work = sets.filter((x) => x.phase === 'travail')
+  return work.length ? work : sets.filter((x) => x.phase === 'serie')
+}
+
+/** Charge de référence : charge de travail, sinon la plus lourde des séries simples (mode libre). */
+export function referenceLoad(e: ProgramExercise): number | undefined {
+  if (e.workLoad && e.workLoad > 0) return e.workLoad
+  const w = workSetsOf(e.sets).map((x) => x.weight ?? 0).filter((x) => x > 0)
+  return w.length ? Math.max(...w) : undefined
 }
 
 export interface OverloadSuggestion {
@@ -63,6 +78,8 @@ export interface OverloadSuggestion {
   from: number
   to: number
   streak: number
+  /** Machine / poulie dont on ne connaît pas encore l'écart entre deux plaques : à demander avant d'appliquer. */
+  needsStep?: boolean
 }
 
 /**
@@ -70,8 +87,10 @@ export interface OverloadSuggestion {
  * réussies (répétitions prévues atteintes, à la charge de travail ou plus), on propose d'augmenter.
  */
 export function overloadSuggestion(e: ProgramExercise, sessions: Session[], programId: string, streak = OVERLOAD_STREAK): OverloadSuggestion | undefined {
-  if (e.usesLoad === false || !e.workLoad || e.workLoad <= 0) return undefined
-  const planned = e.sets.filter((x) => x.phase === 'travail' && x.reps != null)
+  if (e.usesLoad === false || e.parts) return undefined
+  const from = referenceLoad(e)
+  if (!from) return undefined
+  const planned = workSetsOf(e.sets).filter((x) => x.reps != null && x.durationSec == null)
   if (!planned.length) return undefined
   const target = Math.max(...planned.map((x) => x.reps!))
   const key = exerciseKey(e)
@@ -83,12 +102,18 @@ export function overloadSuggestion(e: ProgramExercise, sessions: Session[], prog
     .slice(0, streak)
   if (recent.length < streak) return undefined
   const ok = recent.every((x) => {
-    const work = x.sets.filter((s) => s.phase === 'travail' && s.done)
-    return work.length >= planned.length && work.every((s) => (s.reps ?? 0) >= target && (s.weight ?? 0) >= e.workLoad!)
+    const work = workSetsOf(x.sets).filter((s) => s.done)
+    return work.length >= planned.length && work.every((s) => (s.reps ?? 0) >= target && (s.weight ?? 0) >= from)
   })
   if (!ok) return undefined
-  const to = Math.round((e.workLoad + overloadIncrement(e)) * 2) / 2
-  return { exerciseId: e.id, name: e.name, from: e.workLoad, to, streak }
+  if (needsStep(e)) return { exerciseId: e.id, name: e.name, from, to: from, streak, needsStep: true }
+  return { exerciseId: e.id, name: e.name, from, to: nextWorkLoad(e, from), streak }
+}
+
+/** Applique la nouvelle charge : charge de travail (mode guidé) ou séries simples à l'ancienne charge (mode libre). */
+export function withOverload(e: ProgramExercise, from: number, to: number, apply: (e: ProgramExercise, load: number) => ProgramExercise): ProgramExercise {
+  if (e.workLoad && e.workLoad > 0) return apply(e, to)
+  return { ...e, sets: e.sets.map((s) => (s.phase === 'serie' && (s.weight ?? 0) >= from ? { ...s, weight: to } : s)) }
 }
 
 export function overloadSuggestions(programId: string | undefined, sessions: Session[], exercises: ProgramExercise[]): OverloadSuggestion[] {

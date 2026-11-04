@@ -1,5 +1,6 @@
 import type { ActiveSession, IntervalStep, IntervalTimer, PartSet, PlannedSet, SupersetPart, Program, ProgramExercise, Session, SessionExercise, SessionSet } from '../data/types'
 import { uid } from './util'
+import { isCardio } from '../data/catalog'
 
 export function startFrom(program: Program | null, now = Date.now()): ActiveSession {
   return {
@@ -70,6 +71,61 @@ export function extendRest(s: ActiveSession, seconds: number, now = Date.now()):
   if (!s.rest) return s
   const base = Math.max(s.rest.endsAt, now)
   return { ...s, rest: { ...s.rest, endsAt: base + seconds * 1000 } }
+}
+
+/** Repos raccourci (sans descendre sous maintenant : le repos se termine alors tout de suite). */
+export function shortenRest(s: ActiveSession, seconds: number, now = Date.now()): ActiveSession {
+  if (!s.rest) return s
+  return { ...s, rest: { ...s.rest, endsAt: Math.max(now, s.rest.endsAt - seconds * 1000) } }
+}
+
+/** « Plus tard » : l'exercice passe en fin de séance (machine prise, par exemple). */
+export function moveToEnd(s: ActiveSession, exId: string): ActiveSession {
+  const ex = s.exercises.find((e) => e.id === exId)
+  if (!ex) return s
+  return { ...s, exercises: [...s.exercises.filter((e) => e.id !== exId), ex] }
+}
+
+const liftsWithLoad = (e: Pick<ProgramExercise, 'usesLoad' | 'parts' | 'group' | 'sets'>) => e.usesLoad !== false && !e.parts && !isCardio(e) && e.sets.every((x) => x.durationSec == null)
+
+/**
+ * « Remplacer » : autre exercice à la place, pour cette séance seulement. Entre deux exercices avec charge,
+ * les séries prévues (répétitions, repos) sont gardées et les charges remises à zéro ; sinon, les séries du nouvel exercice.
+ */
+export function replaceExercise(s: ActiveSession, exId: string, next: ProgramExercise): ActiveSession {
+  return {
+    ...s,
+    exercises: s.exercises.map((e) => {
+      if (e.id !== exId) return e
+      const keep = liftsWithLoad(e) && liftsWithLoad(next)
+      return {
+        ...next,
+        id: e.id,
+        workLoad: keep ? undefined : next.workLoad,
+        restSec: keep ? e.restSec : next.restSec,
+        sets: keep ? e.sets.map((x) => (x.done ? x : { ...x, weight: undefined })) : next.sets.map((x) => ({ ...x, done: false })),
+      }
+    }),
+  }
+}
+
+/** Le même exercice lors de la séance précédente (la plus récente où il a été fait). */
+export function lastTime(sessions: Session[], e: Pick<SessionExercise, 'catalogId' | 'name'>, before = Infinity): SessionExercise | undefined {
+  const key = e.catalogId ?? e.name.trim().toLowerCase()
+  let best: { at: number; ex: SessionExercise } | undefined
+  for (const s of sessions) {
+    if (s.startedAt >= before || (best && s.startedAt <= best.at)) continue
+    const ex = s.exercises.find((x) => (x.catalogId ?? x.name.trim().toLowerCase()) === key && x.sets.some((y) => y.done))
+    if (ex) best = { at: s.startedAt, ex }
+  }
+  return best?.ex
+}
+
+/** Série correspondante la dernière fois : même phase et même rang dans la phase (« Travail 2 »), sinon même position. */
+export function matchingSet<T extends { phase: string }>(prev: T[], sets: { phase: string }[], i: number): T | undefined {
+  const phase = sets[i]?.phase
+  const rank = sets.slice(0, i).filter((x) => x.phase === phase).length
+  return prev.filter((x) => x.phase === phase)[rank] ?? (prev.some((x) => x.phase === phase) ? undefined : prev[i])
 }
 
 export function nextPending(s: Pick<Session, 'exercises'>): { exercise: SessionExercise; index: number } | undefined {
@@ -150,41 +206,68 @@ export function finalize(s: ActiveSession, now = Date.now()): Session {
 
 export interface PersonalRecord {
   name: string
+  /** charge : meilleure charge (et 1RM estimé) ; reps / temps : poids du corps, meilleure série en répétitions ou en temps. */
+  kind: 'charge' | 'reps' | 'temps'
   bestWeight: number
   repsAtBest: number
   best1RM: number
+  /** Poids du corps : meilleure série (répétitions, ou secondes tenues). */
+  bestReps?: number
+  bestSec?: number
   date: number
   sessions: number
+  /** Groupe musculaire de l'exercice. */
+  group: string
 }
 
-/** Records par exercice : charge max (et 1RM estimé, formule d'Epley). */
+/** Records par exercice : charge max (et 1RM estimé, formule d'Epley) ; au poids du corps, meilleure série en répétitions ou en temps. */
 export function personalRecords(sessions: Session[]): PersonalRecord[] {
   const map = new Map<string, PersonalRecord>()
+  const seen = new Map<string, Set<string>>()
+  const count = (key: string, sid: string) => {
+    const ids = seen.get(key) ?? new Set<string>()
+    ids.add(sid)
+    seen.set(key, ids)
+  }
   for (const s of sessions) {
-    const seen = new Set<string>()
     for (const e of s.exercises) {
+      if (e.parts || isCardio(e)) continue
       const key = e.catalogId ?? e.name.toLowerCase()
       for (const set of e.sets) {
-        if (!set.done || !set.weight || !set.reps) continue
-        const rm = set.weight * (1 + set.reps / 30)
+        if (!set.done) continue
         const cur = map.get(key)
-        if (!cur) {
-          map.set(key, { name: e.name, bestWeight: set.weight, repsAtBest: set.reps, best1RM: rm, date: s.startedAt, sessions: 0 })
-        } else {
-          if (set.weight > cur.bestWeight || (set.weight === cur.bestWeight && set.reps > cur.repsAtBest)) {
-            cur.bestWeight = set.weight
-            cur.repsAtBest = set.reps
+        if (set.weight && set.reps) {
+          const rm = set.weight * (1 + set.reps / 30)
+          count(key, s.id)
+          if (!cur || cur.kind !== 'charge') {
+            map.set(key, { name: e.name, kind: 'charge', bestWeight: set.weight, repsAtBest: set.reps, best1RM: rm, date: s.startedAt, sessions: 0, group: e.group })
+          } else {
+            if (set.weight > cur.bestWeight || (set.weight === cur.bestWeight && set.reps > cur.repsAtBest)) {
+              cur.bestWeight = set.weight
+              cur.repsAtBest = set.reps
+              cur.date = s.startedAt
+            }
+            cur.best1RM = Math.max(cur.best1RM, rm)
+          }
+        } else if (!set.weight && (set.reps || set.durationSec)) {
+          // Poids du corps : compte seulement tant qu'aucune série lestée n'existe pour cet exercice.
+          if (cur?.kind === 'charge') continue
+          const kind = set.durationSec ? 'temps' : 'reps'
+          const v = set.durationSec ?? set.reps ?? 0
+          count(key, s.id)
+          if (!cur || cur.kind !== kind) {
+            if (cur && cur.kind === 'reps' && kind === 'temps') continue
+            map.set(key, { name: e.name, kind, bestWeight: 0, repsAtBest: 0, best1RM: 0, bestReps: kind === 'reps' ? v : undefined, bestSec: kind === 'temps' ? v : undefined, date: s.startedAt, sessions: 0, group: e.group })
+          } else if (kind === 'reps' ? v > (cur.bestReps ?? 0) : v > (cur.bestSec ?? 0)) {
+            if (kind === 'reps') cur.bestReps = v
+            else cur.bestSec = v
             cur.date = s.startedAt
           }
-          cur.best1RM = Math.max(cur.best1RM, rm)
-        }
-        if (!seen.has(key)) {
-          seen.add(key)
-          map.get(key)!.sessions++
         }
       }
     }
   }
+  for (const [key, r] of map) r.sessions = seen.get(key)?.size ?? 0
   return [...map.values()].sort((a, b) => a.name.localeCompare(b.name, 'fr'))
 }
 

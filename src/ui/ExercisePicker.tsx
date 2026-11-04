@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { CATALOG, cardioSummary, exerciseFromCatalog, pdcSummary, groupLabel, type CatalogExercise } from '../data/catalog'
+import { CATALOG, cardioSummary, exerciseFromCatalog, isLoadedLift, pdcSummary, groupLabel, type CatalogExercise } from '../data/catalog'
 import { KINDS, ZONES, findMuscle, findZone, kindOf, muscleIdOf, norm, worksSecondary, type Kind } from '../data/muscles'
 import type { ProgramExercise } from '../data/types'
 import { uid } from '../logic/util'
@@ -139,8 +139,9 @@ export function CatalogRow({ e, onClick }: { e: CatalogExercise; onClick: () => 
 
 /** Fiche d'un exercice du catalogue, avec saisie de la charge de travail avant l'ajout. */
 /** bare : sans les séries préconisées ni la charge (choix d'un exercice de superset, réglé ensuite). */
-export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false }: { ex: CatalogExercise; onAdd: (p: ProgramExercise) => void; addLabel?: string; bare?: boolean }) {
+export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false, mode = 'guidee' }: { ex: CatalogExercise; onAdd: (p: ProgramExercise) => void; addLabel?: string; bare?: boolean; mode?: 'guidee' | 'libre' }) {
   const [load, setLoad] = useState<number>()
+  const free = mode === 'libre' && isLoadedLift(ex)
   return (
     <div className="stack">
       <div className="small muted" style={{ marginTop: -6 }}>{exerciseSubtitle(ex)}</div>
@@ -149,7 +150,13 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false }:
           {ex.muscles_secondaires.map((m) => <span key={m} className="badge">{groupLabel(m)}</span>)}
         </div>
       )}
-      {!bare && <div className="card tight">
+      {!bare && free && (
+        <div className="card tight">
+          <div className="eyebrow" style={{ marginBottom: 4 }}>Construction libre</div>
+          <div className="small muted">3 séries de {ex.travail?.reps} répétitions, à ajuster ensuite (séries, chauffe, charges) dans le programme.</div>
+        </div>
+      )}
+      {!bare && !free && <div className="card tight">
         <div className="eyebrow" style={{ marginBottom: 8 }}>{ex.cardio ? (ex.cardio.mode === 'duree' ? 'Durée conseillée' : ex.cardio.mode === 'intervalles' ? 'Fractionné conseillé' : 'Répétitions conseillées') : ex.pdc ? 'Séries conseillées' : 'Cycle préconisé'}</div>
         <Prescription ex={ex} workLoad={load} />
       </div>}
@@ -158,21 +165,21 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false }:
       {!bare && ex.charge && !ex.cardio && (
         <div className="row">
           <div className="grow">
-            <div style={{ fontWeight: 600 }}>Charge de travail</div>
-            <div className="small muted">Les charges de chauffe et d’hypertrophie en découlent.</div>
+            <div style={{ fontWeight: 600 }}>{free ? 'Charge' : 'Charge de travail'}</div>
+            <div className="small muted">{free ? 'Mise sur chaque série.' : 'Les charges de chauffe et d’hypertrophie en découlent.'}</div>
           </div>
           <NumInput value={load} onChange={setLoad} placeholder="kg" />
           <span className="small faint">kg</span>
         </div>
       )}
-      <button className="btn primary block" onClick={() => onAdd(exerciseFromCatalog(ex, load))}>
+      <button className="btn primary block" onClick={() => onAdd(exerciseFromCatalog(ex, load, mode))}>
         <IconPlus /> {addLabel}
       </button>
     </div>
   )
 }
 
-export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset = false }: { open: boolean; onClose: () => void; onPick: (ex: ProgramExercise) => void; defaultRest: number; forSuperset?: boolean }) {
+export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset = false, mode = 'guidee' }: { open: boolean; onClose: () => void; onPick: (ex: ProgramExercise) => void; defaultRest: number; forSuperset?: boolean; mode?: 'guidee' | 'libre' }) {
   const search = useCatalogSearch()
   const [detail, setDetail] = useState<CatalogExercise>()
 
@@ -186,7 +193,7 @@ export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset
       parCote: false,
       usesLoad: true,
       restSec: defaultRest,
-      sets: [
+      sets: mode === 'libre' ? Array.from({ length: 3 }, () => ({ phase: 'serie' as const, reps: 10, restSec: defaultRest })) : [
         { phase: 'chauffe', reps: 12, pct: 50, restSec: 60 },
         { phase: 'travail', reps: 8, restSec: defaultRest },
         { phase: 'travail', reps: 8, restSec: defaultRest },
@@ -206,6 +213,7 @@ export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset
         <CatalogDetail
           ex={detail}
           bare={forSuperset}
+          mode={mode}
           addLabel={forSuperset ? 'Ajouter au superset' : undefined}
           onAdd={(p) => {
             setDetail(undefined)

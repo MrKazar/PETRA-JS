@@ -6,10 +6,11 @@ import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
 import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
-import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
+import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, loadFor, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
 import { describePart, estimateDuration, formatEstimate } from '../logic/session'
 import { SupersetEditor } from '../ui/SupersetEditor'
+import { fmtKg, roundForEquipment, stepHint } from '../logic/loads'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { ShareSheet } from '../ui/Share'
 import { shareProgram } from '../logic/share'
@@ -119,7 +120,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
                       {e.usesLoad === false ? ' · poids du corps' : ''}
                     </div>
                     )}
-                    {hasLoad(e) && (
+                    {hasWorkLoad(e) && (
                       <div className="row" style={{ marginTop: 8, gap: 6 }} onClick={(ev) => ev.stopPropagation()}>
                         <span className="small" style={{ color: 'var(--khaki)' }}>Charge de travail</span>
                         <NumInput value={e.workLoad} placeholder="kg" width={70} onChange={(v) => setExercises(program.exercises.map((x) => (x.id === e.id ? withWorkLoad(x, v) : x)))} />
@@ -180,6 +181,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
       </div>
 
       <ExercisePicker
+        mode={data.settings.exerciseMode}
         open={picking}
         onClose={() => setPicking(false)}
         defaultRest={data.settings.defaultRestSec}
@@ -229,6 +231,8 @@ export function ProgramDetailScreen({ id }: { id: string }) {
 }
 
 const hasLoad = (e: ProgramExercise) => !e.parts && e.usesLoad !== false && e.sets.some((s) => s.durationSec == null)
+/** Charge de travail utile : des séries de travail ou en % (pas en construction libre, où chaque série a sa charge). */
+const hasWorkLoad = (e: ProgramExercise) => hasLoad(e) && e.sets.some((s) => s.phase === 'travail' || s.pct != null)
 
 /** Volume total d'un exercice : répétitions cumulées, ou durée cumulée pour les séries en temps. */
 function totalOf(e: ProgramExercise): string {
@@ -250,7 +254,7 @@ function RenameSheet({ open, initial, onClose, onSave }: { open: boolean; initia
   )
 }
 
-const PHASES: Phase[] = ['chauffe', 'travail', 'hypertrophie']
+const PHASES: Phase[] = ['chauffe', 'travail', 'hypertrophie', 'serie']
 
 export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exercise: ProgramExercise; onChange: (e: ProgramExercise) => void; onClose: () => void; onDelete: () => void }) {
   const e = exercise
@@ -259,6 +263,16 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
   const addSet = () => {
     const last = e.sets[e.sets.length - 1] ?? { phase: 'travail', reps: 10 }
     onChange({ ...e, sets: [...e.sets, { ...last }] })
+  }
+  /** Chauffe en tête : 50 % de la charge de travail, ou de la première série en construction libre. */
+  const addWarmup = () => {
+    const work = e.sets.find((x) => x.phase !== 'chauffe')
+    const guided = e.sets.some((x) => x.phase === 'travail')
+    const base = work?.weight
+    const warm: PlannedSet = guided
+      ? { phase: 'chauffe', reps: 12, pct: 50, restSec: 60, weight: loadFor({ phase: 'chauffe', pct: 50 }, e.workLoad, e) }
+      : { phase: 'chauffe', reps: 12, restSec: 60, weight: base ? roundForEquipment(e, base / 2) : undefined }
+    onChange({ ...e, sets: [warm, ...e.sets] })
   }
   const switchMode = () =>
     onChange({
@@ -273,7 +287,7 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
           <span>Nom</span>
           <input className="input" value={e.name} onChange={(ev) => onChange({ ...e, name: ev.target.value })} />
         </label>
-        {hasLoad(e) && (
+        {hasWorkLoad(e) && (
           <div className="row between">
             <div>
               <div style={{ fontWeight: 600 }}>Charge de travail</div>
@@ -281,6 +295,21 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
             </div>
             <div className="row" style={{ gap: 6 }}>
               <NumInput value={e.workLoad} placeholder="kg" width={70} onChange={(v) => onChange(withWorkLoad(e, v))} />
+              <span className="small faint">kg</span>
+            </div>
+          </div>
+        )}
+        {hasLoad(e) && !isCardio(e) && (
+          <div className="row between">
+            <div>
+              <div style={{ fontWeight: 600 }}>Pas de charge</div>
+              <div className="small muted">{e.loadStep ? `${fmtKg(e.loadStep)} kg, réglé à la main` : `Auto : ${stepHint(e)}`}. Sert aux boutons − / + en séance et aux charges proposées.</div>
+            </div>
+            <div className="row" style={{ gap: 6 }}>
+              <NumInput value={e.loadStep} placeholder="auto" width={70} onChange={(v) => {
+                const next = { ...e, loadStep: v && v > 0 ? v : undefined }
+                onChange(next.workLoad ? withWorkLoad(next, next.workLoad) : next)
+              }} />
               <span className="small faint">kg</span>
             </div>
           </div>
@@ -321,9 +350,16 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
             </div>
           ))}
         </div>
-        <button className="btn block" onClick={addSet}>
-          <IconPlus /> Ajouter une série
-        </button>
+        <div className="row">
+          <button className="btn grow" onClick={addSet}>
+            <IconPlus /> Série
+          </button>
+          {!timed && !e.sets.some((x) => x.phase === 'chauffe') && (
+            <button className="btn grow" onClick={addWarmup}>
+              <IconPlus /> Série de chauffe
+            </button>
+          )}
+        </div>
           </>
         )}
         {e.note && <p className="small muted">{e.note}</p>}
