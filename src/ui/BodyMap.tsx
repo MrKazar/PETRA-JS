@@ -68,8 +68,8 @@ export function BodyFigure({
         </defs>
         <ellipse cx="100" cy="411" rx="44" ry="4.5" fill={`url(#${shine}-floor)`} />
         <g id={`corps-${side}`} className="bm-body">
-          <path d={view.body} className="bm-rim" />
-          <path d={PLATE.head} className="bm-rim" />
+          {BODY_THEME.showRim && <path d={view.body} className="bm-rim" />}
+          {BODY_THEME.showRim && <path d={PLATE.head} className="bm-rim" />}
           <path d={view.body} className="bm-tissue" />
           <path d={PLATE.head} className="bm-skin" />
           {view.under.map((u, i) => (
@@ -111,11 +111,11 @@ export function BodyFigure({
             <path key={i} d={d} className="bm-skin" />
           ))}
         </g>
-        <g className="bm-lines">
+        {BODY_THEME.showLandmarks && <g className="bm-lines">
           {view.lines.map((d, i) => (
             <path key={i} d={d} />
           ))}
-        </g>
+        </g>}
       </svg>
       <figcaption>{side === 'front' ? 'Face' : 'Dos'}</figcaption>
     </figure>

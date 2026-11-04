@@ -16,8 +16,11 @@ export const BODY_THEME = {
   tissue: '#3a235f',
   /** Peau et tendons : tête, mains, pieds, genoux. */
   skin: '#24143a',
-  /** Liseré clair autour de la silhouette, qui la détache du fond. */
+  /** Liseré clair autour de la silhouette (désactivé à la demande de l'utilisateur). */
   rim: '#5b3d8f',
+  showRim: false,
+  /** Lignes de repère : clavicule, colonne, plis des mains et des pieds… (désactivées). */
+  showLandmarks: false,
   /** Contours et repères osseux. */
   edge: '#0b0614',
   /** Contour du muscle sélectionné. */
