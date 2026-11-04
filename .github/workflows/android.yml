@@ -86,7 +86,9 @@ jobs:
           if gh release view "v$VERSION" >/dev/null 2>&1; then
             echo "La release v$VERSION existe déjà : rien à publier."
           else
-            gh release create "v$VERSION" "out/PETRA-$VERSION.apk" --title "PETRA $VERSION" --notes "APK Android de PETRA $VERSION. Depuis l'appli : Paramètres > Application > Installer. Sinon, télécharge PETRA-$VERSION.apk sur ton téléphone et ouvre-le."
+            # En brouillon : invisible pour les applis tant que PCTRA (job « windows ») n'y est pas joint,
+            # sinon PCTRA trouverait une release sans latest.yml et dirait « vérification impossible ».
+            gh release create "v$VERSION" "out/PETRA-$VERSION.apk" --draft --title "PETRA $VERSION" --notes "APK Android de PETRA $VERSION. Depuis l'appli : Paramètres > Application > Installer. Sinon, télécharge PETRA-$VERSION.apk sur ton téléphone et ouvre-le."
           fi
 
   # PCTRA : l'appli PC (Windows) construite à partir du même code web.
@@ -142,6 +144,8 @@ jobs:
           if gh release view "v$VERSION" >/dev/null 2>&1; then
             # latest.yml + blockmap : PCTRA s'en sert pour se mettre à jour tout seul.
             gh release upload "v$VERSION" desktop/release/*.exe desktop/release/*.blockmap desktop/release/latest.yml --clobber
+            # Tout est joint : la release devient visible pour PETRA et PCTRA en même temps.
+            gh release edit "v$VERSION" --draft=false --latest
           else
             echo "::warning::Pas de release v$VERSION : PCTRA construit mais pas publié."
           fi
