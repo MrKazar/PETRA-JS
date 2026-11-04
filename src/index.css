@@ -463,3 +463,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 .app.desktop .dock > *, .app.desktop .hiit-actions { max-width: 1040px; }
 .update-banner { display: none; }
 .app.desktop > .update-banner { display: flex; align-items: center; gap: 12px; position: fixed; top: 14px; right: 20px; z-index: 40; max-width: 460px; padding: 10px 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--olive-light); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); font-weight: 500; }
+
+/* Problème d'enregistrement (mémoire pleine) : bandeau en haut, au-dessus de tout. */
+.storage-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 12px; right: 12px; z-index: 60; padding: 10px 14px; border-radius: 10px; background: var(--surface); border: 1px solid #c0392b; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); font-size: 14px; font-weight: 500; }
+.storage-banner > span { flex: 1 1 240px; }

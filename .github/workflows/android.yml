@@ -29,7 +29,10 @@ jobs:
       - name: Installer les dépendances
         run: npm ci
 
-      - name: Tests
+      - name: Vérifier le code (lint)
+        run: npm run lint
+
+      - name: Tests (PETRA et copies de sécurité de PCTRA)
         run: npm test
 
       - name: Construire l'appli web et synchroniser Android

@@ -37,6 +37,8 @@ interface PctraBridge {
   installUpdate(): void
   /** Révision actuelle des données, que le téléphone consulte pour la synchro instantanée. */
   setRev(rev: number): void
+  /** Copies des données faites après chaque synchro (Documents/PCTRA), la plus récente en premier. */
+  backups?(): Promise<string[]>
 }
 
 declare global {

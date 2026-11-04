@@ -1,6 +1,7 @@
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
 import { getData, normalize, setData, update } from '../data/store'
 import type { AppData } from '../data/types'
+import { desktop } from './desktop'
 
 /** Dossier des sauvegardes : Documents/PETRA sur le téléphone (il reste après une désinstallation). */
 export const BACKUP_DIR = 'PETRA'
@@ -24,7 +25,51 @@ export function backupsToPrune(names: string[], keep = BACKUP_KEEP): string[] {
 export function parseBackup(text: string): AppData {
   const parsed = JSON.parse(text)
   if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.programs)) throw new Error('format')
+  for (const k of ['sessions', 'routines'] as const) if (k in parsed && !Array.isArray(parsed[k])) throw new Error('format')
+  for (const k of ['settings', 'routineLog', 'weekPlan', 'weekPlanB', 'planOverrides'] as const)
+    if (k in parsed && (typeof parsed[k] !== 'object' || parsed[k] === null || Array.isArray(parsed[k]))) throw new Error('format')
+  if (!parsed.programs.every((p: unknown) => !!p && typeof p === 'object' && Array.isArray((p as { exercises?: unknown }).exercises))) throw new Error('format')
   return normalize(parsed)
+}
+
+/** Sauvegardes du plus récent au plus ancien (les noms se trient par date). */
+export function newestFirst(names: string[]): string[] {
+  return names.filter((n) => /^petra-\d{4}-\d{2}-\d{2}-\d{4,6}\.json$/.test(n)).sort().reverse()
+}
+
+/**
+ * La sauvegarde automatique la plus récente qui se lit correctement : Documents/PETRA sur le
+ * téléphone, Documents/PCTRA sur le PC. `undefined` s'il n'y en a aucune.
+ */
+export async function latestBackup(): Promise<{ data: AppData; at?: number } | undefined> {
+  const texts: string[] = []
+  if (desktop) {
+    if (desktop.backups) texts.push(...(await desktop.backups().catch(() => [] as string[])))
+  } else {
+    try {
+      const { files } = await Filesystem.readdir({ path: BACKUP_DIR, directory: Directory.Documents })
+      for (const name of newestFirst(files.map((f) => f.name))) {
+        try {
+          const { data } = await Filesystem.readFile({ path: `${BACKUP_DIR}/${name}`, directory: Directory.Documents, encoding: Encoding.UTF8 })
+          texts.push(String(data))
+          break
+        } catch {
+          /* fichier illisible : on essaie le suivant */
+        }
+      }
+    } catch {
+      return undefined
+    }
+  }
+  for (const text of texts) {
+    try {
+      const raw = JSON.parse(text) as { backupAt?: unknown }
+      return { data: parseBackup(text), at: typeof raw.backupAt === 'number' ? raw.backupAt : undefined }
+    } catch {
+      /* copie abîmée : la suivante */
+    }
+  }
+  return undefined
 }
 
 /**

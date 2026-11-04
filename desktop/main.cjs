@@ -6,6 +6,7 @@ const fs = require('node:fs')
 const os = require('node:os')
 const crypto = require('node:crypto')
 const { startSyncServer, localAddresses } = require('./server.cjs')
+const { writeCopy, readCopies } = require('./backups.cjs')
 const { autoUpdater } = require('electron-updater')
 
 const PORT = 47123
@@ -42,16 +43,17 @@ function token() {
 
 const pairing = () => ({ hosts: localAddresses(), port: PORT, token: token(), name: os.hostname(), error: serverError })
 
-/** Copie des données après chaque synchro, au cas où (Documents/PCTRA). */
+const backupDir = () => path.join(app.getPath('documents'), 'PCTRA')
+
+/** Copie des données après chaque synchro, au cas où (Documents/PCTRA, les 5 dernières). */
 function keepCopy(data) {
   try {
-    const dir = path.join(app.getPath('documents'), 'PCTRA')
-    fs.mkdirSync(dir, { recursive: true })
-    fs.writeFileSync(path.join(dir, 'petra-pc.json'), JSON.stringify({ ...data, backupAt: Date.now() }))
+    writeCopy(backupDir(), JSON.stringify({ ...data, backupAt: Date.now() }))
   } catch {
     /* pas de copie : la synchro est quand même faite */
   }
 }
+ipcMain.handle('pctra:backups', () => readCopies(backupDir()))
 
 /** Passe les données du téléphone à la page, qui fusionne et renvoie le résultat. */
 function handleSync(payload) {

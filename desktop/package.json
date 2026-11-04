@@ -1,7 +1,7 @@
 {
   "name": "pctra",
   "productName": "PCTRA",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "PCTRA, l'appli PC de PETRA",
   "author": "MrKazar",
   "private": true,
@@ -26,6 +26,7 @@
       "main.cjs",
       "preload.cjs",
       "server.cjs",
+      "backups.cjs",
       "web/**",
       "build/icon.png"
     ],

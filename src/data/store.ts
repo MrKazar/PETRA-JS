@@ -55,13 +55,61 @@ export function normalize(input: Partial<AppData>): AppData {
   }
 }
 
-function load(): AppData {
+/** Copie des données illisibles trouvées au démarrage, gardée à part pour ne jamais les écraser. */
+export const CORRUPT_KEY = 'petra.data.illisible'
+
+/**
+ * Problème de stockage à montrer à l'utilisateur :
+ * - `read` : les données enregistrées n'ont pas pu être lues au démarrage (l'appli est partie à vide) ;
+ * - `write` : le dernier enregistrement a échoué (mémoire pleine…), les changements risquent d'être perdus.
+ */
+export type StorageIssue = { kind: 'read' } | { kind: 'write' }
+
+let issue: StorageIssue | undefined
+const issueListeners = new Set<() => void>()
+function setIssue(next: StorageIssue | undefined) {
+  if (next?.kind === issue?.kind) return
+  issue = next
+  issueListeners.forEach((l) => l())
+}
+export const getStorageIssue = () => issue
+/** L'utilisateur a vu le problème (restauré, ou choisi de continuer). */
+export const dismissStorageIssue = () => setIssue(undefined)
+export function useStorageIssue(): StorageIssue | undefined {
+  return useSyncExternalStore((l) => {
+    issueListeners.add(l)
+    return () => issueListeners.delete(l)
+  }, getStorageIssue)
+}
+
+/** Lit les données enregistrées. Renvoie `undefined` si elles existent mais sont illisibles. */
+export function parseStored(raw: string | null): AppData | undefined {
+  if (!raw) return emptyData()
   try {
-    const raw = localStorage.getItem(KEY)
-    if (raw) return normalize(JSON.parse(raw))
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.programs)) return undefined
+    return normalize(parsed)
   } catch {
-    // stockage indisponible ou corrompu : on repart de zéro
+    return undefined
   }
+}
+
+function load(): AppData {
+  let raw: string | null = null
+  try {
+    raw = localStorage.getItem(KEY)
+  } catch {
+    return emptyData()
+  }
+  const data = parseStored(raw)
+  if (data) return data
+  // Données abîmées : on les met de côté (jamais écrasées) et on propose de restaurer une sauvegarde.
+  try {
+    localStorage.setItem(CORRUPT_KEY, raw!)
+  } catch {
+    /* pas la place : elles restent au moins jusqu'au premier enregistrement */
+  }
+  issue = { kind: 'read' }
   return emptyData()
 }
 
@@ -71,8 +119,10 @@ const listeners = new Set<() => void>()
 function persist() {
   try {
     localStorage.setItem(KEY, JSON.stringify(state))
+    if (issue?.kind === 'write') setIssue(undefined)
   } catch {
-    // quota dépassé : on garde l'état en mémoire
+    // Mémoire pleine ou stockage refusé : l'état reste en mémoire, l'utilisateur est prévenu.
+    setIssue({ kind: 'write' })
   }
 }
 

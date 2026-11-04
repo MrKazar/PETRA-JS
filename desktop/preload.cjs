@@ -12,4 +12,5 @@ contextBridge.exposeInMainWorld('pctra', {
   checkUpdate: () => ipcRenderer.send('pctra:check-update'),
   installUpdate: () => ipcRenderer.send('pctra:install-update'),
   setRev: (rev) => ipcRenderer.send('pctra:rev', rev),
+  backups: () => ipcRenderer.invoke('pctra:backups'),
 })
