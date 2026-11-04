@@ -471,3 +471,30 @@ textarea.input { min-height: 90px; resize: vertical; }
 .choice { text-align: left; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; }
 .choice.on { border-color: var(--olive-light); background: var(--olive); color: var(--on-primary); }
 .choice.on .muted { color: inherit; opacity: 0.85; }
+
+/* PCTRA : schéma du corps */
+.bm-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+@media (max-width: 860px) { .bm-layout { grid-template-columns: 1fr; } }
+.bm-figures { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bm-fig { margin: 0; text-align: center; }
+.bm-fig figcaption { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.bm-svg { width: 100%; max-height: 62vh; display: block; }
+.bm-base { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; }
+.bm-muscle { stroke: var(--bg); stroke-width: 1.2; cursor: pointer; transition: fill 0.2s, opacity 0.15s; }
+.bm-muscle:hover { opacity: 0.8; }
+.bm-muscle.sel { stroke: var(--text); stroke-width: 2.2; }
+.lv0 { fill: var(--line); background: var(--line); }
+.lv1 { fill: #e0b45c; background: #e0b45c; }
+.lv2 { fill: #9fae6e; background: #9fae6e; }
+.lv3 { fill: #5f8a3a; background: #5f8a3a; }
+.lv4 { fill: #2f5d7c; background: #2f5d7c; }
+.bm-legend { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); justify-content: center; }
+.bm-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.bm-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.bm-ex { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.bm-num { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 36px; text-align: right; }
+.bm-bar { display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 10px; padding: 4px 6px; border: 0; border-radius: 6px; background: none; color: var(--text); text-align: left; cursor: pointer; font-size: 13px; }
+.bm-bar:hover, .bm-bar.sel { background: var(--surface-2); }
+.bm-bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bm-bar-track { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.bm-bar-fill { display: block; height: 100%; border-radius: 4px; }

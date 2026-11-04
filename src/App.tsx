@@ -8,7 +8,7 @@ import { scheduleReminders, setNotifVibration } from './logic/native'
 import { dateKey } from './logic/util'
 import { ToastHost } from './ui/kit'
 import { StorageAlert } from './ui/StorageAlert'
-import { IconBook, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
+import { IconBody, IconBook, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
 import { TodayScreen } from './screens/Today'
 import { ProgramsScreen } from './screens/Programs'
 import { ProgramDetailScreen } from './screens/ProgramDetail'
@@ -21,6 +21,7 @@ import { HistoryScreen, SessionDetailScreen } from './screens/History'
 import { RecordsScreen } from './screens/Records'
 import { AppearanceScreen } from './screens/Appearance'
 import { ProgressScreen } from './screens/Progress'
+import { BodyScreen } from './screens/Body'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
@@ -30,13 +31,16 @@ import { syncAppIcon } from './logic/appIcon'
 import { autoSync, startLiveSync } from './logic/pcsync'
 import { desktop, isDesktop, startDesktop, useUpdateState } from './logic/desktop'
 
-const TABS: { tab: Tab; label: string; Icon: typeof IconToday }[] = [
+const ALL_TABS: { tab: Tab; label: string; Icon: typeof IconToday; pc?: boolean }[] = [
   { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
   { tab: 'programs', label: 'Programmes', Icon: IconDumbbell },
+  { tab: 'body', label: 'Corps', Icon: IconBody, pc: true },
   { tab: 'exercises', label: 'Exercices', Icon: IconBook },
   { tab: 'finishers', label: 'Finishers', Icon: IconFlame },
   { tab: 'settings', label: 'Paramètres', Icon: IconSettings },
 ]
+/** Le schéma du corps n'existe que dans PCTRA. */
+const TABS = ALL_TABS.filter((t) => !t.pc || isDesktop)
 
 export default function App() {
   const [stack, setStack] = useState<Route[]>([{ name: 'today' }])
@@ -191,5 +195,7 @@ function Screen({ route }: { route: Route }) {
       return <SettingsSectionScreen section={route.section} />
     case 'progress':
       return <ProgressScreen id={route.id} />
+    case 'body':
+      return <BodyScreen />
   }
 }
