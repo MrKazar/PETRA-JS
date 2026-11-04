@@ -1,3 +1,5 @@
+import { isDesktop } from '../logic/desktop'
+import { ProgramBody } from '../ui/ProgramBody'
 import { useState } from 'react'
 import { useData } from '../data/store'
 import { useNav } from '../nav'
@@ -81,6 +83,8 @@ export function ProgramDetailScreen({ id }: { id: string }) {
             </button>
           }
         />
+        <div className={isDesktop ? 'prog-layout' : undefined}>
+        <div className="prog-main">
         <button className="btn primary block big" disabled={!program.exercises.length} onClick={start}>
           <IconPlay /> Lancer cette séance
         </button>
@@ -169,6 +173,9 @@ export function ProgramDetailScreen({ id }: { id: string }) {
           <button className="btn danger grow" onClick={remove}>
             <IconTrash /> Supprimer
           </button>
+        </div>
+        </div>
+        {isDesktop && <ProgramBody program={program} data={data} />}
         </div>
       </div>
 

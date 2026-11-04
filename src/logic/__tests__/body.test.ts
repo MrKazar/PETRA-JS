@@ -66,3 +66,21 @@ describe('schéma du corps', () => {
     expect([0, 2, 6, 15, 25].map(levelOf)).toEqual([0, 1, 2, 3, 4])
   })
 })
+
+import { programWork, sessionLevelOf, timesPerWeek } from '../body'
+
+describe('schéma à côté d’un programme', () => {
+  it('séries de la séance et fréquence au planning', () => {
+    const p = { exercises: [{ id: 'a', catalogId: 'dev_couche_barre', name: 'DC', group: 'pectoraux', parCote: false, restSec: 90, sets: [{ phase: 'chauffe' as const }, { phase: 'travail' as const }, { phase: 'travail' as const }, { phase: 'hypertrophie' as const }] }] }
+    const w = programWork(p)
+    expect(w.pec_milieu.sets).toBe(3)
+    expect(w.triceps.sets).toBe(1.5)
+    expect([0, 1, 3, 6, 10].map(sessionLevelOf)).toEqual([0, 1, 2, 3, 4])
+    const d = emptyData()
+    d.weekPlan = { 0: 'x', 3: 'x' }
+    d.weekPlanB = { 0: 'x' }
+    expect(timesPerWeek(d, 'x')).toBe(2)
+    d.settings = { ...d.settings, abWeeks: true }
+    expect(timesPerWeek(d, 'x')).toBe(1.5)
+  })
+})
