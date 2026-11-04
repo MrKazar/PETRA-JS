@@ -1,5 +1,5 @@
-import { CATALOG, findCatalog, type CatalogExercise } from '../data/catalog'
-import { muscleOf } from '../data/muscles'
+import { CATALOG, type CatalogExercise } from '../data/catalog'
+import { MUSCLES_FINE, anatomyOf, type Family, type FineId, type FineZone } from '../data/anatomy'
 import type { AppData, PlannedSet, Program, Session } from '../data/types'
 import { addDays, dateKey, parseKey, weekday } from './util'
 import { exerciseKey } from './progress'
@@ -10,127 +10,24 @@ import { exerciseKey } from './progress'
  * 0,5 pour chaque muscle secondaire ; les séries de chauffe ne comptent pas.
  */
 
-export type RegionId =
-  | 'pec_haut'
-  | 'pec_milieu'
-  | 'pec_bas'
-  | 'epaule_avant'
-  | 'epaule_cote'
-  | 'epaule_arriere'
-  | 'biceps'
-  | 'triceps'
-  | 'avant_bras'
-  | 'abdominaux'
-  | 'obliques'
-  | 'trapezes'
-  | 'dos_largeur'
-  | 'dos_epaisseur'
-  | 'lombaires'
-  | 'fessiers'
-  | 'moyen_fessier'
-  | 'quadriceps'
-  | 'ischio_jambiers'
-  | 'adducteurs'
-  | 'mollets'
+export type RegionId = FineId
+export type { Family }
 
-/** Familles de mouvements, pour proposer la séance où ajouter un exercice. */
-export type Family = 'pousser' | 'tirer' | 'jambes' | 'tronc'
-
-export const REGIONS: { id: RegionId; label: string; family: Family }[] = [
-  { id: 'pec_haut', label: 'Haut des pectoraux', family: 'pousser' },
-  { id: 'pec_milieu', label: 'Milieu des pectoraux', family: 'pousser' },
-  { id: 'pec_bas', label: 'Bas des pectoraux', family: 'pousser' },
-  { id: 'epaule_avant', label: 'Avant d’épaule', family: 'pousser' },
-  { id: 'epaule_cote', label: 'Côté d’épaule', family: 'pousser' },
-  { id: 'epaule_arriere', label: 'Arrière d’épaule', family: 'tirer' },
-  { id: 'biceps', label: 'Biceps', family: 'tirer' },
-  { id: 'triceps', label: 'Triceps', family: 'pousser' },
-  { id: 'avant_bras', label: 'Avant-bras', family: 'tirer' },
-  { id: 'trapezes', label: 'Trapèzes (haut)', family: 'tirer' },
-  { id: 'dos_largeur', label: 'Grand dorsal (largeur)', family: 'tirer' },
-  { id: 'dos_epaisseur', label: 'Milieu du dos (épaisseur)', family: 'tirer' },
-  { id: 'lombaires', label: 'Lombaires', family: 'jambes' },
-  { id: 'abdominaux', label: 'Abdominaux et gainage', family: 'tronc' },
-  { id: 'obliques', label: 'Obliques', family: 'tronc' },
-  { id: 'fessiers', label: 'Grand fessier', family: 'jambes' },
-  { id: 'moyen_fessier', label: 'Moyen fessier (abducteurs)', family: 'jambes' },
-  { id: 'quadriceps', label: 'Quadriceps', family: 'jambes' },
-  { id: 'ischio_jambiers', label: 'Ischio-jambiers', family: 'jambes' },
-  { id: 'adducteurs', label: 'Adducteurs', family: 'jambes' },
-  { id: 'mollets', label: 'Mollets', family: 'jambes' },
-]
+/** Zones du schéma : les muscles fins de data/anatomy.ts. */
+export const REGIONS: { id: RegionId; label: string; zone: FineZone; family: Family }[] = [...MUSCLES_FINE]
 
 export const regionLabel = (id: RegionId) => REGIONS.find((r) => r.id === id)?.label ?? id
 export const familyOf = (id: RegionId) => REGIONS.find((r) => r.id === id)!.family
 
-/** Groupe du catalogue → zone du schéma, pour les muscles secondaires (groupes entiers). */
-const GROUP_REGION: Record<string, RegionId | undefined> = {
-  pectoraux: 'pec_milieu',
-  biceps: 'biceps',
-  triceps: 'triceps',
-  avant_bras: 'avant_bras',
-  abdominaux: 'abdominaux',
-  obliques: 'obliques',
-  trapezes: 'trapezes',
-  dos: 'dos_epaisseur',
-  grand_dorsal: 'dos_largeur',
-  lombaires: 'lombaires',
-  fessiers: 'fessiers',
-  quadriceps: 'quadriceps',
-  ischio_jambiers: 'ischio_jambiers',
-  adducteurs: 'adducteurs',
-  mollets: 'mollets',
-  epaules: 'epaule_avant',
-  deltoides_anterieurs: 'epaule_avant',
-}
-
-/** Muscle détaillé de la recherche (data/muscles.ts) → zone du schéma, pour le muscle principal. */
-const MUSCLE_REGION: Record<string, RegionId | undefined> = {
-  pec_haut: 'pec_haut',
-  pec_milieu: 'pec_milieu',
-  pec_bas: 'pec_bas',
-  dos_largeur: 'dos_largeur',
-  dos_epaisseur: 'dos_epaisseur',
-  dos_chaine: 'lombaires',
-  trapezes: 'trapezes',
-  lombaires: 'lombaires',
-  epaule_avant: 'epaule_avant',
-  epaule_cote: 'epaule_cote',
-  epaule_arriere: 'epaule_arriere',
-  biceps: 'biceps',
-  triceps: 'triceps',
-  avant_bras: 'avant_bras',
-  quadriceps: 'quadriceps',
-  ischio_jambiers: 'ischio_jambiers',
-  fessiers: 'fessiers',
-  abducteurs: 'moyen_fessier',
-  adducteurs: 'adducteurs',
-  mollets: 'mollets',
-  gainage: 'abdominaux',
-  abdominaux: 'abdominaux',
-  obliques: 'obliques',
-}
-
 export interface Targets {
-  primary?: RegionId
+  /** Muscles principaux : 1 par série. */
+  primary: RegionId[]
+  /** Muscles secondaires : 0,5 par série. */
   secondary: RegionId[]
 }
 
 /** Zones travaillées par un exercice (fiche du catalogue, sinon son groupe et son nom). */
-export function targetsOf(e: { catalogId?: string; name: string; group: string }): Targets {
-  const cat: Pick<CatalogExercise, 'nom' | 'groupe_musculaire' | 'muscles_secondaires'> = findCatalog(e.catalogId) ?? {
-    nom: e.name,
-    groupe_musculaire: e.group,
-    muscles_secondaires: [],
-  }
-  const primary = MUSCLE_REGION[muscleOf(cat as CatalogExercise) ?? ''] ?? GROUP_REGION[cat.groupe_musculaire]
-  const secondary: RegionId[] = []
-  for (const g of cat.muscles_secondaires) {
-    const r = GROUP_REGION[g]
-    if (r && r !== primary && !secondary.includes(r)) secondary.push(r)
-  }
-  return { primary, secondary }
-}
+export const targetsOf = (e: { catalogId?: string; name: string; group: string }): Targets => anatomyOf(e)
 
 export interface RegionExercise {
   key: string
@@ -176,7 +73,7 @@ function add(work: BodyWork, item: Item) {
       ex.lastAt = Math.max(ex.lastAt ?? 0, item.at ?? 0) || undefined
     } else w.exercises.push({ key, name: item.name, sets: item.sets, primary, lastAt: item.at })
   }
-  if (t.primary) put(t.primary, 1, true)
+  for (const r of t.primary) put(r, 1, true)
   for (const r of t.secondary) put(r, 0.5, false)
 }
 
@@ -325,7 +222,7 @@ export function bestProgramFor(region: RegionId, programs: Program[]): Program |
   const family = familyOf(region)
   let best: { p: Program; score: number } | undefined
   for (const p of programs) {
-    const prim = p.exercises.flatMap(partsOf).map(primaryOf)
+    const prim = p.exercises.flatMap(partsOf).flatMap(primaryOf)
     const same = prim.filter((r) => r && familyOf(r) === family).length
     // Même famille d'abord, puis la séance la plus courte.
     const score = same * 100 - p.exercises.length
@@ -337,7 +234,7 @@ export function bestProgramFor(region: RegionId, programs: Program[]): Program |
 export function suggestFor(region: RegionId, data: Pick<AppData, 'programs' | 'sessions' | 'weekPlan' | 'weekPlanB' | 'settings'>, max = 6): Suggestion {
   const used = new Map<string, number>()
   for (const s of data.sessions) for (const e of s.exercises) for (const x of partsOf(e)) if (x.catalogId) used.set(x.catalogId, (used.get(x.catalogId) ?? 0) + 1)
-  const exercises = CATALOG.filter((e) => !e.cardio && primaryOf({ catalogId: e.id, name: e.nom, group: e.groupe_musculaire }) === region)
+  const exercises = CATALOG.filter((e) => !e.cardio && primaryOf({ catalogId: e.id, name: e.nom, group: e.groupe_musculaire }).includes(region))
     .map((e, i) => ({ e, i, n: used.get(e.id) ?? 0 }))
     .sort((a, b) => b.n - a.n || a.i - b.i)
     .slice(0, max)

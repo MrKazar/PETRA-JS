@@ -3,6 +3,7 @@ import { useData } from '../data/store'
 import { BodyFigure } from '../ui/BodyMap'
 import { Header, toast } from '../ui/kit'
 import { exerciseFromCatalog, type CatalogExercise } from '../data/catalog'
+import { ZONES_FINE } from '../data/anatomy'
 import type { AppData } from '../data/types'
 import { saveProgram } from '../logic/actions'
 import { LEVELS, REGIONS, doneWork, levelOf, plannedDays, plannedPrograms, plannedWork, regionLabel, scaleWork, suggestFor, weekStart, type BodyWork, type RegionId } from '../logic/body'
@@ -24,6 +25,7 @@ export function BodyScreen() {
   const data = useData()
   const [view, setView] = useState<View>('month')
   const [selected, setSelected] = useState<RegionId>()
+  const [showAll, setShowAll] = useState(false)
 
   const { work, sub, empty } = useMemo((): { work: BodyWork; sub: string; empty?: string } => {
     const now = Date.now()
@@ -114,27 +116,39 @@ export function BodyScreen() {
               <div className="card stack" style={{ gap: 6 }}>
                 <div className="section-title" style={{ margin: 0 }}>Muscles négligés · quoi ajouter</div>
                 <div className="small faint">Moins de 4 séries{perWeek || ' sur la période'}. Repère utile, pas une obligation : à toi de voir si c’est voulu. Clique sur un exercice pour l’ajouter à la séance choisie.</div>
-                {REGIONS.filter((r) => neglected.has(r.id)).map((r) => (
-                  <SuggestionRow key={r.id} data={data} region={r.id} selected={selected === r.id} onSelect={() => setSelected(r.id)} />
-                ))}
+                {REGIONS.filter((r) => neglected.has(r.id))
+                  .slice(0, showAll ? undefined : 6)
+                  .map((r) => (
+                    <SuggestionRow key={r.id} data={data} region={r.id} selected={selected === r.id} onSelect={() => setSelected(r.id)} />
+                  ))}
+                {neglected.size > 6 && (
+                  <button className="btn sm ghost" onClick={() => setShowAll(!showAll)}>
+                    {showAll ? 'Voir moins' : `Voir les ${neglected.size - 6} autres`}
+                  </button>
+                )}
               </div>
             )}
 
             {total > 0 && (
               <div className="card stack" style={{ gap: 4 }}>
                 <div className="section-title" style={{ margin: 0 }}>Séries{perWeek} par muscle</div>
-                {ranked.map((r) => {
-                  const s = work[r.id].sets
-                  return (
-                    <button key={r.id} className={`bm-bar${selected === r.id ? ' sel' : ''}`} onClick={() => setSelected(r.id)}>
-                      <span className="bm-bar-label">{r.label}</span>
-                      <span className="bm-bar-track">
-                        <span className={`bm-bar-fill lv${levelOf(s)}`} style={{ width: `${Math.min(100, (s / Math.max(20, work[ranked[0].id].sets)) * 100)}%` }} />
-                      </span>
-                      <span className="bm-num">{fmt(s)}</span>
-                    </button>
-                  )
-                })}
+                {ZONES_FINE.map((zone) => (
+                  <div key={zone} className="stack" style={{ gap: 2 }}>
+                    <div className="small faint bm-zone">{zone}</div>
+                    {REGIONS.filter((r) => r.zone === zone).map((r) => {
+                      const s = work[r.id].sets
+                      return (
+                        <button key={r.id} className={`bm-bar${selected === r.id ? ' sel' : ''}`} onClick={() => setSelected(r.id)}>
+                          <span className="bm-bar-label" title={r.label}>{r.label}</span>
+                          <span className="bm-bar-track">
+                            <span className={`bm-bar-fill lv${levelOf(s)}`} style={{ width: `${Math.min(100, (s / Math.max(20, work[ranked[0].id].sets)) * 100)}%` }} />
+                          </span>
+                          <span className="bm-num">{fmt(s)}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                ))}
               </div>
             )}
           </div>

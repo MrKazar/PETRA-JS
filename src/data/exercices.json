@@ -950,6 +950,67 @@
    }
   },
   {
+   "id": "pompes_scapulaires",
+   "nom": "Pompes scapulaires (push-up plus)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 60,
+    "reps": 12
+   }
+  },
+  {
+   "id": "punch_dentele_poulie",
+   "nom": "Punch dentelé à la poulie",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "glissements_mur",
+   "nom": "Glissements au mur (dentelé, wall slide)",
+   "groupe_musculaire": "pectoraux",
+   "muscles_secondaires": [
+    "trapezes"
+   ],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 10
+   }
+  },
+  {
    "id": "souleve_terre",
    "nom": "Soulevé de terre",
    "groupe_musculaire": "dos",
@@ -5616,6 +5677,23 @@
     "series": 3,
     "repos_sec": 45,
     "reps": 25
+   }
+  },
+  {
+   "id": "marche_talons",
+   "nom": "Marche sur les talons (tibial)",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "poids du corps",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "temps",
+    "series": 3,
+    "repos_sec": 45,
+    "duree_sec": 30
    }
   },
   {
