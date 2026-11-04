@@ -4,7 +4,7 @@ import type { Routine } from '../data/types'
 import { useNav } from '../nav'
 import { beginSession, setRoutineStatus } from '../logic/actions'
 import { programFor, routinesFor, weekLetter } from '../logic/planner'
-import { statsOf } from '../logic/session'
+import { estimateDuration, formatEstimate, statsOf } from '../logic/session'
 import { addDays, dateKey, formatDay, formatDuration, uid, WEEKDAYS_SHORT, weekday } from '../logic/util'
 import { Empty, Header, Progress, Ring, SectionTitle } from '../ui/kit'
 import { IconChevron, IconDumbbell, IconHistory, IconPlay, IconPlus } from '../ui/icons'
@@ -33,7 +33,10 @@ export function TodayScreen() {
   const monday = addDays(today, -weekday(today))
   const week = Array.from({ length: 7 }, (_, i) => addDays(monday, i))
   const sessionDays = new Set(data.sessions.map((s) => dateKey(new Date(s.startedAt))))
-  const doneToday = data.sessions.some((s) => dateKey(new Date(s.startedAt)) === today && (!program || s.programId === program.id))
+  const doneSession = data.sessions
+    .filter((s) => dateKey(new Date(s.startedAt)) === today && (!program || s.programId === program.id))
+    .sort((a, b) => b.startedAt - a.startedAt)[0]
+  const doneToday = !!doneSession
   const weekSessions = data.sessions.filter((s) => dateKey(new Date(s.startedAt)) >= monday).length
   const plannedThisWeek = week.filter((k) => programFor(data, k)).length
   const nextPlanned = Array.from({ length: 14 }, (_, i) => addDays(today, i + 1)).find((k) => programFor(data, k))
@@ -74,13 +77,19 @@ export function TodayScreen() {
                 <div className="small muted">
                   {doneToday
                     ? program.name
-                    : `Prévue aujourd’hui${data.settings.abWeeks ? ` · semaine ${letter}` : ''} · ${program.exercises.length} exercice${program.exercises.length > 1 ? 's' : ''}`}
+                    : `Prévue aujourd’hui${data.settings.abWeeks ? ` · semaine ${letter}` : ''} · ${program.exercises.length} exercice${program.exercises.length > 1 ? 's' : ''}${program.exercises.length ? ` · ${formatEstimate(estimateDuration(program, data.settings.defaultRestSec))}` : ''}`}
                 </div>
               </div>
             </div>
-            <button className={`btn block${doneToday ? '' : ' primary'}`} style={{ marginTop: 12 }} onClick={() => start()}>
-              <IconPlay /> {doneToday ? 'Refaire' : 'Démarrer'}
-            </button>
+            {doneSession ? (
+              <button className="btn block" style={{ marginTop: 12 }} onClick={() => nav.push({ name: 'session', id: doneSession.id })}>
+                <IconHistory /> Voir le résumé
+              </button>
+            ) : (
+              <button className="btn primary block" style={{ marginTop: 12 }} onClick={() => start()}>
+                <IconPlay /> Démarrer
+              </button>
+            )}
           </div>
         ) : (
           <div className="card">

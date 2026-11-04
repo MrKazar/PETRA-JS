@@ -2,11 +2,11 @@ import { writeBackup } from './backup'
 import { autoSync } from './pcsync'
 import { getData, update } from '../data/store'
 import { finishersOf, type Finisher } from '../data/finishers'
-import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
+import type { ActiveSession, DoneFinisher, Program, ProgramExercise, Settings, TaskStatus } from '../data/types'
 import { cancelIntervals, cancelRestEnd, hideOngoing, hideOngoingOnly, hideRestCountdown, onRestAction, scheduleIntervals, scheduleRestEnd, setKeepAwake, showOngoing, showRestCountdown } from './native'
 import { describeSet, extendRest, finalize, nextPending, startFrom, statsOf, timerSchedule } from './session'
 import { withWorkLoad } from '../data/catalog'
-import type { OverloadSuggestion } from './progress'
+import { withOverload, type OverloadSuggestion } from './progress'
 import { formatDuration } from './util'
 
 export function saveSettings(patch: Partial<Settings>) {
@@ -33,7 +33,20 @@ export function resetFinishers() {
 export function applyOverload(programId: string, s: OverloadSuggestion) {
   update((d) => ({
     ...d,
-    programs: d.programs.map((p) => (p.id !== programId ? p : { ...p, exercises: p.exercises.map((e) => (e.id === s.exerciseId ? withWorkLoad(e, s.to) : e)) })),
+    programs: d.programs.map((p) => (p.id !== programId ? p : { ...p, exercises: p.exercises.map((e) => (e.id === s.exerciseId ? withOverload(e, s.from, s.to, withWorkLoad) : e)) })),
+  }))
+}
+
+const stepped = (e: ProgramExercise, step: number | undefined) => {
+  const next = { ...e, loadStep: step && step > 0 ? step : undefined }
+  return next.workLoad ? withWorkLoad(next, next.workLoad) : next
+}
+
+/** Écart entre deux charges d'un exercice (plaques d'une machine) : retenu pour les prochaines fois. */
+export function setLoadStep(programId: string, exerciseId: string, step: number | undefined) {
+  update((d) => ({
+    ...d,
+    programs: d.programs.map((p) => (p.id !== programId ? p : { ...p, exercises: p.exercises.map((e) => (e.id === exerciseId ? stepped(e, step) : e)) })),
   }))
 }
 

@@ -30,7 +30,7 @@ const RECORDS = [
 ] as const
 const FIELDS = ['weekPlan', 'weekPlanB', 'lastFinisher', 'finishers'] as const
 /** Réglages communs aux deux appareils ; les autres (notifications, vibration, écran…) restent propres à chacun. */
-export const SYNCED_SETTINGS = ['name', 'defaultRestSec', 'abWeeks', 'weekAAnchor', 'finishersEnabled', 'theme', 'timerSound'] as const satisfies readonly (keyof Settings)[]
+export const SYNCED_SETTINGS = ['name', 'defaultRestSec', 'abWeeks', 'weekAAnchor', 'finishersEnabled', 'theme', 'timerSound', 'exerciseMode'] as const satisfies readonly (keyof Settings)[]
 
 /** Version du format de données reçues (les données d'avant la 1.3.11 n'en ont pas : 1). */
 export function versionOf(d: { version?: unknown } | undefined): number {

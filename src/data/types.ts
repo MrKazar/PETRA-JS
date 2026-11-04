@@ -59,6 +59,8 @@ export interface ProgramExercise {
   usesLoad?: boolean
   /** Charge des séries de travail, en kg ; les autres séries en découlent. */
   workLoad?: number
+  /** Écart entre deux charges possibles (kg), réglé à la main ; sinon d'après le matériel (logic/loads). */
+  loadStep?: number
   restSec: number
   sets: PlannedSet[]
   note?: string
@@ -156,6 +158,8 @@ export interface Settings {
   /** Un lundi (AAAA-MM-JJ) d'une semaine A : les semaines alternent à partir de là. */
   weekAAnchor: string
   finishersEnabled: boolean
+  /** Construction des exercices : guidée (chauffe, travail, hypertrophie) ou libre (séries simples). */
+  exerciseMode?: 'guidee' | 'libre'
   vibrate: boolean
   /** Bips du minuteur d'intervalles (décompte et changement d'étape). */
   timerSound: boolean

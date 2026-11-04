@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { DEFAULT_FINISHERS as FINISHERS, drawFinisher, finishersOf, formatItem } from '../../data/finishers'
 import { CATALOG, buildCycle, cardioPlanOf, cardioSets, cardioSummary, exerciseFromCatalog, migrateCardio, migrateExercise, parseReps, pdcPlanOf, pdcSets, setLabels, withWorkLoad } from '../../data/catalog'
 import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
-import { addSet, completeSet, estimateDuration, formatEstimate, extendRest, finalize, nextPending, personalRecords, startFrom, startRest, statsOf } from '../session'
+import { addSet, completeSet, estimateDuration, formatEstimate, extendRest, finalize, lastTime, matchingSet, moveToEnd, nextPending, personalRecords, replaceExercise, shortenRest, startFrom, startRest, statsOf } from '../session'
 import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
-import { exerciseHistory, exerciseKey, overloadIncrement, overloadSuggestion } from '../progress'
+import { exerciseHistory, exerciseKey, nextWorkLoad, overloadSuggestion, withOverload } from '../progress'
+import { loadKind, roundForEquipment, stepLoad } from '../loads'
 import { THEMES, activeTheme, themeOf, themesFor } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { PlannedSet, Program, Routine } from '../../data/types'
@@ -77,7 +78,7 @@ describe('catalogue', () => {
   it('calcule les charges depuis la charge de travail', () => {
     const bench = CATALOG.find((e) => e.id === 'dev_couche_barre')!
     const ex = exerciseFromCatalog(bench, 81)
-    expect(ex.sets.map((s) => s.weight)).toEqual([40.5, 81, 81, 61])
+    expect(ex.sets.map((s) => s.weight)).toEqual([40, 81, 81, 60]) // barre : chauffe et hypertrophie au cran de 2,5 kg
     expect(ex.sets.map((s) => s.reps)).toEqual([10, 6, 6, 10])
     expect(ex.sets.map((s) => s.restSec)).toEqual([90, 180, 180, 120])
     expect(withWorkLoad(ex, 100).sets.map((s) => s.weight)).toEqual([50, 100, 100, 75])
@@ -209,7 +210,7 @@ describe('séance', () => {
     let s = startFrom(program, 0)
     s = completeSet(s, s.exercises[0].id, 0)
     const prs = personalRecords([finalize(s)])
-    expect(prs[0]).toMatchObject({ name: 'Développé couché', bestWeight: 80, repsAtBest: 5 })
+    expect(prs[0]).toMatchObject({ name: 'Développé couché', kind: 'charge', bestWeight: 80, repsAtBest: 5 })
   })
 })
 
@@ -257,9 +258,101 @@ describe('progression', () => {
     expect(overloadSuggestion(squat, [session(1, squat, 100, target), session(2, squat, 100, target - 1)], 'p')).toBeUndefined()
     expect(overloadSuggestion(squat, [session(1, squat, 100, target), session(2, squat, 95, target)], 'p')).toBeUndefined()
   })
-  it('augmente de 2,5 kg le haut du corps et 5 kg les jambes', () => {
-    expect(overloadIncrement(bench)).toBe(2.5)
-    expect(overloadIncrement(squat)).toBe(5)
+  it('augmente de 2,5 kg le haut du corps et 5 kg les jambes à la barre', () => {
+    expect(nextWorkLoad(bench, 80)).toBe(82.5)
+    expect(nextWorkLoad(squat, 100)).toBe(105)
+  })
+  it('suit le pas des haltères : 1 kg jusqu’à 10 kg, puis 2 kg', () => {
+    const db = exerciseFromCatalog(byId('elevations_frontales'), 8)
+    expect(loadKind(db)).toBe('halteres')
+    expect(nextWorkLoad(db, 8)).toBe(9)
+    expect(nextWorkLoad(db, 10)).toBe(12)
+    expect(nextWorkLoad(db, 12)).toBe(14)
+    expect(stepLoad(db, 12, -1)).toBe(10)
+    expect(stepLoad(db, 10, -1)).toBe(9)
+    expect(stepLoad(db, 11, 1)).toBe(12)
+    expect(stepLoad(db, 13, -1)).toBe(12)
+    expect(roundForEquipment(db, 7.4)).toBe(7)
+    expect(roundForEquipment(db, 13)).toBe(14)
+  })
+  it('arrondit la barre à 2,5 kg (1,25 kg de chaque côté)', () => {
+    expect(loadKind(bench)).toBe('barre')
+    expect(stepLoad(bench, 80, 1)).toBe(82.5)
+    expect(stepLoad(bench, 81, 1)).toBe(82.5)
+    expect(stepLoad(bench, 81, -1)).toBe(80)
+    expect(roundForEquipment(bench, 41)).toBe(40)
+    const w = withWorkLoad(bench, 85).sets.filter((x) => x.pct != null).map((x) => x.weight!)
+    for (const x of w) expect((x / 2.5) % 1).toBe(0)
+  })
+  it('demande l’écart des plaques d’une machine, puis le retient', () => {
+    const m = exerciseFromCatalog(byId('leg_extension'), 50)
+    expect(loadKind(m)).toBe('machine')
+    const target = m.sets.find((x) => x.phase === 'travail')!.reps!
+    const hist = [session(1, m, 50, target), session(2, m, 50, target)]
+    expect(overloadSuggestion(m, hist, 'p')).toMatchObject({ needsStep: true, from: 50 })
+    const stepped = { ...m, loadStep: 7 }
+    expect(overloadSuggestion(stepped, hist, 'p')).toMatchObject({ from: 50, to: 56 })
+    expect(stepLoad(stepped, 56, -1)).toBe(49)
+  })
+  it('propose aussi d’augmenter en construction libre', () => {
+    const free = exerciseFromCatalog(byId('dev_couche_barre'), 60, 'libre')
+    expect(free.sets.every((x) => x.phase === 'serie' && x.weight === 60)).toBe(true)
+    expect(free.workLoad).toBeUndefined()
+    const reps = free.sets[0].reps!
+    const run = (day: number) => ({ id: `f${day}`, programId: 'p', programName: 'A', startedAt: Date.UTC(2026, 9, day), exercises: [{ ...free, sets: free.sets.map((x) => ({ ...x, done: true })) }] })
+    const sug = overloadSuggestion(free, [run(1), run(2)], 'p')
+    expect(sug).toMatchObject({ from: 60, to: 62.5 })
+    const up = withOverload(free, 60, 62.5, withWorkLoad)
+    expect(up.sets.map((x) => x.weight)).toEqual([62.5, 62.5, 62.5])
+    expect(up.sets[0].reps).toBe(reps)
+  })
+})
+
+const byId = (id: string) => CATALOG.find((e) => e.id === id)!
+
+describe('confort de séance', () => {
+  const s0 = () => startFrom(program, 0)
+  it('raccourcit le repos sans passer sous maintenant', () => {
+    const s = startRest(s0(), 60, 'x', 0)
+    expect(shortenRest(s, 15, 0).rest!.endsAt).toBe(45_000)
+    expect(shortenRest(s, 15, 50_000).rest!.endsAt).toBe(50_000)
+  })
+  it('passe un exercice en fin de séance', () => {
+    const s = s0()
+    const moved = moveToEnd(s, s.exercises[0].id)
+    expect(moved.exercises.map((e) => e.name)).toEqual(['Fentes', 'Développé couché'])
+  })
+  it('remplace un exercice en gardant les séries et en vidant les charges', () => {
+    const s = s0()
+    const next = exerciseFromCatalog(byId('dev_decline_halteres'), 30)
+    const r = replaceExercise(s, s.exercises[0].id, next)
+    const ex = r.exercises[0]
+    expect(ex.name).toBe(next.name)
+    expect(ex.id).toBe(s.exercises[0].id)
+    expect(ex.sets.map((x) => x.reps)).toEqual([5, 5])
+    expect(ex.sets.every((x) => x.weight == null)).toBe(true)
+    expect(ex.workLoad).toBeUndefined()
+  })
+  it('retrouve la dernière fois, série par série', () => {
+    const done = (day: number, w: number) => {
+      let s = startFrom(program, Date.UTC(2026, 9, day))
+      s = completeSet(s, s.exercises[0].id, 0)
+      s = { ...s, exercises: s.exercises.map((e, i) => (i ? e : { ...e, sets: e.sets.map((x) => ({ ...x, weight: w })) })) }
+      return finalize(s)
+    }
+    const sessions = [done(1, 70), done(3, 80), done(2, 75)]
+    const last = lastTime(sessions, program.exercises[0], Date.UTC(2026, 9, 5))!
+    expect(last.sets[0].weight).toBe(80)
+    expect(lastTime(sessions, program.exercises[0], Date.UTC(2026, 9, 3))!.sets[0].weight).toBe(75)
+    expect(matchingSet(last.sets, program.exercises[0].sets, 0)?.weight).toBe(80)
+    expect(matchingSet(last.sets, program.exercises[0].sets, 1)).toBeUndefined()
+  })
+  it('garde les records au poids du corps', () => {
+    const pdc = { id: 'x', name: 'Tractions', group: 'dos', parCote: false, usesLoad: false, restSec: 60, sets: [{ phase: 'serie' as const, reps: 8, done: true }, { phase: 'serie' as const, reps: 12, done: true }] }
+    const plank = { id: 'y', name: 'Gainage', group: 'abdominaux', parCote: false, usesLoad: false, restSec: 60, sets: [{ phase: 'serie' as const, durationSec: 75, done: true }] }
+    const prs = personalRecords([{ id: 's', programName: 'A', startedAt: 0, exercises: [pdc, plank] }])
+    expect(prs.find((r) => r.name === 'Tractions')).toMatchObject({ kind: 'reps', bestReps: 12, sessions: 1 })
+    expect(prs.find((r) => r.name === 'Gainage')).toMatchObject({ kind: 'temps', bestSec: 75 })
   })
 })
 
