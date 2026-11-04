@@ -123,6 +123,9 @@
             </intent-filter>
         </activity-alias>
 
+        <!-- Boutons « +15 s » et « Passer » de la notification de repos (RestTimerPlugin). -->
+        <receiver android:name=".RestActionReceiver" android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

@@ -3,10 +3,10 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { emptyData, parseStored } from '../../data/store'
-import type { AppData, Program } from '../../data/types'
+import { MIGRATIONS, emptyData, migrate, normalize, parseStored } from '../../data/store'
+import { DATA_VERSION, type AppData, type Program } from '../../data/types'
 import { newestFirst, parseBackup } from '../backup'
-import { merge, track } from '../sync'
+import { merge, toWire, track, versionGap } from '../sync'
 
 const require = createRequire(import.meta.url)
 const pcBackups = require('../../../desktop/backups.cjs') as {
@@ -102,5 +102,36 @@ describe('synchro entre deux versions différentes', () => {
     delete (old as Partial<AppData>).sync
     const out = merge({ ...local, sync: track(emptyData(), local, 5) }, old, 6)
     expect(out.programs.map((p) => p.id).sort()).toEqual(['a', 'b'])
+  })
+})
+
+describe('version du format des données', () => {
+  it('fait passer des données d’avant la 1.3.11 (sans version) à la version actuelle', () => {
+    const old = { programs: [{ id: 'a', name: 'A', createdAt: 0, exercises: [] }], sessions: [] }
+    const d = normalize(old as unknown as Partial<AppData>)
+    expect(d.version).toBe(DATA_VERSION)
+    expect(d.programs[0].name).toBe('A')
+  })
+
+  it('a une migration pour chaque version jusqu’à la version actuelle', () => {
+    for (let v = 1; v < DATA_VERSION; v++) expect(MIGRATIONS[v]).toBeTypeOf('function')
+    expect(migrate({ version: 1 } as never).version).toBe(DATA_VERSION)
+  })
+
+  it('garde la version et les champs de données plus récentes', () => {
+    const d = normalize({ ...emptyData(), version: DATA_VERSION + 1, futur: [1] } as unknown as Partial<AppData>)
+    expect(d.version).toBe(DATA_VERSION + 1)
+    expect((d as unknown as { futur: number[] }).futur).toEqual([1])
+  })
+
+  it('compare la version de l’autre appareil', () => {
+    expect(versionGap({ version: DATA_VERSION })).toBe('same')
+    expect(versionGap({})).toBe(DATA_VERSION > 1 ? 'older' : 'same')
+    expect(versionGap({ version: DATA_VERSION + 1 })).toBe('newer')
+    expect(versionGap({ version: 'x' })).toBe(DATA_VERSION > 1 ? 'older' : 'same')
+  })
+
+  it('la version voyage avec la synchro', () => {
+    expect(toWire(emptyData()).version).toBe(DATA_VERSION)
   })
 })

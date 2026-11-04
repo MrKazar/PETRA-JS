@@ -205,8 +205,15 @@ export interface SyncMeta {
   gone: Record<string, number>
 }
 
+/**
+ * Version du format des données. À augmenter quand la forme des données change, avec une migration
+ * dans store.ts (MIGRATIONS). La synchro avec PCTRA la compare pour prévenir si une appli est en retard.
+ */
+export const DATA_VERSION = 2
+
 export interface AppData {
-  version: 1
+  /** Version du format (DATA_VERSION de l'appli qui les a écrites). */
+  version: number
   programs: Program[]
   sessions: Session[]
   active?: ActiveSession

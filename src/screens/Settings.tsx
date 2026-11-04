@@ -302,7 +302,7 @@ function NotificationsSection() {
       </div>
       <SectionTitle>Pendant la séance</SectionTitle>
       <div className="card stack">
-        <NotifRow title="Fin du repos" sub="Une notification à chaque série quand la pause est finie" on={s.notifRestEnd} onChange={(v) => saveSettings({ notifRestEnd: v })} />
+        <NotifRow title="Repos" sub="Compte à rebours sur l’écran verrouillé (+15 s, Passer) et alerte quand la pause est finie" on={s.notifRestEnd} onChange={(v) => saveSettings({ notifRestEnd: v })} />
         <NotifRow title="Étapes du minuteur" sub="Travail / repos annoncés, même écran verrouillé" on={s.notifIntervals} onChange={(v) => saveSettings({ notifIntervals: v })} />
         <NotifRow title="Séance en cours" sub="Notification permanente avec la série suivante" on={s.notifOngoing} onChange={(v) => saveSettings({ notifOngoing: v })} />
       </div>

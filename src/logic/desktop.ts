@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { getData, normalize, onDataChange, setData } from '../data/store'
 import { toast } from '../ui/kit'
 import type { AppData } from '../data/types'
-import { merge, revOf, toWire, type PairInfo } from './sync'
+import { UPDATE_PCTRA, merge, revOf, toWire, versionGap, type PairInfo } from './sync'
 
 /**
  * Côté PC (PCTRA) : l'appli Electron expose `window.pctra` (voir desktop/preload.cjs). Le
@@ -72,6 +72,8 @@ export function lastPhoneSync(): number | undefined {
 }
 
 let started = false
+/** Prévenu une seule fois par lancement qu'un téléphone en retard se synchronise. */
+let warnedOldPhone = false
 /** Branche la réception des synchros (une fois, au démarrage de l'appli PC). */
 export function startDesktop() {
   if (!desktop || started) return
@@ -86,6 +88,13 @@ export function startDesktop() {
   desktop.onSync((id, payload) => {
     try {
       if (!payload?.data || !Array.isArray(payload.data.programs)) throw new Error('format')
+      const gap = versionGap(payload.data)
+      // Données d'un PETRA plus récent : les fusionner risquerait d'en perdre une partie.
+      if (gap === 'newer') {
+        desktop.reply(id, { error: UPDATE_PCTRA })
+        toast('Mets PCTRA à jour pour synchroniser')
+        return
+      }
       // Le téléphone fait foi pour ce qui n'a jamais été modifié depuis l'arrivée de la synchro.
       const merged = merge(getData(), normalize(payload.data), Date.now(), { preferRemote: true })
       setData(merged, { track: false })
@@ -97,7 +106,10 @@ export function startDesktop() {
         /* rien */
       }
       listeners.forEach((l) => l(at))
-      toast('Synchronisé avec le téléphone')
+      if (gap === 'older' && !warnedOldPhone) {
+        warnedOldPhone = true
+        toast('Synchronisé, mais PETRA n’est pas à jour sur le téléphone')
+      } else toast('Synchronisé avec le téléphone')
     } catch {
       desktop.reply(id, { error: 'Données reçues illisibles' })
     }

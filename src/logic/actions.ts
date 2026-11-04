@@ -3,8 +3,8 @@ import { autoSync } from './pcsync'
 import { getData, update } from '../data/store'
 import { finishersOf, type Finisher } from '../data/finishers'
 import type { ActiveSession, DoneFinisher, Program, Settings, TaskStatus } from '../data/types'
-import { cancelIntervals, cancelRestEnd, hideOngoing, hideOngoingOnly, scheduleIntervals, scheduleRestEnd, setKeepAwake, showOngoing } from './native'
-import { describeSet, finalize, nextPending, startFrom, statsOf, timerSchedule } from './session'
+import { cancelIntervals, cancelRestEnd, hideOngoing, hideOngoingOnly, hideRestCountdown, onRestAction, scheduleIntervals, scheduleRestEnd, setKeepAwake, showOngoing, showRestCountdown } from './native'
+import { describeSet, extendRest, finalize, nextPending, startFrom, statsOf, timerSchedule } from './session'
 import { withWorkLoad } from '../data/catalog'
 import type { OverloadSuggestion } from './progress'
 import { formatDuration } from './util'
@@ -79,8 +79,14 @@ export function setActive(next: ActiveSession, prev?: ActiveSession) {
   if (restChanged) {
     if (next.rest && next.rest.endsAt > Date.now() && getData().settings.notifRestEnd) {
       const up = nextPending(next)
-      scheduleRestEnd(next.rest.endsAt, up ? `À toi : ${up.exercise.name} · ${describeSet(up.exercise.sets[up.index], up.exercise.parCote)}` : 'Série suivante !')
-    } else cancelRestEnd()
+      const upNext = up ? `À toi : ${up.exercise.name} · ${describeSet(up.exercise.sets[up.index], up.exercise.parCote)}` : 'Série suivante !'
+      scheduleRestEnd(next.rest.endsAt, upNext)
+      // Compte à rebours visible écran verrouillé, avec « +15 s » et « Passer ».
+      showRestCountdown(next.rest.endsAt, `Repos · ${next.programName}`, up ? `Ensuite : ${up.exercise.name} · ${describeSet(up.exercise.sets[up.index], up.exercise.parCote)}` : 'Ensuite : série suivante')
+    } else {
+      cancelRestEnd()
+      hideRestCountdown()
+    }
   }
   const t = next.timer
   const p = prev?.timer
@@ -104,6 +110,16 @@ function refreshOngoing(s: ActiveSession) {
   const up = nextPending(s)
   const body = up ? `Suivant : ${up.exercise.name} (série ${up.index + 1}/${up.exercise.sets.length})` : 'Toutes les séries sont faites'
   showOngoing(`${s.programName} · ${st.setsDone}/${st.setsTotal} séries`, body)
+}
+
+/** Boutons de la notification de repos : même effet que ceux de l'écran de séance. */
+export function listenRestNotification() {
+  onRestAction((kind) => {
+    const a = getData().active
+    if (!a?.rest) return
+    if (kind === 'add') setActive(extendRest(a, 15), a)
+    else setActive({ ...a, rest: undefined }, a)
+  })
 }
 
 export function finishSession(finisher?: DoneFinisher): string | undefined {

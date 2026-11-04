@@ -1,4 +1,4 @@
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, registerPlugin } from '@capacitor/core'
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import { KeepAwake } from '@capacitor-community/keep-awake'
@@ -110,6 +110,41 @@ export async function cancelRestEnd() {
   } catch {
     /* rien */
   }
+}
+
+/* ---------- Compte à rebours du repos sur l'écran verrouillé (plugin Android RestTimer) ---------- */
+
+interface RestTimerPlugin {
+  show(o: { endsAt: number; title: string; body: string }): Promise<void>
+  hide(): Promise<void>
+  addListener(event: 'action', cb: (e: { kind: 'add' | 'skip' }) => void): Promise<{ remove(): Promise<void> }>
+}
+const RestTimer = registerPlugin<RestTimerPlugin>('RestTimer')
+const android = Capacitor.getPlatform() === 'android'
+
+/** Affiche le temps de repos restant dans une notification (il défile tout seul, écran verrouillé). */
+export async function showRestCountdown(endsAt: number, title: string, body: string) {
+  if (!android || !(await ensurePermission())) return
+  try {
+    await RestTimer.show({ endsAt, title, body })
+  } catch {
+    /* ancienne version sans le plugin : seule la notification de fin reste */
+  }
+}
+
+export async function hideRestCountdown() {
+  if (!android) return
+  try {
+    await RestTimer.hide()
+  } catch {
+    /* rien */
+  }
+}
+
+/** Boutons « +15 s » et « Passer » de la notification de repos. */
+export function onRestAction(cb: (kind: 'add' | 'skip') => void) {
+  if (!android) return
+  RestTimer.addListener('action', (e) => cb(e.kind)).catch(() => {})
 }
 
 const INTERVAL_BASE = 2000
@@ -225,6 +260,7 @@ export async function hideOngoing() {
   try {
     await LocalNotifications.cancel({ notifications: [{ id: ONGOING_ID }, { id: REST_ID }] })
     await cancelIntervals()
+    await hideRestCountdown()
   } catch {
     /* rien */
   }
