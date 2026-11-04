@@ -39,6 +39,28 @@ interface PctraBridge {
   setRev(rev: number): void
   /** Copies des données faites après chaque synchro (Documents/PCTRA), la plus récente en premier. */
   backups?(): Promise<string[]>
+  /** Réglages de la fenêtre (propres à ce PC). */
+  windowState?(): Promise<WindowState>
+  setWindow?(patch: Partial<WindowPrefs>): Promise<WindowState>
+  onWindowState?(cb: (s: WindowState) => void): void
+}
+
+export type WindowMode = 'fenetre' | 'maximise' | 'plein-ecran'
+export interface WindowPrefs {
+  mode: WindowMode
+  width: number
+  height: number
+  zoom: number
+  onTop: boolean
+  autoStart: boolean
+  startMinimized: boolean
+}
+export interface WindowState extends WindowPrefs {
+  /** Tailles proposées qui tiennent sur l'écran. */
+  sizes: { width: number; height: number }[]
+  screen: { width: number; height: number }
+  /** Lancement au démarrage possible (PCTRA installé sous Windows). */
+  canAutoStart: boolean
 }
 
 declare global {
@@ -133,3 +155,22 @@ export function useUpdateState(): UpdateState {
 }
 const updateListeners = new Set<(s: UpdateState) => void>()
 desktop?.onUpdateState((s) => updateListeners.forEach((l) => l(s)))
+
+/** Réglages de la fenêtre de PCTRA, tenus à jour (F11, Ctrl +/- changent aussi). */
+export function useWindowState(): [WindowState | undefined, (patch: Partial<WindowPrefs>) => void] {
+  const [state, setState] = useState<WindowState>()
+  useEffect(() => {
+    if (!desktop?.windowState) return
+    let alive = true
+    void desktop.windowState().then((s) => alive && setState(s))
+    windowListeners.add(setState)
+    return () => {
+      alive = false
+      windowListeners.delete(setState)
+    }
+  }, [])
+  const set = (patch: Partial<WindowPrefs>) => void desktop?.setWindow?.(patch).then((s) => windowListeners.forEach((l) => l(s)))
+  return [state, set]
+}
+const windowListeners = new Set<(s: WindowState) => void>()
+desktop?.onWindowState?.((s) => windowListeners.forEach((l) => l(s)))

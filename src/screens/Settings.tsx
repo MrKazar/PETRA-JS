@@ -13,7 +13,7 @@ import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle
 import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor } from '../ui/icons'
 import { syncNow, unpair } from '../logic/pcsync'
 import { encodePairing } from '../logic/sync'
-import { desktop, isDesktop, lastPhoneSync, onPhoneSync, useUpdateState, type PairingState } from '../logic/desktop'
+import { desktop, isDesktop, lastPhoneSync, onPhoneSync, useUpdateState, useWindowState, type PairingState, type WindowMode } from '../logic/desktop'
 
 const when = (t: number) => new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
@@ -61,6 +61,7 @@ export function SettingsScreen() {
           {row('Utilisateur', s.name ? s.name : 'Prénom pour l’accueil', <IconUser />, () => nav.push({ name: 'settingsSection', section: 'user' }))}
           {row('Séances', `Repos ${s.defaultRestSec} s${s.vibrate ? ' · vibration' : ''}${s.keepAwake ? ' · écran allumé' : ''}`, <IconClock />, () => nav.push({ name: 'settingsSection', section: 'sessions' }))}
           {row('Notifications', notifSummary(s), <IconBell />, () => nav.push({ name: 'settingsSection', section: 'notifications' }))}
+          {isDesktop && row('Fenêtre', 'Plein écran, taille, zoom, démarrage avec Windows', <IconMonitor />, () => nav.push({ name: 'settingsSection', section: 'window' }))}
           {row(isDesktop ? 'Téléphone' : 'Appli PC', pcSummary(s), <IconMonitor />, () => nav.push({ name: 'settingsSection', section: 'pc' }))}
           {row('Scanner un QR code', 'Importer une séance, une semaine ou un finisher', <IconQr />, () => setScanning(true))}
           {row('Données', s.lastBackupAt ? `Dernière sauvegarde : ${when(s.lastBackupAt)}` : 'Sauvegarde et restauration', <IconBook />, () => nav.push({ name: 'settingsSection', section: 'data' }))}
@@ -95,9 +96,9 @@ export function SettingsScreen() {
   )
 }
 
-export type SettingsSection = 'user' | 'sessions' | 'notifications' | 'data' | 'pc'
+export type SettingsSection = 'user' | 'sessions' | 'notifications' | 'data' | 'pc' | 'window'
 
-const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', notifications: 'Notifications', data: 'Données', pc: isDesktop ? 'Téléphone' : 'Appli PC' }
+const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', notifications: 'Notifications', data: 'Données', pc: isDesktop ? 'Téléphone' : 'Appli PC', window: 'Fenêtre' }
 
 /** Sous-pages de Paramètres. */
 export function SettingsSectionScreen({ section }: { section: SettingsSection }) {
@@ -150,6 +151,7 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
         {section === 'notifications' && <NotificationsSection />}
         {section === 'data' && <DataSection />}
         {section === 'pc' && (isDesktop ? <PhoneLinkSection /> : <PcLinkSection />)}
+        {section === 'window' && <WindowSection />}
       </div>
     </div>
   )
@@ -162,6 +164,70 @@ function pcSummary(s: Settings): string {
   }
   if (!s.pc) return 'Synchroniser avec PCTRA sur ton PC'
   return s.pc.lastAt ? `${s.pc.name} · ${when(s.pc.lastAt)}` : s.pc.name
+}
+
+const MODE_LABELS: { mode: WindowMode; label: string; sub: string }[] = [
+  { mode: 'fenetre', label: 'Fenêtré', sub: 'Taille au choix' },
+  { mode: 'maximise', label: 'Agrandi', sub: 'Tout l’écran, barre des tâches visible' },
+  { mode: 'plein-ecran', label: 'Plein écran', sub: 'Sans barre de titre ni barre des tâches' },
+]
+
+/** PCTRA : réglages de la fenêtre, propres à ce PC. */
+function WindowSection() {
+  const [w, set] = useWindowState()
+  if (!w) return null
+  const sizeOn = (x: { width: number; height: number }) => w.mode === 'fenetre' && w.width === x.width && w.height === x.height
+  return (
+    <>
+      <SectionTitle>Affichage</SectionTitle>
+      <div className="card stack">
+        <div className="choice-grid">
+          {MODE_LABELS.map((m) => (
+            <button key={m.mode} className={`choice${w.mode === m.mode ? ' on' : ''}`} onClick={() => set({ mode: m.mode })}>
+              <div style={{ fontWeight: 600 }}>{m.label}</div>
+              <div className="small muted">{m.sub}</div>
+            </button>
+          ))}
+        </div>
+        <div className="small faint">Raccourci : F11 pour passer en plein écran et en sortir.</div>
+      </div>
+      <SectionTitle>Taille de la fenêtre</SectionTitle>
+      <div className="card stack">
+        <div className="row wrap">
+          {w.sizes.map((x) => (
+            <button key={`${x.width}x${x.height}`} className={`btn sm${sizeOn(x) ? ' primary' : ''}`} onClick={() => set({ width: x.width, height: x.height })}>{x.width} × {x.height}</button>
+          ))}
+        </div>
+        <div className="row">
+          <span className="grow small muted">Taille perso</span>
+          <NumInput value={w.width} width={90} onChange={(v) => v && v >= 900 && set({ width: v, height: w.height })} />
+          <span className="small faint">×</span>
+          <NumInput value={w.height} width={90} onChange={(v) => v && v >= 600 && set({ width: w.width, height: v })} />
+        </div>
+        <div className="small faint">Ton écran : {w.screen.width} × {w.screen.height}. En mode fenêtré, PCTRA rouvre là où tu l’as laissé.</div>
+      </div>
+      <SectionTitle>Taille du texte</SectionTitle>
+      <div className="card stack">
+        <div className="row">
+          <button className="btn sm" disabled={w.zoom <= 0.8} onClick={() => set({ zoom: w.zoom - 0.1 })}>A−</button>
+          <div className="grow center" style={{ fontWeight: 600 }}>{Math.round(w.zoom * 100)} %</div>
+          <button className="btn sm" disabled={w.zoom >= 1.5} onClick={() => set({ zoom: w.zoom + 0.1 })}>A+</button>
+          <button className="btn ghost sm" disabled={w.zoom === 1} onClick={() => set({ zoom: 1 })}>100 %</button>
+        </div>
+        <div className="small faint">Raccourcis : Ctrl + et Ctrl − pour zoomer, Ctrl 0 pour revenir à 100 %.</div>
+      </div>
+      <SectionTitle>Comportement</SectionTitle>
+      <div className="card stack">
+        <NotifRow title="Toujours au premier plan" sub="PCTRA reste visible par-dessus les autres fenêtres (pratique pendant une séance)" on={w.onTop} onChange={(v) => set({ onTop: v })} />
+        {w.canAutoStart && (
+          <>
+            <NotifRow title="Lancer avec Windows" sub="PCTRA s’ouvre au démarrage du PC : la synchro avec le téléphone est toujours prête" on={w.autoStart} onChange={(v) => set({ autoStart: v })} />
+            {w.autoStart && <NotifRow title="Démarrer réduit" sub="Au démarrage de Windows, PCTRA s’ouvre dans la barre des tâches" on={w.startMinimized} onChange={(v) => set({ startMinimized: v })} />}
+          </>
+        )}
+      </div>
+    </>
+  )
 }
 
 function DesktopVersion() {
