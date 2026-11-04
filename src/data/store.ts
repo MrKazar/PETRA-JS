@@ -1,8 +1,8 @@
 import { useSyncExternalStore } from 'react'
-import type { AppData, Settings } from './types'
+import { DATA_VERSION, type AppData, type Settings } from './types'
 import { addDays, dateKey, weekday } from '../logic/util'
 import { migrateExercise } from './catalog'
-import { track } from '../logic/sync'
+import { track, versionOf } from '../logic/sync'
 
 const KEY = 'petra.data.v1'
 
@@ -30,7 +30,7 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export function emptyData(): AppData {
   return {
-    version: 1,
+    version: DATA_VERSION,
     programs: [],
     sessions: [],
     routines: [],
@@ -43,13 +43,38 @@ export function emptyData(): AppData {
   }
 }
 
+type Raw = Partial<AppData> & Record<string, unknown>
+
+/**
+ * Migrations du format des données : MIGRATIONS[n] passe de la version n à n + 1. Chacune doit
+ * être testée (src/logic/__tests__/storage.test.ts) et ne jamais perdre d'information.
+ */
+export const MIGRATIONS: Record<number, (d: Raw) => Raw> = {
+  // 1 → 2 (PETRA 1.3.11) : même forme ; la version voyage désormais avec la synchro.
+  1: (d) => d,
+}
+
+/** Applique les migrations jusqu'à la version de cette appli. Des données plus récentes gardent leur version. */
+export function migrate(input: Raw): Raw {
+  let d = input
+  let v = versionOf(d)
+  while (v < DATA_VERSION) {
+    const step = MIGRATIONS[v]
+    if (!step) throw new Error(`migration ${v} manquante`)
+    d = step(d)
+    v++
+  }
+  return { ...d, version: Math.max(v, versionOf(input)) }
+}
+
 /** Complète des données chargées (ancienne sauvegarde, import) avec les valeurs par défaut. */
-export function normalize(input: Partial<AppData>): AppData {
+export function normalize(raw: Partial<AppData>): AppData {
+  const input = migrate(raw as Raw) as Partial<AppData>
   const base = emptyData()
   return {
     ...base,
     ...input,
-    version: 1,
+    version: input.version ?? DATA_VERSION,
     settings: { ...base.settings, ...(input.settings ?? {}) },
     programs: (input.programs ?? base.programs).map((p) => ({ ...p, exercises: p.exercises.map(migrateExercise) })),
   }

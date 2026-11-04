@@ -1,7 +1,7 @@
 import { Capacitor, CapacitorHttp } from '@capacitor/core'
 import { getData, normalize, onLocalChange, setData, update } from '../data/store'
 import type { AppData, PcLink } from '../data/types'
-import { REV_PATH, SYNC_PATH, merge, revOf, toWire, type PairInfo } from './sync'
+import { REV_PATH, SYNC_PATH, UPDATE_PCTRA, UPDATE_PETRA, merge, revOf, toWire, versionGap, type PairInfo } from './sync'
 
 /**
  * Côté téléphone : synchro avec l'appli PC (PCTRA) par le Wi-Fi local. Le téléphone envoie
@@ -25,9 +25,21 @@ export function unpair() {
 
 class HttpError extends Error {
   status: number
-  constructor(status: number) {
+  /** Message renvoyé par le PC (`{ error }`), quand il y en a un. */
+  reason?: string
+  constructor(status: number, body?: unknown) {
     super(`HTTP ${status}`)
     this.status = status
+    let b = body
+    if (typeof b === 'string') {
+      try {
+        b = JSON.parse(b)
+      } catch {
+        /* texte brut */
+      }
+    }
+    const r = (b as { error?: unknown } | undefined)?.error
+    if (typeof r === 'string') this.reason = r
   }
 }
 
@@ -36,14 +48,14 @@ async function postJson(url: string, token: string, body: unknown, timeoutMs: nu
   const headers = { 'Content-Type': 'application/json', 'X-Petra-Token': token }
   if (Capacitor.isNativePlatform()) {
     const res = await CapacitorHttp.request({ url, method: 'POST', headers, data: body, connectTimeout: timeoutMs, readTimeout: 30000 })
-    if (res.status !== 200) throw new HttpError(res.status)
+    if (res.status !== 200) throw new HttpError(res.status, res.data)
     return typeof res.data === 'string' ? JSON.parse(res.data) : res.data
   }
   const ctl = new AbortController()
   const timer = window.setTimeout(() => ctl.abort(), timeoutMs)
   try {
     const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body), signal: ctl.signal })
-    if (!res.ok) throw new HttpError(res.status)
+    if (!res.ok) throw new HttpError(res.status, await res.json().catch(() => undefined))
     return await res.json()
   } finally {
     window.clearTimeout(timer)
@@ -89,22 +101,35 @@ async function doSync(): Promise<SyncResult> {
   const pc = getData().settings.pc
   if (!pc) return { ok: false, error: 'Aucun PC associé' }
   let refused = false
+  let reason: string | undefined
   for (const host of pc.hosts) {
     try {
       const sent = toWire(getData())
       const reply = (await postJson(`http://${host}:${pc.port}${SYNC_PATH}`, pc.token, { app: 'PETRA', data: sent }, 4000)) as { data?: Partial<AppData> }
       if (!reply?.data || !Array.isArray(reply.data.programs)) throw new Error('réponse')
+      const gap = versionGap(reply.data)
+      // Données d'un PCTRA plus récent : les fusionner risquerait d'en perdre une partie.
+      if (gap === 'newer') {
+        reason = UPDATE_PETRA
+        break
+      }
       // Fusion avec l'état actuel (une série a pu être validée pendant l'échange).
       const merged = merge(getData(), normalize(reply.data))
       const at = Date.now()
       knownPcRev = revOf(merged)
-      setData({ ...merged, settings: { ...merged.settings, pc: { ...pc, hosts: [host, ...pc.hosts.filter((h) => h !== host)], lastAt: at, lastError: undefined } } }, { track: false })
+      setData({ ...merged, settings: { ...merged.settings, pc: { ...pc, hosts: [host, ...pc.hosts.filter((h) => h !== host)], lastAt: at, lastError: gap === 'older' ? `Synchronisé. ${UPDATE_PCTRA}` : undefined } } }, { track: false })
       return { ok: true, at }
     } catch (e) {
       if (e instanceof HttpError && e.status === 401) refused = true
+      else if (e instanceof HttpError && e.reason) {
+        reason = e.reason
+        break
+      }
     }
   }
-  const error = refused
+  const error = reason
+    ? reason
+    : refused
     ? 'Le PC a refusé la synchro : scanne à nouveau son QR code'
     : 'PC introuvable : vérifie que PCTRA est ouvert et que le téléphone est sur le même Wi-Fi'
   const now = getData().settings.pc

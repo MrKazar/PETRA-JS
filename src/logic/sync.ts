@@ -1,4 +1,4 @@
-import type { AppData, Settings, SyncMeta } from '../data/types'
+import { DATA_VERSION, type AppData, type Settings, type SyncMeta } from '../data/types'
 
 /**
  * Synchro téléphone ↔ appli PC, sans cloud : les deux appareils gardent chacun leurs données et
@@ -31,6 +31,25 @@ const RECORDS = [
 const FIELDS = ['weekPlan', 'weekPlanB', 'lastFinisher', 'finishers'] as const
 /** Réglages communs aux deux appareils ; les autres (notifications, vibration, écran…) restent propres à chacun. */
 export const SYNCED_SETTINGS = ['name', 'defaultRestSec', 'abWeeks', 'weekAAnchor', 'finishersEnabled', 'theme', 'timerSound'] as const satisfies readonly (keyof Settings)[]
+
+/** Version du format de données reçues (les données d'avant la 1.3.11 n'en ont pas : 1). */
+export function versionOf(d: { version?: unknown } | undefined): number {
+  const v = d?.version
+  return typeof v === 'number' && Number.isInteger(v) && v >= 1 ? v : 1
+}
+
+/**
+ * Compare la version des données de l'autre appareil à celle de cette appli :
+ * `newer` = l'autre appli est plus récente (c'est celle-ci qu'il faut mettre à jour),
+ * `older` = l'autre appli est en retard.
+ */
+export function versionGap(remote: { version?: unknown } | undefined): 'same' | 'newer' | 'older' {
+  const v = versionOf(remote)
+  return v === DATA_VERSION ? 'same' : v > DATA_VERSION ? 'newer' : 'older'
+}
+
+export const UPDATE_PCTRA = 'PCTRA n’est pas à jour : ouvre PCTRA > Paramètres > Vérifier les mises à jour, puis resynchronise'
+export const UPDATE_PETRA = 'PETRA n’est pas à jour sur le téléphone : installe la dernière version, puis resynchronise'
 
 const emptyMeta = (): SyncMeta => ({ stamps: {}, gone: {} })
 

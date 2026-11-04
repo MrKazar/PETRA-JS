@@ -24,6 +24,7 @@ import { ProgressScreen } from './screens/Progress'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
+import { listenRestNotification } from './logic/actions'
 import { activeTheme, applyTheme } from './ui/theme'
 import { syncAppIcon } from './logic/appIcon'
 import { autoSync, startLiveSync } from './logic/pcsync'
@@ -68,6 +69,7 @@ export default function App() {
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
+      listenRestNotification()
       checkOnLaunch()
       autoSync()
       // Synchro avec le PC aussi quand on revient dans l'appli.
