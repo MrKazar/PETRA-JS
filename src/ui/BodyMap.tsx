@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import type { Level, RegionId } from '../logic/body'
 
 /**
@@ -8,7 +9,7 @@ import type { Level, RegionId } from '../logic/body'
 type Shape = { id: RegionId; d: string }
 
 const SILHOUETTE =
-  'M100 56 L91 58 Q78 63 66 68 Q51 73 48 90 Q45 112 45 132 Q39 158 38 184 L35 212 Q41 218 48 210 L52 188 Q60 162 62 138 Q65 124 66 112 L68 142 Q66 170 69 192 Q64 240 70 298 Q64 340 70 382 L68 402 Q79 408 87 400 L86 382 Q92 340 90 300 Q96 252 98 208 L100 208 Z'
+  'M100 47 L94 47 Q93 54 91 58 Q78 63 66 68 Q51 73 48 90 Q45 112 45 132 Q39 158 38 184 L37 200 Q31 206 31 219 Q32 232 38 234 Q43 233 44 223 L45 212 Q47 202 49 196 L52 188 Q60 162 62 138 Q65 124 66 112 L68 142 Q66 170 69 192 Q64 240 70 298 Q64 340 70 380 Q62 392 63 400 Q66 406 80 405 Q88 404 88 398 L86 382 Q92 340 90 300 Q96 252 98 208 L100 208 Z'
 
 const FRONT: Shape[] = [
   { id: 'trap_sup', d: 'M91 60 L77 68 L92 67 Z' },
@@ -22,8 +23,8 @@ const FRONT: Shape[] = [
   { id: 'dentele', d: 'M70 118 L79 121 L78 124 L71 122 Z' },
   { id: 'biceps', d: 'M58 106 Q50 118 51 132 Q56 138 61 132 Q64 119 63 106 Z' },
   { id: 'brachial', d: 'M50 120 Q47 129 48 138 L53 138 Q50 130 51 121 Z' },
-  { id: 'brachio_radial', d: 'M48 141 L52 141 Q47 162 44 184 L41 183 Q42 160 48 141 Z' },
-  { id: 'flechisseurs_ab', d: 'M54 141 L60 141 Q57 164 49 186 L45 185 Q48 164 54 141 Z' },
+  { id: 'brachio_radial', d: 'M47 141 L52 141 Q46 162 44 186 L39 184 Q40 160 47 141 Z' },
+  { id: 'flechisseurs_ab', d: 'M55 141 Q61 148 59 164 Q55 178 48 190 L46 186 Q49 164 55 141 Z' },
   { id: 'grand_droit', d: 'M98 110 L87 111 L87 129 L98 129 Z' },
   { id: 'grand_droit', d: 'M98 131 L87 131 L87 150 L98 150 Z' },
   { id: 'grand_droit', d: 'M98 152 L87 152 Q87 170 89 176 L98 184 Z' },
@@ -34,9 +35,9 @@ const FRONT: Shape[] = [
   { id: 'droit_femoral', d: 'M93 207 Q87 203 85 211 Q81 246 82 286 L88 288 Q94 250 93 207 Z' },
   { id: 'vaste_interne', d: 'M95 256 Q90 272 89 290 L95 290 Q97 272 95 256 Z' },
   { id: 'adducteurs', d: 'M99 205 L95 208 Q95 232 95 252 Q99 236 99 210 Z' },
-  { id: 'tibial', d: 'M76 304 Q72 326 75 362 L79 362 Q79 330 81 304 Z' },
-  { id: 'gastrocnemiens', d: 'M85 308 Q89 330 86 354 L83 356 Q83 334 85 308 Z' },
-  { id: 'soleaire', d: 'M83 358 L86 356 Q86 368 84 378 L81 378 Q81 368 83 358 Z' },
+  { id: 'tibial', d: 'M80 304 Q70 312 70 336 Q71 356 76 372 Q80 360 81 336 Z' },
+  { id: 'gastrocnemiens', d: 'M84 306 Q91 318 90 340 Q88 356 84 366 Q82 340 84 306 Z' },
+  { id: 'soleaire', d: 'M79 374 Q82 368 85 371 Q86 378 84 385 L80 385 Q78 379 79 374 Z' },
 ]
 
 const BACK: Shape[] = [
@@ -79,23 +80,29 @@ export function BodyFigure({
   labelOf: (id: RegionId) => string
 }) {
   const shapes = side === 'front' ? FRONT : BACK
+  const shine = `bm-shine${useId().replace(/:/g, '')}`
+  const mirrorT = 'matrix(-1 0 0 1 200 0)'
   const shape = (s: Shape, i: number, mirror: boolean) => (
-    <path
-      key={`${i}-${mirror}`}
-      d={s.d}
-      transform={mirror ? 'matrix(-1 0 0 1 200 0)' : undefined}
-      className={`bm-muscle lv${levelOf(s.id)}${selected === s.id ? ' sel' : ''}${neglected?.has(s.id) ? ' neg' : ''}`}
-      onClick={() => onSelect(s.id)}
-    >
-      <title>{labelOf(s.id)}</title>
-    </path>
+    <g key={`${i}-${mirror}`} transform={mirror ? mirrorT : undefined} onClick={() => onSelect(s.id)} className="bm-hit">
+      <path d={s.d} className={`bm-muscle lv${levelOf(s.id)}${selected === s.id ? ' sel' : ''}${neglected?.has(s.id) ? ' neg' : ''}`}>
+        <title>{labelOf(s.id)}</title>
+      </path>
+      <path d={s.d} fill={`url(#${shine})`} className="bm-shine" />
+    </g>
   )
   return (
     <figure className="bm-fig">
       <svg viewBox="20 0 160 412" className="bm-svg" role="img" aria-label={side === 'front' ? 'Corps vu de face' : 'Corps vu de dos'}>
-        <circle cx="100" cy="32" r="19" className="bm-base" />
+        <defs>
+          <linearGradient id={shine} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#fff" stopOpacity="0.28" />
+            <stop offset="0.55" stopColor="#fff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
         <path d={SILHOUETTE} className="bm-base" />
-        <path d={SILHOUETTE} className="bm-base" transform="matrix(-1 0 0 1 200 0)" />
+        <path d={SILHOUETTE} className="bm-base" transform={mirrorT} />
+        <circle cx="100" cy="30" r="19" className="bm-base" />
+        {side === 'back' && <line x1="100" y1="60" x2="100" y2="196" className="bm-spine" />}
         {shapes.map((s, i) => shape(s, i, false))}
         {shapes.map((s, i) => shape(s, i, true))}
       </svg>
