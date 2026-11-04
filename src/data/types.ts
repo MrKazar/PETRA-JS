@@ -232,4 +232,20 @@ export interface AppData {
   settings: Settings
   /** Dates de modification pour fusionner avec l'appli PC (absent tant que rien n'a changé). */
   sync?: SyncMeta
+  /** Objectifs de PCTRA (restent sur le PC, ne passent pas par la synchro). */
+  goals?: Goal[]
+}
+
+/** Objectif sur un exercice chargé : un 1RM estimé ou une charge à soulever (PCTRA 1.2.0). */
+export interface Goal {
+  id: string
+  /** Exercice visé (exerciseKey : fiche du catalogue, sinon nom). */
+  key: string
+  name: string
+  kind: 'e1rm' | 'max'
+  /** Cible en kg. */
+  target: number
+  /** Date visée (AAAA-MM-JJ), facultative. */
+  deadline?: string
+  createdAt: number
 }
