@@ -1,6 +1,6 @@
 // PCTRA : l'appli PC de PETRA (Electron). Affiche la même appli React que le téléphone, en
 // grand, et reçoit la synchro du téléphone par le Wi-Fi local (voir server.cjs).
-const { app, BrowserWindow, ipcMain, shell } = require('electron')
+const { app, BrowserWindow, ipcMain, shell, screen } = require('electron')
 const path = require('node:path')
 const fs = require('node:fs')
 const os = require('node:os')
@@ -8,6 +8,7 @@ const crypto = require('node:crypto')
 const { startSyncServer, localAddresses } = require('./server.cjs')
 const { writeCopy, readCopies } = require('./backups.cjs')
 const { autoUpdater } = require('electron-updater')
+const { SIZES, MIN, normalizePrefs, boundsVisible } = require('./window.cjs')
 
 const PORT = 47123
 app.setName('PCTRA')
@@ -143,18 +144,113 @@ ipcMain.on('pctra:version', (e) => {
   e.returnValue = app.getVersion()
 })
 
+/* ---------- Fenêtre : mode, taille, zoom, premier plan, démarrage avec Windows ---------- */
+
+const winPrefs = () => normalizePrefs(readConfig().window)
+function saveWinPrefs(patch) {
+  const c = readConfig()
+  c.window = normalizePrefs({ ...normalizePrefs(c.window), ...patch })
+  writeConfig(c)
+  return c.window
+}
+const startedAtLogin = process.argv.includes('--au-demarrage')
+
+function applyAutoStart(p) {
+  if (!app.isPackaged) return
+  app.setLoginItemSettings({ openAtLogin: p.autoStart, args: ['--au-demarrage'] })
+}
+
+/** Ce que la page affiche dans Paramètres › Fenêtre. */
+function windowState() {
+  const p = winPrefs()
+  const area = screen.getDisplayMatching(win?.getBounds() ?? screen.getPrimaryDisplay().bounds).workAreaSize
+  return { ...p, bounds: undefined, sizes: SIZES.filter((s) => s.width <= area.width && s.height <= area.height), screen: area, canAutoStart: app.isPackaged && process.platform !== 'linux' }
+}
+const sendWindowState = () => win?.webContents.send('pctra:window-state', windowState())
+
+/** Applique un mode d'affichage à la fenêtre ouverte. */
+function applyMode(mode) {
+  if (!win) return
+  if (mode === 'plein-ecran') return win.setFullScreen(true)
+  if (win.isFullScreen()) win.setFullScreen(false)
+  if (mode === 'maximise') win.maximize()
+  else if (win.isMaximized()) win.unmaximize()
+}
+
+ipcMain.handle('pctra:window-get', () => windowState())
+ipcMain.handle('pctra:window-set', (_e, patch) => {
+  const before = winPrefs()
+  const p = saveWinPrefs({ ...patch, ...(patch?.width ? { mode: 'fenetre', bounds: null } : {}) })
+  if (patch?.width && win) {
+    applyMode('fenetre')
+    win.setSize(p.width, p.height)
+    win.center()
+  } else if (p.mode !== before.mode) applyMode(p.mode)
+  if (p.zoom !== before.zoom) win?.webContents.setZoomFactor(p.zoom)
+  if (p.onTop !== before.onTop) win?.setAlwaysOnTop(p.onTop)
+  if (p.autoStart !== before.autoStart) applyAutoStart(p)
+  return windowState()
+})
+
+/** Retient la position et la taille de la fenêtre (mode fenêtré) pour la rouvrir au même endroit. */
+function rememberBounds() {
+  if (!win || win.isFullScreen() || win.isMaximized() || win.isMinimized()) return
+  const b = win.getBounds()
+  saveWinPrefs({ bounds: b, width: b.width, height: b.height })
+}
+
 function createWindow() {
+  const p = winPrefs()
+  const areas = screen.getAllDisplays().map((d) => d.workArea)
+  const place = boundsVisible(p.bounds, areas) ? p.bounds : { width: p.width, height: p.height }
   win = new BrowserWindow({
-    width: 1280,
-    height: 860,
-    minWidth: 900,
-    minHeight: 600,
+    ...place,
+    minWidth: MIN.width,
+    minHeight: MIN.height,
+    show: false,
     title: 'PCTRA',
     backgroundColor: '#0D0F0E',
     autoHideMenuBar: true,
+    alwaysOnTop: p.onTop,
     icon: path.join(__dirname, 'build', 'icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, sandbox: false },
   })
+  win.once('ready-to-show', () => {
+    if (startedAtLogin && p.startMinimized) {
+      win.showInactive()
+      win.minimize()
+    } else win.show()
+    applyMode(p.mode)
+  })
+  win.webContents.on('did-finish-load', () => win?.webContents.setZoomFactor(winPrefs().zoom))
+  // F11 : plein écran ; Ctrl + / Ctrl - / Ctrl 0 : zoom (retenus pour les prochaines fois).
+  win.webContents.on('before-input-event', (e, input) => {
+    if (input.type !== 'keyDown') return
+    const zoomBy = (d) => {
+      const z = saveWinPrefs({ zoom: d === 0 ? 1 : winPrefs().zoom + d }).zoom
+      win.webContents.setZoomFactor(z)
+      sendWindowState()
+    }
+    if (input.key === 'F11') {
+      e.preventDefault()
+      const full = !win.isFullScreen()
+      saveWinPrefs({ mode: full ? 'plein-ecran' : 'fenetre' })
+      applyMode(full ? 'plein-ecran' : 'fenetre')
+      sendWindowState()
+    } else if (input.control && (input.key === '+' || input.key === '=')) {
+      e.preventDefault()
+      zoomBy(0.1)
+    } else if (input.control && input.key === '-') {
+      e.preventDefault()
+      zoomBy(-0.1)
+    } else if (input.control && input.key === '0') {
+      e.preventDefault()
+      zoomBy(0)
+    }
+  })
+  win.on('resized', rememberBounds)
+  win.on('moved', rememberBounds)
+  win.on('close', rememberBounds)
   win.on('page-title-updated', (e) => e.preventDefault())
   // Liens externes (GitHub…) dans le navigateur.
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -173,6 +269,7 @@ app.on('second-instance', () => {
 
 app.whenReady().then(async () => {
   createWindow()
+  applyAutoStart(winPrefs())
   setupUpdates()
   try {
     await startSyncServer({ port: PORT, getToken: token, handle: handleSync, getRev: () => dataRev })

@@ -467,3 +467,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 /* Problème d'enregistrement (mémoire pleine) : bandeau en haut, au-dessus de tout. */
 .storage-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 12px; right: 12px; z-index: 60; padding: 10px 14px; border-radius: 10px; background: var(--surface); border: 1px solid #c0392b; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); font-size: 14px; font-weight: 500; }
 .storage-banner > span { flex: 1 1 240px; }
+.choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.choice { text-align: left; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; }
+.choice.on { border-color: var(--olive-light); background: var(--olive); color: var(--on-primary); }
+.choice.on .muted { color: inherit; opacity: 0.85; }
