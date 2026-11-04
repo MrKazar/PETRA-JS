@@ -2,16 +2,17 @@ import { findCatalog, type CatalogExercise } from './catalog'
 import { muscleOf, norm } from './muscles'
 
 /**
- * Anatomie fine pour le schéma du corps (PCTRA) : 36 muscles ou chefs de muscle, et pour chaque
+ * Anatomie fine pour le schéma du corps (PCTRA) : 40 muscles ou chefs de muscle, et pour chaque
  * exercice ses muscles principaux (1 par série) et secondaires (0,5 par série).
  */
 
 export type Family = 'pousser' | 'tirer' | 'jambes' | 'tronc'
 
-export const ZONES_FINE = ['Pectoraux', 'Épaules', 'Bras', 'Avant-bras', 'Dos', 'Tronc', 'Hanches et fessiers', 'Cuisses', 'Bas des jambes'] as const
+export const ZONES_FINE = ['Cou', 'Pectoraux', 'Épaules', 'Bras', 'Avant-bras', 'Dos', 'Tronc', 'Hanches et fessiers', 'Cuisses', 'Bas des jambes'] as const
 export type FineZone = (typeof ZONES_FINE)[number]
 
 export const MUSCLES_FINE = [
+  { id: 'cou', label: 'Cou (sterno-cléido-mastoïdien)', zone: 'Cou', family: 'tirer' },
   { id: 'pec_haut', label: 'Haut des pectoraux', zone: 'Pectoraux', family: 'pousser' },
   { id: 'pec_milieu', label: 'Milieu des pectoraux', zone: 'Pectoraux', family: 'pousser' },
   { id: 'pec_bas', label: 'Bas des pectoraux', zone: 'Pectoraux', family: 'pousser' },
@@ -39,7 +40,9 @@ export const MUSCLES_FINE = [
   { id: 'flechisseurs_hanche', label: 'Fléchisseurs de hanche (psoas)', zone: 'Hanches et fessiers', family: 'jambes' },
   { id: 'grand_fessier', label: 'Grand fessier', zone: 'Hanches et fessiers', family: 'jambes' },
   { id: 'moyen_fessier', label: 'Moyen fessier (abducteurs)', zone: 'Hanches et fessiers', family: 'jambes' },
+  { id: 'tfl', label: 'Tenseur du fascia lata', zone: 'Hanches et fessiers', family: 'jambes' },
   { id: 'adducteurs', label: 'Adducteurs', zone: 'Cuisses', family: 'jambes' },
+  { id: 'couturier', label: 'Couturier', zone: 'Cuisses', family: 'jambes' },
   { id: 'droit_femoral', label: 'Quadriceps, droit fémoral', zone: 'Cuisses', family: 'jambes' },
   { id: 'vaste_externe', label: 'Quadriceps, vaste externe', zone: 'Cuisses', family: 'jambes' },
   { id: 'vaste_interne', label: 'Quadriceps, vaste interne', zone: 'Cuisses', family: 'jambes' },
@@ -48,6 +51,7 @@ export const MUSCLES_FINE = [
   { id: 'gastrocnemiens', label: 'Mollets, gastrocnémiens', zone: 'Bas des jambes', family: 'jambes' },
   { id: 'soleaire', label: 'Mollets, soléaire', zone: 'Bas des jambes', family: 'jambes' },
   { id: 'tibial', label: 'Tibial antérieur', zone: 'Bas des jambes', family: 'jambes' },
+  { id: 'fibulaires', label: 'Fibulaires (péroniers)', zone: 'Bas des jambes', family: 'jambes' },
 ] as const satisfies readonly { id: string; label: string; zone: FineZone; family: Family }[]
 
 export type FineId = (typeof MUSCLES_FINE)[number]['id']
@@ -124,6 +128,9 @@ function ruleFor(group: string, sub: string | undefined, n: string): Rule {
       return { p: ['rhomboides', 'trap_moyen', 'grand_dorsal'], s: ['delt_post', 'biceps', 'brachial'] }
     }
     case 'trapezes':
+      // Flexions et extensions de la nuque (« couché » contient aussi « cou », d'où le mot entier).
+      if (/flexion du cou/.test(n)) return { p: ['cou'] }
+      if (/\bnuque\b|\bcou\b/.test(n)) return { p: ['cou', 'trap_sup'] }
       if (/en y|y raise/.test(n)) return { p: ['trap_inf'], s: ['delt_post', 'trap_moyen'] }
       return { p: ['trap_sup'] }
     case 'epaules': {
@@ -154,6 +161,7 @@ function ruleFor(group: string, sub: string | undefined, n: string): Rule {
     case 'lombaires':
       return { p: ['erecteurs'] }
     case 'quadriceps':
+      if (/flexion de hanche/.test(n)) return { p: ['flechisseurs_hanche', 'couturier'], s: ['droit_femoral', 'tfl'] }
       return { p: QUADS, s: /squat|presse|fente|step/.test(n) && !/sissy/.test(n) ? ['adducteurs'] : [] }
     case 'ischio_jambiers':
       if (/leg curl|nordic|glute ham/.test(n)) return { p: ISCHIOS, s: ['gastrocnemiens'] }
@@ -161,17 +169,19 @@ function ruleFor(group: string, sub: string | undefined, n: string): Rule {
     case 'fessiers':
       if (/croisee|curtsy/.test(n)) return { p: ['grand_fessier', 'moyen_fessier'] }
       if (/gainage lateral/.test(n)) return { p: ['moyen_fessier'] }
-      if (sub === 'abducteurs') return { p: ['moyen_fessier'] }
+      // Le tenseur du fascia lata écarte la cuisse avec le moyen fessier.
+      if (sub === 'abducteurs') return { p: ['moyen_fessier', 'tfl'] }
       return { p: ['grand_fessier'] }
     case 'adducteurs':
       return { p: ['adducteurs'] }
     case 'mollets':
       if (/tibial|pointes/.test(n)) return { p: ['tibial'] }
+      if (/eversion|fibul/.test(n)) return { p: ['fibulaires'] }
       if (/assis/.test(n)) return { p: ['soleaire'], s: ['gastrocnemiens'] }
-      return { p: ['gastrocnemiens'], s: ['soleaire'] }
+      return { p: ['gastrocnemiens'], s: ['soleaire', 'fibulaires'] }
     case 'abdominaux':
       // Relevés de jambes, L-sit : c'est d'abord le psoas qui lève les jambes, les abdominaux tiennent le bassin.
-      if (/releve de (jambes|genoux)|toes to bar|l-sit|mountain/.test(n)) return { p: ['grand_droit', 'flechisseurs_hanche'] }
+      if (/releve de (jambes|genoux)|toes to bar|l-sit|mountain/.test(n)) return { p: ['grand_droit', 'flechisseurs_hanche'], s: ['couturier'] }
       if (/ciseaux|battements|jackknife|v-ups|dragon|crunch inverse/.test(n)) return { p: ['grand_droit'], s: ['flechisseurs_hanche'] }
       return { p: ['grand_droit'] }
     case 'obliques':
