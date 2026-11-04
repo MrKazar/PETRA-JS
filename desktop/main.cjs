@@ -118,7 +118,17 @@ function setupUpdates() {
   autoUpdater.on('download-progress', (p) => setUpdate({ kind: 'downloading', version: update.version, percent: Math.round(p.percent) }))
   autoUpdater.on('update-downloaded', (info) => setUpdate({ kind: 'ready', version: info.version }))
   autoUpdater.on('error', (e) => {
-    if (update.kind !== 'ready') setUpdate({ kind: 'error', message: /net::|ENOTFOUND|ETIMEDOUT|ECONN/.test(String(e?.message)) ? 'Pas de connexion Internet.' : 'Vérification impossible pour le moment.' })
+    if (update.kind === 'ready') return
+    const m = String(e?.message)
+    setUpdate({
+      kind: 'error',
+      message: /net::|ENOTFOUND|ETIMEDOUT|ECONN/.test(m)
+        ? 'Pas de connexion Internet.'
+        : // Release trouvée sans latest.yml : la nouvelle version est encore en train d'être publiée.
+          /latest\.yml|404|Cannot find/i.test(m)
+          ? 'Une nouvelle version est en cours de publication : réessaie dans quelques minutes.'
+          : 'Vérification impossible pour le moment.',
+    })
   })
   void checkUpdates()
   setInterval(checkUpdates, 6 * 3600 * 1000)
