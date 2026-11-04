@@ -218,7 +218,7 @@ function WindowSection() {
       </div>
       <SectionTitle>Comportement</SectionTitle>
       <div className="card stack">
-        <NotifRow title="Toujours au premier plan" sub="PCTRA reste visible par-dessus les autres fenêtres (pratique pendant une séance)" on={w.onTop} onChange={(v) => set({ onTop: v })} />
+        <NotifRow title="Toujours au premier plan" sub="PCTRA reste visible par-dessus les autres fenêtres" on={w.onTop} onChange={(v) => set({ onTop: v })} />
         {w.canAutoStart && (
           <>
             <NotifRow title="Lancer avec Windows" sub="PCTRA s’ouvre au démarrage du PC : la synchro avec le téléphone est toujours prête" on={w.autoStart} onChange={(v) => set({ autoStart: v })} />
