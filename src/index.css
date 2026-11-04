@@ -518,3 +518,47 @@ textarea.input { min-height: 90px; resize: vertical; }
 .lv0-text { color: var(--muted); } .lv1-text { color: #e0b45c; } .lv2-text { color: #9fae6e; } .lv3-text { color: #7fae4a; } .lv4-text { color: #7fb6d9; }
 .bm-zone { margin: 8px 6px 2px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 11px; }
 .bm-bar { grid-template-columns: 170px 1fr auto; }
+
+/* PCTRA 1.2.0 : graphiques et objectifs */
+.st-controls { gap: 8px; align-items: center; }
+select.input.st-select { width: auto; min-width: 220px; max-width: 100%; min-height: 40px; padding: 6px 10px; }
+input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
+.st-seg { flex: 0 1 auto; }
+.st-seg button { padding: 0 14px; white-space: nowrap; }
+.ch-wrap { position: relative; }
+.ch-readout { font-size: 13px; min-height: 20px; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+.ch-readout b { font-size: 16px; }
+.ch { display: block; overflow: visible; }
+.ch .grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 4; }
+.ch .axis { stroke: var(--line); stroke-width: 1; }
+.ch .lbl { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.ch .hit { fill: transparent; }
+.ch .bar { fill: var(--khaki); }
+.ch .bar.now { fill: var(--olive-light); }
+.ch .bar.hov { fill: var(--success); }
+.ch .avg { stroke: var(--text); stroke-width: 1; stroke-dasharray: 6 4; opacity: 0.55; }
+.ch .avg-lbl { fill: var(--text); opacity: 0.75; }
+.ch .line { fill: none; stroke: var(--khaki); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.ch .dot { fill: var(--khaki); }
+.ch .dot.on { fill: var(--success); stroke: var(--surface); stroke-width: 2; }
+.ch .target { stroke: var(--success); stroke-width: 1.5; stroke-dasharray: 2 4; }
+.ch .target-lbl { fill: var(--success); }
+.ch .proj { stroke: var(--success); stroke-width: 2; stroke-dasharray: 6 5; }
+.st-table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.st-table th { text-align: left; font-weight: 600; font-size: 12px; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.st-table td { padding: 7px 8px; border-bottom: 1px solid var(--line); }
+.st-table tr:last-child td { border-bottom: 0; }
+.st-table .r { text-align: right; }
+.st-table tr.clickable { cursor: pointer; }
+.st-table tr.clickable:hover td { background: var(--surface-2); }
+.st-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 12px; align-items: start; }
+.st-goals { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 12px; align-items: start; }
+.st-progress { height: 10px; border-radius: 5px; background: var(--surface-2); overflow: hidden; }
+.st-progress span { display: block; height: 100%; background: var(--khaki); border-radius: 5px; }
+.st-progress span.done { background: var(--success); }
+.st-status { color: var(--muted); }
+.st-status.ok { color: var(--success); }
+.st-status.late { color: var(--warning); }
+.st-link { all: unset; cursor: pointer; }
+.st-link:hover { text-decoration: underline; }
+@media (max-width: 700px) { .st-compare, .st-goals { grid-template-columns: 1fr; } }

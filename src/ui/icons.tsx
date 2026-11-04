@@ -44,4 +44,5 @@ export const IconSettings = (p: P) => (<svg {...base(p)}><circle cx="12" cy="12"
 export const IconMonitor = (p: P) => (<svg {...base(p)}><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>)
 export const IconBook = (p: P) => (<svg {...base(p)}><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" /><path d="M4 19V5M8 7h7M8 11h5" /></svg>)
 export const IconToday = (p: P) => (<svg {...base(p)}><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /><rect x="7" y="13" width="4" height="4" rx="1" fill="currentColor" stroke="none" /></svg>)
+export const IconChart = (p: P) => (<svg {...base(p)}><path d="M4 20h16M6 16v-4M10 16V8M14 16v-6M18 16V5" /></svg>)
 export const IconBody = (p: P) => (<svg {...base(p)}><circle cx="12" cy="4.5" r="2" /><path d="M5 8.5l7 1 7-1M12 9.5v5M9 21l3-6.5 3 6.5M8.5 9.2L7 14M15.5 9.2L17 14" /></svg>)
