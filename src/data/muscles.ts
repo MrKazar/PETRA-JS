@@ -26,6 +26,7 @@ export const ZONES: Zone[] = [
     muscles: [
       { id: 'pec_haut', label: 'Haut des pectoraux', hint: 'Faisceau claviculaire', group: 'pectoraux', match: /^(?!pompes).*inclin|pompes declin|vers haut|landmine/ },
       { id: 'pec_bas', label: 'Bas des pectoraux', hint: 'Dips, déclinés', group: 'pectoraux', match: /^(?!pompes).*declin|pompes inclin|dips|vers bas/ },
+      { id: 'dentele', label: 'Dentelé antérieur', hint: 'Sous l’aisselle, sur les côtes', group: 'pectoraux', match: /dentel|pompes scapulaires|glissements au mur/ },
       { id: 'pec_milieu', label: 'Milieu des pectoraux', hint: 'Développés, écartés, pompes', group: 'pectoraux' },
     ],
   },
@@ -67,6 +68,7 @@ export const ZONES: Zone[] = [
       { id: 'fessiers', label: 'Fessiers', group: 'fessiers' },
       { id: 'abducteurs', label: 'Abducteurs', hint: 'Extérieur de hanche, moyen fessier', group: 'fessiers', match: /abduct|monster walk|coquillage|releve de jambe/ },
       { id: 'adducteurs', label: 'Adducteurs', group: 'adducteurs' },
+      { id: 'tibial', label: 'Tibial antérieur', hint: 'Devant du tibia', group: 'mollets', match: /tibial/ },
       { id: 'mollets', label: 'Mollets', group: 'mollets' },
     ],
   },

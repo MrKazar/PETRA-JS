@@ -516,3 +516,5 @@ textarea.input { min-height: 90px; resize: vertical; }
 .pb-row.pb-head span:not(:first-child) { text-align: right; }
 .pb-row:not(.pb-head):hover, .pb-row.sel { background: var(--surface-2); }
 .lv0-text { color: var(--muted); } .lv1-text { color: #e0b45c; } .lv2-text { color: #9fae6e; } .lv3-text { color: #7fae4a; } .lv4-text { color: #7fb6d9; }
+.bm-zone { margin: 8px 6px 2px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 11px; }
+.bm-bar { grid-template-columns: 170px 1fr auto; }
