@@ -8,7 +8,7 @@ import { scheduleReminders, setNotifVibration } from './logic/native'
 import { dateKey } from './logic/util'
 import { ToastHost } from './ui/kit'
 import { StorageAlert } from './ui/StorageAlert'
-import { IconBody, IconBook, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
+import { IconBody, IconBook, IconChart, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
 import { TodayScreen } from './screens/Today'
 import { ProgramsScreen } from './screens/Programs'
 import { ProgramDetailScreen } from './screens/ProgramDetail'
@@ -22,6 +22,7 @@ import { RecordsScreen } from './screens/Records'
 import { AppearanceScreen } from './screens/Appearance'
 import { ProgressScreen } from './screens/Progress'
 import { BodyScreen } from './screens/Body'
+import { StatsScreen } from './screens/Stats'
 import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
@@ -35,11 +36,12 @@ const ALL_TABS: { tab: Tab; label: string; Icon: typeof IconToday; pc?: boolean 
   { tab: 'today', label: 'Aujourd’hui', Icon: IconToday },
   { tab: 'programs', label: 'Programmes', Icon: IconDumbbell },
   { tab: 'body', label: 'Corps', Icon: IconBody, pc: true },
+  { tab: 'stats', label: 'Graphiques', Icon: IconChart, pc: true },
   { tab: 'exercises', label: 'Exercices', Icon: IconBook },
   { tab: 'finishers', label: 'Finishers', Icon: IconFlame },
   { tab: 'settings', label: 'Paramètres', Icon: IconSettings },
 ]
-/** Le schéma du corps n'existe que dans PCTRA. */
+/** Le schéma du corps et les graphiques n'existent que dans PCTRA. */
 const TABS = ALL_TABS.filter((t) => !t.pc || isDesktop)
 
 export default function App() {
@@ -197,5 +199,7 @@ function Screen({ route }: { route: Route }) {
       return <ProgressScreen id={route.id} />
     case 'body':
       return <BodyScreen />
+    case 'stats':
+      return <StatsScreen />
   }
 }
