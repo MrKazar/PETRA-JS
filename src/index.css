@@ -483,6 +483,8 @@ textarea.input { min-height: 90px; resize: vertical; }
 /* Planche anatomique : couleurs dans ui/bodyTheme.ts, tracés dans data/bodyPlate.ts. */
 .bm-tissue { fill: var(--bm-tissue); stroke: var(--bm-edge); stroke-width: 0.9; stroke-linejoin: round; }
 .bm-skin { fill: var(--bm-skin); stroke: var(--bm-edge); stroke-width: 0.6; stroke-linejoin: round; }
+.bm-skin-fill:not([fill]) { fill: var(--bm-skin); }
+.bm-skin-edge { fill: none; stroke: var(--bm-edge); stroke-width: 0.6; stroke-linejoin: round; stroke-linecap: round; }
 .bm-skin-layer, .bm-lines, .bm-shine { pointer-events: none; }
 .bm-lines { fill: none; stroke: var(--bm-edge); stroke-width: 0.6; stroke-linecap: round; }
 .bm-rim { fill: none; stroke: var(--bm-rim); stroke-width: 2.4; stroke-linejoin: round; opacity: 0.55; }

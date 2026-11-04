@@ -13,6 +13,7 @@ import type { FineId } from './anatomy'
 
 type Pt = readonly [number, number]
 type Piece = readonly [FineId, readonly Pt[]]
+export type Side = 'front' | 'back'
 
 const FRONT: readonly Piece[] = [
   ['cou', [[89.5,45],[91.5,50],[94.5,59],[97.6,68.5],[95.5,70.5],[92,66],[89,56],[88,49]]],
@@ -73,31 +74,123 @@ const BACK: readonly Piece[] = [
   ['gastrocnemiens', [[85.8,306],[84,308],[83.2,322],[83.2,342],[82.4,360],[86.6,362],[91.2,354],[93.2,340],[93.2,324],[90.4,312]]]
 ]
 
-/** Silhouette (moitié gauche, de haut en bas) : elle est remplie comme du tissu musculaire de fond. */
-const BODY: readonly Pt[] = [[94,51],[92,57],[91,64],[80,67],[68,70.4],[58,74],[51,82],[48.6,94],[47,110],[46,128],[43,148],[40,168],[38,190],[37,202],[33,210],[32,222],[35,233],[41,235],[45,226],[46,212],[49,192],[53,170],[57,148],[60,128],[63,112],[65,110],[66.4,130],[68.6,154],[67.6,176],[66,192],[65,214],[65,245],[67,275],[69,296],[68,312],[66,334],[67,356],[70,376],[71,392],[66,402],[70,410],[80,411],[91,410],[93,404],[89,396],[89,384],[91,364],[92,340],[91,318],[94,300],[96,280],[98,250],[98,224]]
+/**
+ * Silhouette (moitié gauche, de haut en bas), en trois morceaux autour de la main et du pied, qui
+ * sont dessinés à part (voir plus bas). Elle est remplie comme du tissu musculaire de fond.
+ */
+const BODY_ARM_OUT: readonly Pt[] = [[93.4,51],[90.4,57],[88.8,64],[80,67],[68,70.4],[58,74],[51,82],[48.6,94],[47,110],[46,128],[43,148],[40,168],[38.4,188]]
+const BODY_ARM_IN_LEG_OUT: readonly Pt[] = [[49.4,190],[53,170],[57,148],[60,128],[63,112],[65,110],[66.4,130],[68.6,154],[67.6,176],[66,192],[65,214],[65,245],[67,275],[69,296],[68,312],[66,334],[67,356],[70,376]]
+const BODY_LEG_IN: readonly Pt[] = [[89,382],[91,364],[92,340],[91,318],[94,300],[96,280],[98,250],[98,224]]
 const HEAD: readonly Pt[] = [[100,9],[109.5,11.5],[114.5,21],[114,35],[108.5,45.5],[100,49.6],[91.5,45.5],[86,35],[85.5,21],[90.5,11.5]]
 
-/** Peau et tendons non cliquables : mains, pieds, genoux, crête du tibia, tendon d'Achille, coude. */
-const SKIN: Record<'front' | 'back', readonly (readonly Pt[])[]> = {
+/**
+ * Main droite en position anatomique (paume vers l'avant, pouce vers l'extérieur), décrite dans le
+ * repère du poignet : v en travers (négatif = côté pouce), u le long de l'avant-bras vers le bas.
+ * On voit la même silhouette de face (paume) et de dos (dos de la main).
+ */
+const HAND_LOCAL: readonly Pt[] = [
+  [-4.6, 0], [-5.6, 4], [-7, 9], [-8.3, 13.6], [-9.2, 17.6], [-8.8, 20.2], [-7.4, 20.6], [-6.4, 18], [-5.8, 14.6], // pouce
+  [-5.8, 18.5], [-5.6, 25], [-5.1, 29.6], [-4.1, 31], [-3.1, 29.8], [-2.8, 20.4], // index
+  [-2.7, 25], [-2.4, 31.4], [-1.3, 32.8], [-0.2, 31.4], [0.1, 20.2], // majeur
+  [0.3, 25], [0.6, 30.4], [1.6, 31.8], [2.6, 30.4], [2.9, 19.8], // annulaire
+  [3.2, 22.6], [3.6, 27.4], [4.5, 28.6], [5.4, 27.2], [5.6, 20.4], // auriculaire
+  [5.8, 14], [5.6, 6], [4.6, 0],
+]
+/** Plis de la main : base du pouce et départ des doigts. */
+const HAND_LINES: readonly (readonly Pt[])[] = [
+  [[-5.4, 4.6], [-3.8, 10], [-3.4, 15]],
+  [[-2.8, 20.4], [-2.8, 17.6]],
+  [[0.1, 20.2], [0.1, 17.4]],
+  [[2.9, 19.8], [2.9, 17.2]],
+]
+/** Taille de la main (1 = taille du dessin ci-dessus). */
+const HAND_SCALE = 1.14
+const WRIST: Pt = [42.9, 189.6]
+const FOREARM_DIR: Pt = [-0.15, 0.989]
+const handPt = ([v0, u0]: Pt): Pt => {
+  const [v, u] = [v0 * HAND_SCALE, u0 * HAND_SCALE]
+  return [WRIST[0] + u * FOREARM_DIR[0] + v * FOREARM_DIR[1], WRIST[1] + u * FOREARM_DIR[1] - v * FOREARM_DIR[0]]
+}
+const HAND = HAND_LOCAL.slice(0, -1).map(handPt)
+/** Main de la peau : elle remonte sous les muscles de l'avant-bras pour ne pas laisser de bord net au poignet. */
+const HAND_SKIN = [handPt([4.4, -7]), ...HAND_LOCAL.slice(1, -1).map(handPt), handPt([-4.4, -7])]
+
+/** Pied gauche de l'image vu de face : malléoles (l'externe plus basse), dos du pied qui s'élargit. */
+const FOOT_FRONT: readonly Pt[] = [
+  [70.4, 378], [71.2, 385], [70.4, 389.6], [69.6, 393.4], [68.8, 397.4], [67.8, 401.6], [68.2, 405.4], [72, 406.8], [80, 407.6],
+  [88, 408], [92.2, 406.6], [92.6, 402], [91.6, 397], [90.6, 393], [91, 389.4], [90.6, 385], [89.6, 379],
+]
+/** Orteils vus de face, du gros orteil (côté intérieur) au petit : [centre x, bas y, demi-largeur, hauteur]. */
+const TOES: readonly (readonly [number, number, number, number])[] = [
+  [88, 412.4, 3.2, 6.4], [82.8, 411.6, 1.9, 5.4], [78.8, 410.8, 1.8, 5], [75, 409.8, 1.7, 4.6], [71.4, 408.6, 1.6, 4.2],
+]
+const toe = ([cx, by, hw, h]: (typeof TOES)[number]): Pt[] => [
+  [cx - hw, by - h], [cx - hw * 1.05, by - h * 0.45], [cx - hw * 0.6, by - h * 0.06], [cx, by], [cx + hw * 0.6, by - h * 0.06], [cx + hw * 1.05, by - h * 0.45], [cx + hw, by - h],
+]
+/** Le même pied vu de dos : talon au centre, bord de l'avant-pied qui dépasse de chaque côté. */
+const FOOT_BACK: readonly Pt[] = [
+  [70.4, 378], [71.2, 385], [71, 392], [70, 398], [69, 403.6], [70, 407.6], [73.6, 409.4], [77, 411.8], [82, 412.4],
+  [86.4, 411], [89.6, 408.4], [91.6, 404.4], [91.4, 398], [90.6, 392], [90.6, 385], [89.6, 379],
+]
+const FOOT_LINES: Record<Side, readonly (readonly Pt[])[]> = {
+  front: [[[90.6, 393], [87.4, 398.4], [86.6, 404]], [[70.4, 389.6], [74, 396], [76.4, 403]]],
+  back: [[[75.6, 401], [76.6, 408], [81, 410.2], [85.4, 407.8], [86.4, 401]]],
+}
+/** Contour du pied pour la silhouette : de face il englobe les orteils. */
+const FOOT_OUTLINE: Record<Side, readonly Pt[]> = {
+  front: [[71.6, 386], [70.4, 389.6], [69.6, 393.4], [68.8, 397.4], [67.8, 401.6], [68.4, 405.6], [70, 408.4], [73.4, 409.6], [77, 410.8], [81, 411.8], [86, 412.6], [90.4, 412.2], [92.6, 409], [92.6, 402], [91.6, 397], [90.6, 393], [91, 389.4], [90.8, 386]],
+  back: FOOT_BACK,
+}
+
+/** Peau et tendons non cliquables : genoux, crête du tibia, tendon d'Achille, coude. */
+const SKIN: Record<Side, readonly (readonly Pt[])[]> = {
   front: [
-      [[38.6,197],[34,207],[32,221],[35,233],[41,235],[45,226],[46,212],[46.8,199]],
-      [[71,389],[66,401],[70,410],[80,411],[91,410],[93,404],[89.6,396],[89.6,387]],
-      [[84.4,296],[79.6,300.4],[79,307],[82,313],[86.6,312.4],[89.6,306.4],[88.6,299.4]],
-      [[83,315],[82.6,340],[83,366],[84.6,386],[86.2,386],[86.4,366],[86,340],[85.4,315]]
+    [[84.4,296],[79.6,300.4],[79,307],[82,313],[86.6,312.4],[89.6,306.4],[88.6,299.4]],
+    [[83,315],[82.6,340],[83,366],[84.6,386],[86.2,386],[86.4,366],[86,340],[85.4,315]],
   ],
   back: [
-      [[38.6,197],[34,207],[32,221],[35,233],[41,235],[45,226],[46,212],[46.8,199]],
-      [[71,389],[66,401],[70,410],[80,411],[91,410],[93,404],[89.6,396],[89.6,387]],
-      [[80.6,378],[79.6,390],[83.6,391],[86,378]],
-      [[52.6,150],[53,155.4],[57.4,155.4],[57.6,150.6]]
-  ]
-  }
+    [[52.6,150],[53,155.4],[57.4,155.4],[57.6,150.6]],
+  ],
+}
 
 /** Repères osseux (non cliquables) : clavicule, ligne blanche, colonne, épine de l'omoplate. */
-const LINES: Record<'front' | 'back', readonly string[]> = {
-  front: ['M97.6 72.6 C88 72.2 78 72.8 66 73.6', 'M100 74 L100 199'],
-  back: ['M100 54 L100 196', 'M70.4 77.6 C76 82 82 86.4 88 90.4']
+const LINES: Record<Side, readonly (readonly Pt[])[]> = {
+  front: [[[97.6,72.6],[88,72.3],[78,72.8],[66,73.6]], [[100,74],[100,199]]],
+  back: [[[100,54],[100,196]], [[70.4,77.6],[79,84],[88,90.4]]],
+}
+
+/**
+ * Carrure : le dessin de base est déformé à la volée pour un physique plus athlétique. On élargit
+ * les épaules et le haut du dos, et on gonfle bras, cuisses et mollets vers l'extérieur. Comme
+ * tous les tracés (silhouette, muscles, peau) passent par la même déformation, ils restent
+ * jointifs. Mettre un coefficient à 0 rend le dessin de base.
+ */
+const MASS = { shoulders: 0.09, arm: 0.38, forearm: 0.32, thigh: 0.17, calfOut: 0.24, calfIn: 0.2 }
+
+const bump = (y: number, c: number, w: number) => Math.exp(-(((y - c) / w) ** 2))
+const lerp = (y: number, y0: number, x0: number, y1: number, x1: number) => x0 + ((x1 - x0) * (y - y0)) / (y1 - y0)
+
+function warp([x0, y]: Pt): Pt {
+  let x = x0
+  // Bras (côté extérieur seulement : l'intérieur touche le buste) : deltoïde, biceps, avant-bras.
+  if (y > 80 && y < 200 && x < 64) {
+    const c = y < 150 ? lerp(y, 80, 60, 150, 54.4) : lerp(y, 150, 54.4, 200, 44)
+    const k = MASS.arm * (0.75 * bump(y, 98, 13) + bump(y, 128, 13)) + MASS.forearm * bump(y, 162, 12)
+    if (x < c) x = c - (c - x) * (1 + k)
   }
+  // Cuisse : galbe du vaste externe.
+  if (y > 200 && y < 305 && x > 60 && x < 81) x = 81 - (81 - x) * (1 + MASS.thigh * bump(y, 240, 32))
+  // Mollet : losange des gastrocnémiens, des deux côtés.
+  if (y > 306 && y < 384 && x > 60) {
+    if (x < 80) x = 80 - (80 - x) * (1 + MASS.calfOut * bump(y, 336, 18))
+    else x = 80 + (x - 80) * (1 + MASS.calfIn * bump(y, 334, 16))
+  }
+  // Carrure : épaules et haut du buste plus larges, taille inchangée.
+  const s = y < 70 ? 0 : y < 96 ? (y - 70) / 26 : y < 128 ? 1 : y < 176 ? 1 - (y - 128) / 48 : 0
+  x = 100 - (100 - x) * (1 + MASS.shoulders * s)
+  return [x, y]
+}
+const W = (pts: readonly Pt[]) => pts.map(warp)
 
 const r2 = (v: number) => Math.round(v * 100) / 100
 
@@ -108,28 +201,46 @@ export function spline(pts: readonly Pt[], closed = true, t = 0.5): string {
   let d = `M${r2(pts[0][0])} ${r2(pts[0][1])}`
   for (let i = 0; i < (closed ? n : n - 1); i++) {
     const [p0, p1, p2, p3] = [P(i - 1), P(i), P(i + 1), P(i + 2)]
-  d += ` C${r2(p1[0] + ((p2[0] - p0[0]) * t) / 3)} ${r2(p1[1] + ((p2[1] - p0[1]) * t) / 3)} ${r2(p2[0] - ((p3[0] - p1[0]) * t) / 3)} ${r2(p2[1] - ((p3[1] - p1[1]) * t) / 3)} ${r2(p2[0])} ${r2(p2[1])}`
+    d += ` C${r2(p1[0] + ((p2[0] - p0[0]) * t) / 3)} ${r2(p1[1] + ((p2[1] - p0[1]) * t) / 3)} ${r2(p2[0] - ((p3[0] - p1[0]) * t) / 3)} ${r2(p2[1] - ((p3[1] - p1[1]) * t) / 3)} ${r2(p2[0])} ${r2(p2[1])}`
   }
   return d + (closed ? ' Z' : '')
 }
 
 const mirror = (pts: readonly Pt[]): Pt[] => pts.map(([x, y]) => [200 - x, y] as const)
+/** Tracé du côté gauche de l'image et de son reflet. */
+const both = (pts: readonly Pt[], closed = true, t = 0.5) => [spline(W(pts), closed, t), spline(mirror(W(pts)), closed, t)]
 
-export type Side = 'front' | 'back'
 export interface PlateMuscle {
   id: FineId
   /** Les deux côtés du corps. */
   paths: [string, string]
 }
 
-const muscles = (list: readonly Piece[]): PlateMuscle[] => list.map(([id, pts]) => ({ id, paths: [spline(pts), spline(mirror(pts))] }))
+const muscles = (list: readonly Piece[]): PlateMuscle[] => list.map(([id, pts]) => ({ id, paths: both(pts) as [string, string] }))
+/** Tendon d'Achille, vu de dos : il part sous le mollet et finit sur le talon. */
+const ACHILLES: readonly Pt[] = [[80.4, 366], [80.6, 380], [80.8, 392], [82, 396], [83.4, 392], [83.8, 380], [85.2, 366]]
+const FOOT_SKIN: Record<Side, readonly (readonly Pt[])[]> = { front: [FOOT_FRONT], back: [FOOT_BACK, ACHILLES] }
+const halfBody = (side: Side): Pt[] => W([...BODY_ARM_OUT, ...HAND, ...BODY_ARM_IN_LEG_OUT, ...FOOT_OUTLINE[side], ...BODY_LEG_IN])
+const body = (side: Side) => spline([[100, 49], ...halfBody(side), [100, 213], ...mirror(halfBody(side).reverse())], true, 0.45)
+
+const view = (side: Side, list: readonly Piece[]) => ({
+  body: body(side),
+  /** Mains et pieds, dessinés sous les muscles : le haut se glisse sous l'avant-bras et la cheville. */
+  under: [HAND_SKIN, ...FOOT_SKIN[side], ...(side === 'front' ? TOES.map(toe) : [])].flatMap((p, i, all) => {
+    // Remplissage fermé, mais contour ouvert : pas de trait en haut, là où la peau passe sous les
+    // muscles (ou, pour un orteil, sous le dos du pied).
+    const toeShape = side === 'front' && i >= all.length - TOES.length
+    const [fill, fillM] = both(p)
+    const [edge, edgeM] = both(toeShape ? p : p.slice(1, -1), false)
+    return [{ fill, edge, fade: !toeShape }, { fill: fillM, edge: edgeM, fade: !toeShape }]
+  }),
+  muscles: muscles(list),
+  skin: SKIN[side].flatMap((p) => both(p)),
+  lines: [...LINES[side], ...HAND_LINES.map((l) => l.map(handPt)), ...FOOT_LINES[side]].flatMap((l) => both(l, false)),
+})
 
 export const PLATE = {
   viewBox: '22 4 156 412',
-  body: spline([[100, 49], ...BODY, [100, 213], ...mirror([...BODY].reverse())], true, 0.45),
   head: spline(HEAD),
-  views: {
-  front: { muscles: muscles(FRONT), skin: SKIN.front.flatMap((p) => [spline(p), spline(mirror(p))]), lines: LINES.front },
-  back: { muscles: muscles(BACK), skin: SKIN.back.flatMap((p) => [spline(p), spline(mirror(p))]), lines: LINES.back },
-  },
+  views: { front: view('front', FRONT), back: view('back', BACK) },
 } as const

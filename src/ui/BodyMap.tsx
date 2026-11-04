@@ -56,6 +56,11 @@ export function BodyFigure({
             <stop offset="0.8" stopColor="#000" stopOpacity={BODY_THEME.shade * 0.45} />
             <stop offset="1" stopColor="#000" stopOpacity={BODY_THEME.shade} />
           </radialGradient>
+          {/* Peau des mains et des pieds : elle naît de la couleur du muscle, sans bord net. */}
+          <linearGradient id={`${shine}-skin`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="var(--bm-tissue)" />
+            <stop offset="0.32" stopColor="var(--bm-skin)" />
+          </linearGradient>
           <radialGradient id={`${shine}-floor`} cx="0.5" cy="0.5" r="0.5">
             <stop offset="0" stopColor="#000" stopOpacity="0.55" />
             <stop offset="1" stopColor="#000" stopOpacity="0" />
@@ -63,10 +68,16 @@ export function BodyFigure({
         </defs>
         <ellipse cx="100" cy="411" rx="44" ry="4.5" fill={`url(#${shine}-floor)`} />
         <g id={`corps-${side}`} className="bm-body">
-          <path d={PLATE.body} className="bm-rim" />
+          <path d={view.body} className="bm-rim" />
           <path d={PLATE.head} className="bm-rim" />
-          <path d={PLATE.body} className="bm-tissue" />
+          <path d={view.body} className="bm-tissue" />
           <path d={PLATE.head} className="bm-skin" />
+          {view.under.map((u, i) => (
+            <g key={i}>
+              <path d={u.fill} className="bm-skin-fill" fill={u.fade ? `url(#${shine}-skin)` : undefined} />
+              <path d={u.edge} className="bm-skin-edge" />
+            </g>
+          ))}
         </g>
         {VIEWS[side].map((m) => {
           const lv = levelOf(m.id)
@@ -102,10 +113,7 @@ export function BodyFigure({
         </g>
         <g className="bm-lines">
           {view.lines.map((d, i) => (
-            <g key={i}>
-              <path d={d} />
-              <path d={d} transform="matrix(-1 0 0 1 200 0)" />
-            </g>
+            <path key={i} d={d} />
           ))}
         </g>
       </svg>
