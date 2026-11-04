@@ -155,8 +155,8 @@ const SKIN: Record<Side, readonly (readonly Pt[])[]> = {
 
 /** Repères osseux (non cliquables) : clavicule, ligne blanche, colonne, épine de l'omoplate. */
 const LINES: Record<Side, readonly (readonly Pt[])[]> = {
-  front: [[[97.6,72.6],[88,72.3],[78,72.8],[66,73.6]], [[100,74],[100,199]]],
-  back: [[[100,54],[100,196]], [[70.4,77.6],[79,84],[88,90.4]]],
+  front: [[[97.6,72.6],[88,72.3],[78,72.8],[66,73.6]], [[100,74],[100,199]], [[72.4,172],[78,183],[85,194],[92,203.4],[96.4,208]]],
+  back: [[[100,54],[100,196]], [[70.4,77.6],[79,84],[88,90.4]], [[69.4,182],[76,177.4],[84,176.4],[92,178.6]]],
 }
 
 /**
@@ -165,7 +165,7 @@ const LINES: Record<Side, readonly (readonly Pt[])[]> = {
  * tous les tracés (silhouette, muscles, peau) passent par la même déformation, ils restent
  * jointifs. Mettre un coefficient à 0 rend le dessin de base.
  */
-const MASS = { shoulders: 0.09, arm: 0.38, forearm: 0.32, thigh: 0.17, calfOut: 0.24, calfIn: 0.2 }
+const MASS = { shoulders: 0.09, waist: 0.17, hips: 0.06, arm: 0.38, forearm: 0.32, thigh: 0.17, calfOut: 0.24, calfIn: 0.2 }
 
 const bump = (y: number, c: number, w: number) => Math.exp(-(((y - c) / w) ** 2))
 const lerp = (y: number, y0: number, x0: number, y1: number, x1: number) => x0 + ((x1 - x0) * (y - y0)) / (y1 - y0)
@@ -185,6 +185,9 @@ function warp([x0, y]: Pt): Pt {
     if (x < 80) x = 80 - (80 - x) * (1 + MASS.calfOut * bump(y, 336, 18))
     else x = 80 + (x - 80) * (1 + MASS.calfIn * bump(y, 334, 16))
   }
+  // Taille plus fine au-dessus des hanches, puis hanches qui ressortent : on voit le cadre des
+  // fessiers et la fin du V des abdominaux. Seulement le buste (les bras pendent à côté).
+  if (x > 60) x = 100 - (100 - x) * (1 - MASS.waist * bump(y, 180, 15) + MASS.hips * bump(y, 214, 11))
   // Carrure : épaules et haut du buste plus larges, taille inchangée.
   const s = y < 70 ? 0 : y < 96 ? (y - 70) / 26 : y < 128 ? 1 : y < 176 ? 1 - (y - 128) / 48 : 0
   x = 100 - (100 - x) * (1 + MASS.shoulders * s)
