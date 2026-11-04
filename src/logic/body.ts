@@ -220,6 +220,41 @@ export function plannedWork(data: Pick<AppData, 'programs' | 'weekPlan' | 'weekP
   return sortWork(work)
 }
 
+/** Ce que travaille une séance d'un programme (séries prévues, hors chauffe). */
+export function programWork(program: Pick<Program, 'exercises'>): BodyWork {
+  const work = emptyWork()
+  for (const it of items(program.exercises, false)) add(work, it)
+  return sortWork(work)
+}
+
+/** Nombre de fois où un programme revient dans la semaine type (moyenne A/B). */
+export function timesPerWeek(data: Pick<AppData, 'weekPlan' | 'weekPlanB' | 'settings'>, programId: string): number {
+  const plans = data.settings.abWeeks ? [data.weekPlan, data.weekPlanB] : [data.weekPlan]
+  let n = 0
+  for (const plan of plans) for (let d = 0; d < 7; d++) if (plan[d] === programId) n++
+  return n / plans.length
+}
+
+/**
+ * Niveau d'une zone pour une seule séance : 0 rien, 1 moins de 2 séries, 2 de 2 à 3,
+ * 3 de 4 à 8, 4 au-delà de 8.
+ */
+export function sessionLevelOf(sets: number): Level {
+  if (sets <= 0) return 0
+  if (sets < 2) return 1
+  if (sets < 4) return 2
+  if (sets <= 8) return 3
+  return 4
+}
+
+export const SESSION_LEVELS: { level: Level; label: string; range: string }[] = [
+  { level: 0, label: 'Pas travaillé', range: '0' },
+  { level: 1, label: 'Léger', range: 'moins de 2' },
+  { level: 2, label: 'Moyen', range: '2 à 3' },
+  { level: 3, label: 'Bien', range: '4 à 8' },
+  { level: 4, label: 'Beaucoup', range: 'plus de 8' },
+]
+
 /** Nombre de jours prévus dans la semaine type. */
 export function plannedDays(data: Pick<AppData, 'programs' | 'weekPlan' | 'weekPlanB' | 'settings'>): number {
   const plans = data.settings.abWeeks ? [data.weekPlan, data.weekPlanB] : [data.weekPlan]

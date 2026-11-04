@@ -61,7 +61,7 @@ export function BodyFigure({
   side: 'front' | 'back'
   levelOf: (id: RegionId) => Level
   selected?: RegionId
-  neglected: Set<RegionId>
+  neglected?: Set<RegionId>
   onSelect: (id: RegionId) => void
   labelOf: (id: RegionId) => string
 }) {
@@ -71,7 +71,7 @@ export function BodyFigure({
       key={`${i}-${mirror}`}
       d={s.d}
       transform={mirror ? 'matrix(-1 0 0 1 200 0)' : undefined}
-      className={`bm-muscle lv${levelOf(s.id)}${selected === s.id ? ' sel' : ''}${neglected.has(s.id) ? ' neg' : ''}`}
+      className={`bm-muscle lv${levelOf(s.id)}${selected === s.id ? ' sel' : ''}${neglected?.has(s.id) ? ' neg' : ''}`}
       onClick={() => onSelect(s.id)}
     >
       <title>{labelOf(s.id)}</title>
