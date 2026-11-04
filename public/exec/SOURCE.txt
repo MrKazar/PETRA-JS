@@ -1,0 +1,4 @@
+Photos d'exécution des exercices : free-exercise-db
+https://github.com/yuhonas/free-exercise-db
+Licence : The Unlicense (domaine public).
+Images redimensionnées (480 px) et converties en WebP pour PETRA.

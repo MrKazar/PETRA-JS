@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { ExecutionDemo } from './Execution'
 import { CATALOG, cardioSummary, exerciseFromCatalog, isLoadedLift, pdcSummary, groupLabel, type CatalogExercise } from '../data/catalog'
 import { KINDS, ZONES, findMuscle, findZone, kindOf, muscleIdOf, norm, worksSecondary, type Kind } from '../data/muscles'
 import type { ProgramExercise } from '../data/types'
@@ -145,6 +146,7 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false, m
   return (
     <div className="stack">
       <div className="small muted" style={{ marginTop: -6 }}>{exerciseSubtitle(ex)}</div>
+      <ExecutionDemo catalogId={ex.id} />
       {ex.muscles_secondaires.length > 0 && (
         <div className="chips">
           {ex.muscles_secondaires.map((m) => <span key={m} className="badge">{groupLabel(m)}</span>)}

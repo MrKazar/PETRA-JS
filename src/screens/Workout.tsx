@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ExecutionButton } from '../ui/Execution'
 import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
 import type { ActiveSession, FinisherType, PartSet, SessionExercise } from '../data/types'
@@ -452,6 +453,7 @@ function ExerciseCard({
             {ex.usesLoad === false ? ' · poids du corps' : ex.workLoad ? ` · travail ${ex.workLoad} kg` : ''}
           </div>
         </div>
+        {!editing && <ExecutionButton catalogId={ex.catalogId} name={ex.name} />}
         <button className={`btn sm${editing ? ' primary' : ' ghost'}`} onClick={() => setEditing(!editing)}>{editing ? 'OK' : 'Modifier'}</button>
       </div>
       {ex.note && <div className="small faint" style={{ marginBottom: 6 }}>{ex.note}</div>}

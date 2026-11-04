@@ -579,3 +579,11 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 .st-link { all: unset; cursor: pointer; }
 .st-link:hover { text-decoration: underline; }
 @media (max-width: 700px) { .st-compare, .st-goals { grid-template-columns: 1fr; } }
+
+/* Démonstration d'exécution (photos départ / arrivée qui alternent) */
+.exec-demo { margin: 0; display: flex; flex-direction: column; gap: 6px; cursor: pointer; user-select: none; }
+.exec-frame { position: relative; width: 100%; aspect-ratio: 3 / 2; max-width: 480px; align-self: center; border-radius: var(--radius); overflow: hidden; background: #fff; border: 1px solid var(--line); }
+.exec-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.25s ease; }
+.exec-frame img.on { opacity: 1; }
+.exec-step { position: absolute; left: 8px; bottom: 8px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; background: rgba(0, 0, 0, 0.6); color: #fff; }
+.exec-demo figcaption { text-align: center; }
