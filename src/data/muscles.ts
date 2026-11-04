@@ -69,6 +69,7 @@ export const ZONES: Zone[] = [
       { id: 'abducteurs', label: 'Abducteurs', hint: 'Extérieur de hanche, moyen fessier', group: 'fessiers', match: /abduct|monster walk|coquillage|releve de jambe/ },
       { id: 'adducteurs', label: 'Adducteurs', group: 'adducteurs' },
       { id: 'tibial', label: 'Tibial antérieur', hint: 'Devant du tibia', group: 'mollets', match: /tibial/ },
+      { id: 'fibulaires', label: 'Fibulaires', hint: 'Extérieur de la jambe, chevilles', group: 'mollets', match: /fibul|eversion/ },
       { id: 'mollets', label: 'Mollets', group: 'mollets' },
     ],
   },

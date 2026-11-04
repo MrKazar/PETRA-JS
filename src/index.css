@@ -479,24 +479,25 @@ textarea.input { min-height: 90px; resize: vertical; }
 .bm-fig { margin: 0; text-align: center; }
 .bm-fig figcaption { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
 .bm-svg { width: 100%; max-height: 62vh; display: block; }
-.bm-figures { padding: 14px; border-radius: 14px; background: radial-gradient(ellipse at 50% 35%, #1d1030 0%, #0e0718 75%); border: 1px solid #3d2566; box-shadow: inset 0 0 0 1px #1a0f2b; }
-.bm-base { fill: #24143a; stroke: #4b2f78; stroke-width: 1.3; stroke-linejoin: round; }
-.bm-spine { stroke: #0e0718; stroke-width: 1.6; stroke-linecap: round; }
-.bm-hit { cursor: pointer; }
-.bm-muscle { stroke: #0e0718; stroke-width: 2.4; stroke-linejoin: round; transition: fill 0.2s, opacity 0.15s; }
-.bm-muscle.lv0 { fill: #3a235f; }
-.bm-shine { pointer-events: none; }
-.bm-hit:hover .bm-muscle { opacity: 0.82; }
-.bm-muscle.sel { stroke: #fff; stroke-width: 2.4; }
-.bm-fig figcaption { color: #a58bd6 !important; }
-.bm-figures .bm-legend { color: #a58bd6; }
-.bm-figures .bm-legend .faint { color: #7d68a6; }
-.bm-figures .bm-swatch.lv0 { background: #3a235f; }
+.bm-figures { padding: 14px; border-radius: 14px; background: radial-gradient(ellipse at 50% 35%, var(--bm-bg) 0%, var(--bm-bg-edge) 75%); border: 1px solid var(--bm-border); }
+/* Planche anatomique : couleurs dans ui/bodyTheme.ts, tracés dans data/bodyPlate.ts. */
+.bm-tissue { fill: var(--bm-tissue); stroke: var(--bm-edge); stroke-width: 0.9; stroke-linejoin: round; }
+.bm-skin { fill: var(--bm-skin); stroke: var(--bm-edge); stroke-width: 0.6; stroke-linejoin: round; }
+.bm-skin-layer, .bm-lines, .bm-shine { pointer-events: none; }
+.bm-lines { fill: none; stroke: var(--bm-edge); stroke-width: 0.6; stroke-linecap: round; }
+.bm-hit { cursor: pointer; outline: none; }
+.bm-muscle { stroke: var(--bm-edge); stroke-width: 0.55; stroke-linejoin: round; transition: fill 0.2s, opacity 0.15s; }
+.bm-hit:hover .bm-muscle, .bm-hit:focus-visible .bm-muscle { opacity: 0.82; }
+.bm-muscle.sel { stroke: var(--bm-selected); stroke-width: 1.3; }
+.bm-fig figcaption { color: var(--bm-ink) !important; }
+.bm-figures .bm-legend { color: var(--bm-ink); }
+.bm-figures .bm-legend .faint { color: var(--bm-ink-faint); }
+.bm-figures .lv0 { fill: var(--bm-lv0); background: var(--bm-lv0); }
 .lv0 { fill: var(--line); background: var(--line); }
-.lv1 { fill: #f2bd4b; background: #f2bd4b; }
-.lv2 { fill: #a5cf6a; background: #a5cf6a; }
-.lv3 { fill: #5c9b39; background: #5c9b39; }
-.lv4 { fill: #2f7194; background: #2f7194; }
+.lv1 { fill: var(--bm-lv1); background: var(--bm-lv1); }
+.lv2 { fill: var(--bm-lv2); background: var(--bm-lv2); }
+.lv3 { fill: var(--bm-lv3); background: var(--bm-lv3); }
+.lv4 { fill: var(--bm-lv4); background: var(--bm-lv4); }
 .bm-legend { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); justify-content: center; }
 .bm-legend > span { display: inline-flex; align-items: center; gap: 6px; }
 .bm-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }

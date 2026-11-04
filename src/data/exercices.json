@@ -3839,6 +3839,56 @@
    }
   },
   {
+   "id": "flexion_cou_disque",
+   "nom": "Flexion du cou avec disque (allongé sur le dos)",
+   "groupe_musculaire": "trapezes",
+   "muscles_secondaires": [],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
+   "id": "extension_nuque_disque",
+   "nom": "Extension de la nuque avec disque (allongé sur le ventre)",
+   "groupe_musculaire": "trapezes",
+   "muscles_secondaires": [],
+   "equipement": "disque",
+   "par_cote": false,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "12-15",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
+   }
+  },
+  {
    "id": "extension_lombaires",
    "nom": "Extensions lombaires (banc à 45°)",
    "groupe_musculaire": "lombaires",
@@ -4682,6 +4732,33 @@
     "series": 3,
     "repos_sec": 120,
     "reps": 6
+   }
+  },
+  {
+   "id": "flexion_hanche_poulie",
+   "nom": "Flexion de hanche à la poulie basse",
+   "groupe_musculaire": "quadriceps",
+   "muscles_secondaires": [
+    "abdominaux"
+   ],
+   "equipement": "poulie",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": true,
+   "profil": "iso_petit",
+   "chauffe": {
+    "reps": "15",
+    "repos_sec": 45,
+    "charge_pct": 40
+   },
+   "travail": {
+    "reps": "10-12",
+    "repos_sec": 60
+   },
+   "hypertrophie": {
+    "reps": "15-20",
+    "repos_sec": 60,
+    "charge_pct": 65
    }
   },
   {
@@ -5694,6 +5771,23 @@
     "series": 3,
     "repos_sec": 45,
     "duree_sec": 30
+   }
+  },
+  {
+   "id": "eversion_cheville_elastique",
+   "nom": "Éversion de cheville à l'élastique (fibulaires)",
+   "groupe_musculaire": "mollets",
+   "muscles_secondaires": [],
+   "equipement": "élastique",
+   "par_cote": true,
+   "type": "isolation",
+   "charge": false,
+   "profil": "pdc",
+   "pdc": {
+    "mode": "reps",
+    "series": 3,
+    "repos_sec": 45,
+    "reps": 20
    }
   },
   {
