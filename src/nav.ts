@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-export type Tab = 'today' | 'programs' | 'exercises' | 'finishers' | 'settings'
+export type Tab = 'today' | 'programs' | 'body' | 'exercises' | 'finishers' | 'settings'
 
 export type Route =
   | { name: Tab }
