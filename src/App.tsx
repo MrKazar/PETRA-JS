@@ -7,6 +7,7 @@ import { computeReminders } from './logic/reminders'
 import { scheduleReminders, setNotifVibration } from './logic/native'
 import { dateKey } from './logic/util'
 import { ToastHost } from './ui/kit'
+import { StorageAlert } from './ui/StorageAlert'
 import { IconBook, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
 import { TodayScreen } from './screens/Today'
 import { ProgramsScreen } from './screens/Programs'
@@ -127,6 +128,7 @@ export default function App() {
             ))}
           </nav>
         )}
+        <StorageAlert />
         <ToastHost />
       </div>
     </NavContext.Provider>
