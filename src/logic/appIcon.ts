@@ -10,6 +10,12 @@ const AppIcon = registerPlugin<AppIconPlugin>('AppIcon')
 /** Nom de l'activity-alias Android de chaque thème (voir AndroidManifest.xml). */
 export const ICON_ALIAS: Record<ThemeId, string> = {
   spartiate: 'Militaire', // même icône que l'ancien thème militaire (le logo ne change pas)
+  // Thèmes de la 1.3.13 : icône spartiate en attendant des icônes dédiées.
+  olympe: 'Militaire',
+  arene: 'Militaire',
+  acier: 'Militaire',
+  jade: 'Militaire',
+  crepuscule: 'Militaire',
   minimal: 'Minimal',
   vantablack: 'Vantablack',
   pompier: 'Pompier',

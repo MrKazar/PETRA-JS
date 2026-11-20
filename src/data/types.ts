@@ -153,7 +153,7 @@ export type TaskStatus = 'fait' | 'reporte' | 'saute'
 
 export type FinisherType = 'abdos' | 'dos' | 'pecs' | 'jambes' | 'epaules_bras'
 
-export type ThemeId = 'spartiate' | 'minimal' | 'vantablack' | 'pompier' | 'neon'
+export type ThemeId = 'spartiate' | 'olympe' | 'arene' | 'acier' | 'jade' | 'crepuscule' | 'minimal' | 'vantablack' | 'pompier' | 'neon'
 /** Thèmes retirés en 1.3.13 (remplacés par le thème spartiate). */
 export const OLD_THEMES = ['militaire', 'police', 'gendarmerie', 'forces']
 
