@@ -1,6 +1,6 @@
 import { useData } from '../data/store'
 import { useNav } from '../nav'
-import { saveSettings } from '../logic/actions'
+import { bumpFeats, saveSettings } from '../logic/actions'
 import { activeTheme, themesFor } from '../ui/theme'
 import { LogoFull, TopBar, imgUrl } from '../ui/kit'
 
@@ -18,7 +18,10 @@ export function AppearanceScreen() {
         </div>
         <div className="theme-grid">
           {themesFor(data.settings.name).map((t) => (
-            <button key={t.id} className={`theme-card${current.id === t.id ? ' on' : ''}`} onClick={() => saveSettings({ theme: t.id })}>
+            <button key={t.id} className={`theme-card${current.id === t.id ? ' on' : ''}`} onClick={() => {
+              saveSettings({ theme: t.id })
+              bumpFeats((f) => ({ ...f, themes: [...new Set([...(f.themes ?? []), t.id])] }))
+            }}>
               <span className="emb" style={{ background: t.swatches[0] }}>
                 <img src={imgUrl(t.emblem)} alt="" />
               </span>

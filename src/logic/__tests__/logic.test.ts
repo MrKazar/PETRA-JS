@@ -10,7 +10,7 @@ import { loadKind, roundForEquipment, stepLoad } from '../loads'
 import { THEMES, activeTheme, themeOf, themesFor } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { PlannedSet, Program, Routine } from '../../data/types'
-import { DEFAULT_SETTINGS } from '../../data/store'
+import { DEFAULT_SETTINGS, normalize } from '../../data/store'
 import { backupName, backupsToPrune, parseBackup } from '../backup'
 import { MAX_QR_CHARS, applyShare, decodeShare, encodeShare, shareProgram, shareWeeksAB } from '../share'
 import { emptyData } from '../../data/store'
@@ -226,14 +226,15 @@ describe('mises à jour', () => {
 })
 
 describe('thèmes', () => {
-  it('propose 6 thèmes, militaire par défaut', () => {
-    expect(THEMES.map((t) => t.id)).toEqual(['militaire', 'police', 'gendarmerie', 'forces', 'minimal', 'vantablack', 'pompier', 'neon'])
-    expect(themeOf(undefined).id).toBe('militaire')
-    expect(themeOf('forces').emblem).toBe('emblem-forces.webp')
+  it('spartiate par défaut, anciens thèmes militaire / police / gendarmerie / forces retirés', () => {
+    expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'abysse', 'givre', 'lave', 'sakura', 'carbone', 'minimal', 'vantablack', 'pompier', 'neon'])
+    expect(themeOf(undefined).id).toBe('spartiate')
+    expect(themeOf('militaire' as never).id).toBe('spartiate')
     expect(themesFor('').some((t) => t.id === 'neon')).toBe(false)
     expect(themesFor(' neodyme ').some((t) => t.id === 'neon')).toBe(true)
     expect(activeTheme({ theme: 'neon', name: 'NéoDyme' }).id).toBe('neon')
-    expect(activeTheme({ theme: 'neon', name: 'Kazar' }).id).toBe('militaire')
+    expect(activeTheme({ theme: 'neon', name: 'Kazar' }).id).toBe('spartiate')
+    expect(normalize({ programs: [], settings: { theme: 'police' } } as never).settings.theme).toBe('spartiate')
   })
 })
 

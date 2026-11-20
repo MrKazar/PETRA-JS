@@ -9,6 +9,7 @@ import { overloadSuggestions } from '../logic/progress'
 import { OverloadCard } from '../ui/Overload'
 import { Empty, TopBar, confirmAction } from '../ui/kit'
 import { IconChevron, IconFlame, IconHistory, IconTrash } from '../ui/icons'
+import { SessionGains, achievementsOn } from './Achievements'
 
 const fmtDate = (t: number) => new Date(t).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 const fmtTime = (t: number) => new Date(t).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
@@ -93,6 +94,8 @@ export function SessionDetailScreen({ id }: { id: string }) {
           <div className="stat"><div className="v">{st.exercisesDone}</div><div className="l">Exercices</div></div>
           <div className="stat"><div className="v">{Math.round(st.volumeKg)}</div><div className="l">Volume (kg)</div></div>
         </div>
+
+        {achievementsOn(data) && data.sessions.every((x) => x.startedAt <= s.startedAt) && <SessionGains sessionId={s.id} />}
 
         {s.finisher && (
           <div className="card accent">

@@ -9,6 +9,11 @@ import { withWorkLoad } from '../data/catalog'
 import { withOverload, type OverloadSuggestion } from './progress'
 import { formatDuration } from './util'
 
+/** Compteurs locaux des succès secrets (appuis sur l'emblème, thèmes essayés, partages). */
+export function bumpFeats(fn: (f: NonNullable<Settings['feats']>) => NonNullable<Settings['feats']>) {
+  update((d) => ({ ...d, settings: { ...d.settings, feats: fn(d.settings.feats ?? {}) } }))
+}
+
 export function saveSettings(patch: Partial<Settings>) {
   update((d) => ({ ...d, settings: { ...d.settings, ...patch } }))
 }

@@ -6,12 +6,16 @@ import { MAX_QR_CHARS, applyShare, decodeShare, describeShare, encodeShare, type
 import { Sheet, confirmAction, toast } from './kit'
 import { decodePairing, isPairingCode } from '../logic/sync'
 import { pairWith } from '../logic/pcsync'
+import { bumpFeats } from '../logic/actions'
 
 /** Affiche le QR code d'un partage, à scanner avec PETRA sur l'autre téléphone. */
 export function ShareSheet({ payload, title, onClose }: { payload: SharePayload; title: string; onClose: () => void }) {
   const [img, setImg] = useState<string>()
   const [text, setText] = useState('')
   const [tooBig, setTooBig] = useState(false)
+  useEffect(() => {
+    bumpFeats((f) => ({ ...f, shares: (f.shares ?? 0) + 1 }))
+  }, [])
   useEffect(() => {
     let alive = true
     encodeShare(payload).then(async (t) => {

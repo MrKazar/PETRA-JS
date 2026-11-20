@@ -158,6 +158,13 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
             </div>
             <Toggle on={s.keepAwake} onChange={(v) => saveSettings({ keepAwake: v })} label="Écran allumé" />
           </div>
+          <div className="row">
+            <div className="grow">
+              <div style={{ fontWeight: 600 }}>Succès et XP</div>
+              <div className="small muted">Médailles, niveau et XP sur l’accueil et en fin de séance</div>
+            </div>
+            <Toggle on={s.achievements !== false} onChange={(v) => saveSettings({ achievements: v })} label="Succès" />
+          </div>
         </div>
         )}
         {section === 'notifications' && <NotificationsSection />}

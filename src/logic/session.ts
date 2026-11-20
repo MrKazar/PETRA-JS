@@ -200,6 +200,7 @@ export function finalize(s: ActiveSession, now = Date.now()): Session {
   return {
     ...rest,
     endedAt: now,
+    planned: s.exercises.reduce((n, e) => n + e.sets.length, 0),
     exercises: s.exercises.map((e) => ({ ...e, sets: e.sets.filter((x) => x.done) })).filter((e) => e.sets.length > 0),
   }
 }
@@ -377,7 +378,7 @@ export function syncTimer(s: ActiveSession, now = Date.now()): ActiveSession {
     at += step.sec * 1000
     if (i >= pos.index || step.kind !== 'work' || step.exId == null || step.index == null) return
     const set = next.exercises.find((e) => e.id === step.exId)?.sets[step.index]
-    if (set && !set.done) next = patchSet(next, step.exId, step.index, { done: true, doneAt: Math.min(at, now) })
+    if (set && !set.done) next = patchSet(next, step.exId, step.index, { done: true, doneAt: Math.min(at, now), timer: true })
   })
   if (pos.index >= t.steps.length) next = { ...next, timer: undefined }
   return next
