@@ -43,8 +43,8 @@ export const THEMES: Theme[] = [
   },
   {
     id: 'pompier',
-    label: 'Pompier',
-    description: 'Rouge feu et laiton, médaillon rouge.',
+    label: 'Royal',
+    description: 'Rouge royal et or, médaillon rouge.',
     emblem: 'emblem-pompier.webp',
     swatches: ['#120d0c', '#1d1412', '#9e1c1c', '#d4a24c'],
     statusBar: '#120D0C',
