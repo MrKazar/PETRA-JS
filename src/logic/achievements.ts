@@ -505,7 +505,7 @@ export const DEFS: Def[] = [
   D('outils', 'gear', 'transmission', 'Transmission', 'Partager un programme ou un finisher par QR code', [1], (_f, d) => Math.min(1, d.settings.feats?.shares ?? 0)),
 
   S('mot_de_passe', 'Mot de passe', 'Débloquer le thème caché', 'Un nom qui ouvre des portes', (_f, d) => themesFor(d.settings.name).some((t) => t.unlockName)),
-  S('curiosite', 'Curiosité', 'Appuyer 7 fois sur l’emblème de l’accueil', 'Ce bouclier cache quelque chose', (_f, d) => (d.settings.feats?.logoTaps ?? 0) >= 7),
+  S('curiosite', 'Curiosité', 'Appuyer 7 fois sur l’emblème de l’accueil : débloque le bouclier Lambda et son thème', 'Ce bouclier cache quelque chose', (_f, d) => (d.settings.feats?.logoTaps ?? 0) >= 7),
   S('defile', 'Défilé', 'Séance un 14 juillet', 'Jour de fête nationale', (f) => md(f, '07-14')),
   S('sainte_barbe', 'Sainte-Barbe', 'Séance un 4 décembre', 'La patronne des soldats du feu', (f) => md(f, '12-04')),
   S('resolution', 'Bonne résolution', 'Séance un 1er janvier', 'Premier jour', (f) => md(f, '01-01')),

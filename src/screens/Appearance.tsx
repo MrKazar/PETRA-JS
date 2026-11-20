@@ -17,7 +17,7 @@ export function AppearanceScreen() {
           <div className="small muted" style={{ textAlign: 'center', marginTop: 10 }}>{current.description}</div>
         </div>
         <div className="theme-grid">
-          {themesFor(data.settings.name).map((t) => (
+          {themesFor(data.settings).map((t) => (
             <button key={t.id} className={`theme-card${current.id === t.id ? ' on' : ''}`} onClick={() => {
               saveSettings({ theme: t.id })
               bumpFeats((f) => ({ ...f, themes: [...new Set([...(f.themes ?? []), t.id])] }))
