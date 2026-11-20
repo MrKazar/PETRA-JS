@@ -21,7 +21,7 @@ const fmt = (n: number) => Math.round(n).toLocaleString('fr-FR')
 
 function MedalOf({ a, size }: { a: Achievement; size?: number }) {
   const secret = a.def.family === 'secrets' && !a.reached
-  return <Medal metal={metalNow(a)} icon={a.def.icon} size={size} locked={!a.reached} secret={secret} label={a.def.name} />
+  return <Medal metal={metalNow(a)} icon={a.def.icon} size={size} locked={!a.reached} secret={secret} label={a.def.name} secretId={a.def.family === 'secrets' ? a.def.id : undefined} />
 }
 
 /** Carte de niveau : écusson, titre et barre d'XP. */
@@ -150,7 +150,7 @@ export function SessionGains({ sessionId }: { sessionId: string }) {
         <div className="gain-list">
           {g.gains.map((x) => (
             <div key={`${x.achievement.def.id}:${x.tier}`} className="gain">
-              <Medal metal={x.metal} icon={x.achievement.def.icon} size={44} label={x.achievement.def.name} />
+              <Medal metal={x.metal} icon={x.achievement.def.icon} size={44} label={x.achievement.def.name} secretId={x.achievement.def.family === 'secrets' ? x.achievement.def.id : undefined} />
               <div className="n">{x.achievement.def.name}</div>
               <div className="small faint">{x.achievement.def.family === 'secrets' ? 'Secret' : tierLabel(x.achievement.def, x.achievement.def.tiers[x.tier])}</div>
             </div>
