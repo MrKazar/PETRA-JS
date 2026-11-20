@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useData } from '../data/store'
 import type { Routine } from '../data/types'
 import { useNav } from '../nav'
@@ -10,6 +10,8 @@ import { Empty, Header, Progress, Ring, SectionTitle } from '../ui/kit'
 import { IconChevron, IconDumbbell, IconHistory, IconPlay, IconPlus } from '../ui/icons'
 import { RoutineEditor, TaskRow } from './Routines'
 import { UpdateBanner } from '../ui/UpdateCard'
+import { LevelCard, achievementsOn } from './Achievements'
+import { bumpFeats } from '../logic/actions'
 
 function greeting(name: string): string {
   const hello = new Date().getHours() >= 18 ? 'Bonsoir' : 'Bonjour'
@@ -42,6 +44,14 @@ export function TodayScreen() {
   const nextPlanned = Array.from({ length: 14 }, (_, i) => addDays(today, i + 1)).find((k) => programFor(data, k))
   const last = data.sessions[0]
 
+  // Succès secret « Curiosité » : 7 appuis rapides sur l'emblème.
+  const taps = useRef<number[]>([])
+  const tapEmblem = () => {
+    const now = Date.now()
+    taps.current = [...taps.current.filter((t) => now - t < 4000), now]
+    if (taps.current.length >= 7 && (data.settings.feats?.logoTaps ?? 0) < 7) bumpFeats((f) => ({ ...f, logoTaps: 7 }))
+  }
+
   const start = (p = program) => {
     if (!data.active) beginSession(p)
     nav.push({ name: 'workout' })
@@ -50,9 +60,10 @@ export function TodayScreen() {
   return (
     <div className="screen">
       <div className="screen-inner">
-        <Header title="PETRA — Aujourd’hui" sub={formatDay(today).replace(/^./, (c) => c.toUpperCase())} />
+        <Header title="PETRA — Aujourd’hui" sub={formatDay(today).replace(/^./, (c) => c.toUpperCase())} onEmblem={tapEmblem} />
         <div className="muted">{greeting(data.settings.name)}</div>
         <UpdateBanner />
+        {achievementsOn(data) && <LevelCard onOpen={() => nav.push({ name: 'achievements' })} />}
 
         <SectionTitle right={<button className="btn ghost sm" onClick={() => nav.reset({ name: 'programs' })}>Planning</button>}>Objectif sportif</SectionTitle>
         {data.active ? (

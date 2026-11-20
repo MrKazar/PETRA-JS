@@ -79,6 +79,8 @@ export interface Program {
 export interface SessionSet extends PlannedSet {
   done: boolean
   doneAt?: number
+  /** Série validée par le minuteur d'intervalles (succès « Sous le chrono »). */
+  timer?: boolean
 }
 
 export interface SessionExercise extends Omit<ProgramExercise, 'sets'> {
@@ -101,6 +103,8 @@ export interface Session {
   exercises: SessionExercise[]
   notes?: string
   finisher?: DoneFinisher
+  /** Nombre de séries prévues au départ (depuis la 1.3.13) : une séance est parfaite si toutes sont faites. */
+  planned?: number
 }
 
 export interface Rest {
@@ -149,7 +153,9 @@ export type TaskStatus = 'fait' | 'reporte' | 'saute'
 
 export type FinisherType = 'abdos' | 'dos' | 'pecs' | 'jambes' | 'epaules_bras'
 
-export type ThemeId = 'militaire' | 'police' | 'gendarmerie' | 'forces' | 'minimal' | 'vantablack' | 'pompier' | 'neon'
+export type ThemeId = 'spartiate' | 'minimal' | 'vantablack' | 'pompier' | 'neon'
+/** Thèmes retirés en 1.3.13 (remplacés par le thème spartiate). */
+export const OLD_THEMES = ['militaire', 'police', 'gendarmerie', 'forces']
 
 export interface Settings {
   defaultRestSec: number
@@ -184,6 +190,19 @@ export interface Settings {
   lastBackupAt?: number
   /** Appli PC associée (synchro par le Wi-Fi local). Propre à cet appareil, jamais synchronisé. */
   pc?: PcLink
+  /** Succès et XP affichés (oui par défaut). */
+  achievements?: boolean
+  /** Compteurs de quelques succès secrets, propres à cet appareil. */
+  feats?: Feats
+}
+
+export interface Feats {
+  /** Appuis sur l'emblème de l'accueil. */
+  logoTaps?: number
+  /** Thèmes essayés. */
+  themes?: string[]
+  /** Partages par QR code. */
+  shares?: number
 }
 
 /** Appli PC associée en scannant son QR code. */

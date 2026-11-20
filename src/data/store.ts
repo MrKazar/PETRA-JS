@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { DATA_VERSION, type AppData, type Settings } from './types'
+import { DATA_VERSION, OLD_THEMES, type AppData, type Settings } from './types'
 import { addDays, dateKey, weekday } from '../logic/util'
 import { migrateExercise } from './catalog'
 import { track, versionOf } from '../logic/sync'
@@ -25,7 +25,7 @@ export const DEFAULT_SETTINGS: Settings = {
   notifRoutines: false,
   keepAwake: true,
   name: '',
-  theme: 'militaire',
+  theme: 'spartiate',
 }
 
 export function emptyData(): AppData {
@@ -75,10 +75,13 @@ export function normalize(raw: Partial<AppData>): AppData {
     ...base,
     ...input,
     version: input.version ?? DATA_VERSION,
-    settings: { ...base.settings, ...(input.settings ?? {}) },
+    settings: withTheme({ ...base.settings, ...(input.settings ?? {}) }),
     programs: (input.programs ?? base.programs).map((p) => ({ ...p, exercises: p.exercises.map(migrateExercise) })),
   }
 }
+
+/** Les thèmes militaire, police, gendarmerie et forces spéciales sont remplacés par le thème spartiate (1.3.13). */
+const withTheme = (s: Settings): Settings => (OLD_THEMES.includes(s.theme) ? { ...s, theme: 'spartiate' } : s)
 
 /** Copie des données illisibles trouvées au démarrage, gardée à part pour ne jamais les écraser. */
 export const CORRUPT_KEY = 'petra.data.illisible'

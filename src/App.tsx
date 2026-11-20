@@ -19,6 +19,7 @@ import { SettingsScreen, SettingsSectionScreen } from './screens/Settings'
 import { WorkoutScreen } from './screens/Workout'
 import { HistoryScreen, SessionDetailScreen } from './screens/History'
 import { RecordsScreen } from './screens/Records'
+import { AchievementsScreen } from './screens/Achievements'
 import { AppearanceScreen } from './screens/Appearance'
 import { ProgressScreen } from './screens/Progress'
 import { BodyScreen } from './screens/Body'
@@ -191,6 +192,8 @@ function Screen({ route }: { route: Route }) {
       return <SessionDetailScreen id={route.id} />
     case 'records':
       return <RecordsScreen />
+    case 'achievements':
+      return <AchievementsScreen />
     case 'appearance':
       return <AppearanceScreen />
     case 'settingsSection':

@@ -9,6 +9,7 @@ export type Route =
   | { name: 'history' }
   | { name: 'session'; id: string }
   | { name: 'records' }
+  | { name: 'achievements' }
   | { name: 'routines' }
   | { name: 'appearance' }
   | { name: 'settingsSection'; section: 'user' | 'sessions' | 'notifications' | 'data' | 'pc' | 'window' }

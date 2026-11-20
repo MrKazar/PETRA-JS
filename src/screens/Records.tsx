@@ -12,7 +12,7 @@ export function RecordsScreen() {
   return (
     <div className="screen">
       <div className="screen-inner">
-        <TopBar title="Records personnels" onBack={nav.pop} />
+        <TopBar title="Records personnels" onBack={nav.pop} right={data.settings.achievements !== false ? <button className="btn ghost sm" onClick={() => nav.push({ name: 'achievements' })}>Succès</button> : undefined} />
         {!prs.length && <Empty icon={<IconTrophy />}>Tes meilleures charges (et tes meilleures séries au poids du corps) apparaîtront ici dès que tu auras validé des séries.</Empty>}
         <div className="list">
           {prs.map((r) => (

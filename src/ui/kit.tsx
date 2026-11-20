@@ -23,7 +23,7 @@ export const imgUrl = (file: string) => `${IMG}${file}`
 
 const useTheme = () => activeTheme(useData().settings)
 
-export const Emblem = ({ size = 40 }: { size?: number }) => <img className="emblem" src={imgUrl(useTheme().emblem)} width={size} height={size} alt="" />
+export const Emblem = ({ size = 40, onClick }: { size?: number; onClick?: () => void }) => <img className="emblem" src={imgUrl(useTheme().emblem)} width={size} height={size} alt="" onClick={onClick} />
 
 /** Logo complet : l'image d'origine pour le thème militaire, sinon emblème + PETRA dans la police du thème. */
 export function LogoFull() {
@@ -50,10 +50,10 @@ export function Stripe({ width = 36 }: { width?: number }) {
 }
 
 /** En-tête d'écran PETRA : emblème + titre en capitales + liseré tricolore + sous-titre. */
-export function Header({ title, sub, right }: { title: ReactNode; sub?: ReactNode; right?: ReactNode }) {
+export function Header({ title, sub, right, onEmblem }: { title: ReactNode; sub?: ReactNode; right?: ReactNode; onEmblem?: () => void }) {
   return (
     <div className="header">
-      <Emblem />
+      <Emblem onClick={onEmblem} />
       <div className="grow">
         <h1 className="ellipsis">{title}</h1>
         <Stripe />

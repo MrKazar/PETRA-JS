@@ -17,37 +17,13 @@ export interface Theme {
 
 export const THEMES: Theme[] = [
   {
-    id: 'militaire',
-    label: 'Militaire',
-    description: 'Olive et kaki, carte topographique. Le design d’origine.',
+    id: 'spartiate',
+    label: 'Spartiate',
+    description: 'Bronze, rouge sombre et noir profond, titres en capitales antiques.',
     emblem: 'emblem.webp',
     logo: 'logo.webp',
-    swatches: ['#0d0f0e', '#171a17', '#4a543a', '#b7a98a'],
-    statusBar: '#0D0F0E',
-  },
-  {
-    id: 'police',
-    label: 'Police',
-    description: 'Bleu nuit et argent, écusson étoilé, police condensée.',
-    emblem: 'emblem-police.webp',
-    swatches: ['#0a0e16', '#121926', '#24427e', '#b9c6de'],
-    statusBar: '#0A0E16',
-  },
-  {
-    id: 'gendarmerie',
-    label: 'Gendarmerie',
-    description: 'Bleu profond, argent et rouge, médaillon, titres à empattements.',
-    emblem: 'emblem-gendarmerie.webp',
-    swatches: ['#0b0f1a', '#141a2a', '#1d3264', '#c8ccd8'],
-    statusBar: '#0B0F1A',
-  },
-  {
-    id: 'forces',
-    label: 'Forces spéciales',
-    description: 'Noir mat et sable, dague ailée, titres au pochoir.',
-    emblem: 'emblem-forces.webp',
-    swatches: ['#08090a', '#121312', '#6b5f43', '#cbb98c'],
-    statusBar: '#08090A',
+    swatches: ['#0e0b09', '#1a1411', '#8e2a1e', '#c99a5b'],
+    statusBar: '#0E0B09',
   },
   {
     id: 'minimal',
@@ -68,7 +44,7 @@ export const THEMES: Theme[] = [
   {
     id: 'pompier',
     label: 'Pompier',
-    description: 'Rouge feu et laiton, médaillon aux flammes et haches croisées.',
+    description: 'Rouge feu et laiton, médaillon rouge.',
     emblem: 'emblem-pompier.webp',
     swatches: ['#120d0c', '#1d1412', '#9e1c1c', '#d4a24c'],
     statusBar: '#120D0C',
@@ -92,7 +68,7 @@ const simplify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '
 /** Thèmes proposés pour ce nom d'utilisateur (les thèmes cachés seulement avec le bon nom). */
 export const themesFor = (name: string | undefined) => THEMES.filter((t) => !t.unlockName || simplify(name ?? '') === simplify(t.unlockName))
 
-/** Thème réellement appliqué : un thème caché dont le nom ne correspond plus revient au thème militaire. */
+/** Thème réellement appliqué : un thème caché dont le nom ne correspond plus (ou un thème retiré) revient au thème spartiate. */
 export function activeTheme(s: { theme?: ThemeId; name?: string }) {
   const t = themeOf(s.theme)
   return themesFor(s.name).includes(t) ? t : THEMES[0]

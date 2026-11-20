@@ -9,10 +9,7 @@ const AppIcon = registerPlugin<AppIconPlugin>('AppIcon')
 
 /** Nom de l'activity-alias Android de chaque thème (voir AndroidManifest.xml). */
 export const ICON_ALIAS: Record<ThemeId, string> = {
-  militaire: 'Militaire',
-  police: 'Police',
-  gendarmerie: 'Gendarmerie',
-  forces: 'Forces',
+  spartiate: 'Militaire', // même icône que l'ancien thème militaire (le logo ne change pas)
   minimal: 'Minimal',
   vantablack: 'Vantablack',
   pompier: 'Pompier',
