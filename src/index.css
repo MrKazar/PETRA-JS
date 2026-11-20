@@ -679,6 +679,129 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 :root[data-theme='olympe'] .card { box-shadow: 0 1px 2px rgba(60, 45, 20, 0.08); }
 :root[data-theme='olympe'] .backdrop { background: rgba(30, 24, 14, 0.4); }
 :root[data-theme='olympe'] .stripe { box-shadow: 0 0 0 1px var(--line); }
+:root[data-theme='abysse'] {
+  --bg: #050d14;
+  --surface: #0b1822;
+  --surface-2: #12222e;
+  --line: #1d3443;
+  --text: #e4f4f6;
+  --muted: #8fb3bb;
+  --faint: #52707a;
+  --olive: #0f8a8a;
+  --olive-light: #1fb8b0;
+  --olive-dark: #0a4b50;
+  --khaki: #ff8a6b;
+  --khaki-soft: rgba(255,138,107,.12);
+  --success: #5ee0d2;
+  --success-soft: rgba(94,224,210,.13);
+  --on-primary: #ecfffd;
+  --radius: 14px;
+  --font-body: 'Barlow',sans-serif;
+  --font-head: 'Barlow Condensed',sans-serif;
+  --head-weight: 600;
+  --bg-image: radial-gradient(ellipse at 50% 120%,rgba(31,184,176,.18),transparent 60%),linear-gradient(180deg,rgba(255,138,107,.06),transparent 30%);
+}
+:root[data-theme='abysse'] .tab { font-family: var(--font-body); }
+:root[data-theme='givre'] {
+  --bg: #eef4f8;
+  --surface: #ffffff;
+  --surface-2: #e3ecf3;
+  --line: #cfdbe6;
+  --text: #13202c;
+  --muted: #4c6074;
+  --faint: #8597a8;
+  --olive: #1f4f80;
+  --olive-light: #3d7ab8;
+  --olive-dark: #13304f;
+  --khaki: #2b6cb0;
+  --khaki-soft: rgba(43,108,176,.1);
+  --success: #2f8f7a;
+  --success-soft: rgba(47,143,122,.12);
+  --on-primary: #f4f9ff;
+  --radius: 14px;
+  --font-body: 'Barlow',sans-serif;
+  --font-head: 'Barlow Condensed',sans-serif;
+  --head-weight: 600;
+  --bg-image: radial-gradient(ellipse at 50% -10%,rgba(127,178,224,.25),transparent 55%);
+  color-scheme: light;
+}
+:root[data-theme='givre'] .tab { font-family: var(--font-body); }
+:root[data-theme='lave'] {
+  --bg: #0a0706;
+  --surface: #15100d;
+  --surface-2: #1e1612;
+  --line: #33231b;
+  --text: #fbeee4;
+  --muted: #c8a58f;
+  --faint: #7e6252;
+  --olive: #e2470f;
+  --olive-light: #ff7a2e;
+  --olive-dark: #7a1f05;
+  --khaki: #ffb23a;
+  --khaki-soft: rgba(255,178,58,.13);
+  --success: #ffc23a;
+  --success-soft: rgba(255,194,58,.14);
+  --on-primary: #fff5ec;
+  --radius: 6px;
+  --font-body: 'Barlow',sans-serif;
+  --font-head: 'Oswald',sans-serif;
+  --head-weight: 600;
+  --bg-image: radial-gradient(ellipse at 50% 125%,rgba(255,90,31,.32),transparent 60%);
+}
+:root[data-theme='lave'] .tab { font-family: var(--font-body); }
+:root[data-theme='sakura'] {
+  --bg: #fbf3f4;
+  --surface: #ffffff;
+  --surface-2: #f6e6ea;
+  --line: #ecd3da;
+  --text: #2a1e22;
+  --muted: #6e5860;
+  --faint: #a68e96;
+  --olive: #c2557a;
+  --olive-light: #e07fa0;
+  --olive-dark: #7a2a46;
+  --khaki: #a8456a;
+  --khaki-soft: rgba(194,85,122,.1);
+  --success: #5f9a7e;
+  --success-soft: rgba(95,154,126,.12);
+  --on-primary: #fff7fa;
+  --radius: 18px;
+  --font-body: 'Barlow',sans-serif;
+  --font-head: 'Cinzel',serif;
+  --head-weight: 700;
+  --bg-image: radial-gradient(ellipse at 80% -10%,rgba(232,154,180,.25),transparent 50%);
+  color-scheme: light;
+}
+:root[data-theme='sakura'] .tab { font-family: var(--font-body); }
+:root[data-theme='carbone'] {
+  --bg: #0c0c0c;
+  --surface: #171717;
+  --surface-2: #202020;
+  --line: #2e2e2e;
+  --text: #f2f2f2;
+  --muted: #a8a8a8;
+  --faint: #666;
+  --olive: #ffd600;
+  --olive-light: #ffe74d;
+  --olive-dark: #8a7400;
+  --khaki: #ffd600;
+  --khaki-soft: rgba(255,214,0,.1);
+  --success: #ffd600;
+  --success-soft: rgba(255,214,0,.12);
+  --on-primary: #111111;
+  --radius: 4px;
+  --font-body: 'Barlow',sans-serif;
+  --font-head: 'Barlow Condensed',sans-serif;
+  --head-weight: 600;
+  --bg-image: repeating-linear-gradient(45deg,rgba(255,255,255,.018) 0 2px,transparent 2px 8px);
+}
+:root[data-theme='carbone'] .tab { font-family: var(--font-body); }
+:root[data-theme='givre'] .card { box-shadow: 0 1px 2px rgba(20, 30, 40, 0.08); }
+:root[data-theme='givre'] .backdrop { background: rgba(20, 24, 30, 0.4); }
+:root[data-theme='givre'] .stripe { box-shadow: 0 0 0 1px var(--line); }
+:root[data-theme='sakura'] .card { box-shadow: 0 1px 2px rgba(20, 30, 40, 0.08); }
+:root[data-theme='sakura'] .backdrop { background: rgba(20, 24, 30, 0.4); }
+:root[data-theme='sakura'] .stripe { box-shadow: 0 0 0 1px var(--line); }
 
 /* ===== Succès et XP (1.3.13) ===== */
 .medal { display: block; flex: none; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45)); }

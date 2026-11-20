@@ -227,7 +227,7 @@ describe('mises à jour', () => {
 
 describe('thèmes', () => {
   it('spartiate par défaut, anciens thèmes militaire / police / gendarmerie / forces retirés', () => {
-    expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'minimal', 'vantablack', 'pompier', 'neon'])
+    expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'abysse', 'givre', 'lave', 'sakura', 'carbone', 'minimal', 'vantablack', 'pompier', 'neon'])
     expect(themeOf(undefined).id).toBe('spartiate')
     expect(themeOf('militaire' as never).id).toBe('spartiate')
     expect(themesFor('').some((t) => t.id === 'neon')).toBe(false)
