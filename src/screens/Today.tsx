@@ -6,12 +6,13 @@ import { beginSession, setRoutineStatus } from '../logic/actions'
 import { programFor, routinesFor, weekLetter } from '../logic/planner'
 import { estimateDuration, formatEstimate, statsOf } from '../logic/session'
 import { addDays, dateKey, formatDay, formatDuration, uid, WEEKDAYS_SHORT, weekday } from '../logic/util'
-import { Empty, Header, Progress, Ring, SectionTitle } from '../ui/kit'
+import { Empty, Header, Progress, Ring, SectionTitle, Sheet, imgUrl } from '../ui/kit'
 import { IconChevron, IconDumbbell, IconHistory, IconPlay, IconPlus } from '../ui/icons'
 import { RoutineEditor, TaskRow } from './Routines'
 import { UpdateBanner } from '../ui/UpdateCard'
 import { LevelCard, achievementsOn } from './Achievements'
-import { bumpFeats } from '../logic/actions'
+import { bumpFeats, saveSettings } from '../logic/actions'
+import { themeOf } from '../ui/theme'
 
 function greeting(name: string): string {
   const hello = new Date().getHours() >= 18 ? 'Bonsoir' : 'Bonjour'
@@ -49,7 +50,18 @@ export function TodayScreen() {
   const tapEmblem = () => {
     const now = Date.now()
     taps.current = [...taps.current.filter((t) => now - t < 4000), now]
-    if (taps.current.length >= 7 && (data.settings.feats?.logoTaps ?? 0) < 7) bumpFeats((f) => ({ ...f, logoTaps: 7 }))
+    if (taps.current.length < 7) return
+    taps.current = []
+    if ((data.settings.feats?.logoTaps ?? 0) < 7) bumpFeats((f) => ({ ...f, logoTaps: 7 }))
+    setReveal(true)
+  }
+  // Le bouclier caché derrière l'emblème : il apparaît et débloque le thème Lambda.
+  const [reveal, setReveal] = useState(false)
+  const lambda = themeOf('lambda')
+  const wearLambda = () => {
+    saveSettings({ theme: 'lambda' })
+    bumpFeats((f) => ({ ...f, themes: [...new Set([...(f.themes ?? []), 'lambda'])] }))
+    setReveal(false)
   }
 
   const start = (p = program) => {
@@ -207,6 +219,21 @@ export function TodayScreen() {
         <IconPlus /> Tâche
       </button>
       {editing && <RoutineEditor routine={editing} onClose={() => setEditing(null)} />}
+      <Sheet open={reveal} onClose={() => setReveal(false)} title="Le bouclier s’ouvre">
+        <div className="stack reveal" style={{ gap: 12, alignItems: 'center', textAlign: 'center' }}>
+          <img className="reveal-shield" src={imgUrl(lambda.emblem)} alt="Bouclier Lambda" />
+          <div><b>Thème {lambda.label} débloqué</b></div>
+          <div className="small muted">Le Λ que les Spartiates peignaient sur leurs boucliers. Le thème t’attend aussi dans Paramètres &gt; Apparence.</div>
+          {data.settings.theme === 'lambda' ? (
+            <button className="btn" onClick={() => setReveal(false)}>Déjà porté</button>
+          ) : (
+            <div className="row" style={{ gap: 8 }}>
+              <button className="btn ghost" onClick={() => setReveal(false)}>Plus tard</button>
+              <button className="btn" onClick={wearLambda}>Porter le bouclier</button>
+            </div>
+          )}
+        </div>
+      </Sheet>
     </div>
   )
 }

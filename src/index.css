@@ -348,6 +348,23 @@ textarea.input { min-height: 90px; resize: vertical; }
 :root[data-theme='neon'] .tab { font-family: var(--font-body); }
 :root[data-theme='neon'] .card h2, :root[data-theme='neon'] .card h3, :root[data-theme='neon'] .topbar h1, :root[data-theme='neon'] .sheet h2 { font-size: 1.35em; letter-spacing: 0.04em; }
 :root[data-theme='neon'] .stat .v, :root[data-theme='neon'] .rest .clock { text-shadow: 0 0 10px rgba(60, 242, 255, 0.5); }
+:root[data-theme='lambda'] {
+  --bg: #0e0708; --surface: #1b0d0e; --surface-2: #261213; --line: #44201f;
+  --text: #f7ebdc; --muted: #c9a98e; --faint: #85645a;
+  --olive: #b3141c; --olive-light: #e0352c; --olive-dark: #5c0a0e;
+  --khaki: #e8bd62; --khaki-soft: rgba(232, 189, 98, 0.14);
+  --success: #f0c66d; --success-soft: rgba(240, 198, 109, 0.15);
+  --warning: #f0c66d; --error: #ff8a72; --destructive: #6e0f12;
+  --on-primary: #fff6e6;
+  --radius: 6px;
+  --font-body: 'Barlow', Roboto, system-ui, sans-serif;
+  --font-head: 'Cinzel', Georgia, serif;
+  --head-weight: 700;
+  --bg-image: radial-gradient(circle at 50% -10%, rgba(232, 189, 98, 0.18), transparent 50%), radial-gradient(ellipse at 50% 120%, rgba(179, 20, 28, 0.35), transparent 60%);
+}
+:root[data-theme='lambda'] .card { border-color: #4a2320; border-top: 2px solid rgba(232, 189, 98, 0.55); }
+:root[data-theme='lambda'] .header h1, :root[data-theme='lambda'] .logo-compose .word { color: var(--khaki); text-shadow: 0 0 12px rgba(232, 189, 98, 0.35); letter-spacing: 0.06em; }
+:root[data-theme='lambda'] .tab, :root[data-theme='lambda'] .seg button, :root[data-theme='lambda'] .badge { font-family: var(--font-body); font-weight: 600; }
 :root[data-theme='minimal'] .stripe { box-shadow: 0 0 0 1px var(--line); } /* blanc du drapeau visible sur fond clair */
 
 /* Progression */
@@ -832,3 +849,12 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 .gain .n { font-size: 12px; font-weight: 600; line-height: 1.2; }
 @keyframes xp-pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
 .medal-cell.locked .medal { opacity: 0.75; }
+
+/* Bouclier Lambda révélé par les 7 appuis sur l'emblème */
+.reveal-shield { width: 168px; height: 168px; filter: drop-shadow(0 6px 22px rgba(232, 189, 98, 0.35)); animation: shield-in 0.9s cubic-bezier(0.2, 0.9, 0.25, 1.15) both; }
+@keyframes shield-in {
+  0% { transform: perspective(600px) rotateY(-180deg) scale(0.4); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: perspective(600px) rotateY(0) scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .reveal-shield { animation: none; } }

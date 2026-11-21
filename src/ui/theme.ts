@@ -1,4 +1,4 @@
-import type { ThemeId } from '../data/types'
+import type { Feats, ThemeId } from '../data/types'
 
 export interface Theme {
   id: ThemeId
@@ -13,6 +13,8 @@ export interface Theme {
   statusBar: string
   /** Thème caché : n'apparaît et ne s'applique qu'avec ce nom d'utilisateur. */
   unlockName?: string
+  /** Thème caché débloqué par un succès secret de l'appareil (ici les 7 appuis sur l'emblème). */
+  unlockTaps?: number
 }
 
 export const THEMES: Theme[] = [
@@ -138,6 +140,15 @@ export const THEMES: Theme[] = [
     swatches: ['#0a0414', '#140a24', '#8a2be2', '#ff46dc'],
     statusBar: '#0A0414',
   },
+  {
+    id: 'lambda',
+    label: 'Lambda',
+    description: 'Le bouclier des Spartiates : rouge sang, or et noir, frise grecque.',
+    emblem: 'emblem-lambda.webp',
+    unlockTaps: 7,
+    swatches: ['#0e0708', '#1b0d0e', '#b3141c', '#e8bd62'],
+    statusBar: '#0E0708',
+  },
 ]
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]
@@ -145,13 +156,22 @@ export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === 
 /** Nom comparé sans accents, majuscules ni espaces autour : « neodyme » débloque « NéoDyme ». */
 const simplify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
 
-/** Thèmes proposés pour ce nom d'utilisateur (les thèmes cachés seulement avec le bon nom). */
-export const themesFor = (name: string | undefined) => THEMES.filter((t) => !t.unlockName || simplify(name ?? '') === simplify(t.unlockName))
+type Unlock = { name?: string; feats?: Feats }
+
+/** Thème caché ouvert pour ces réglages : bon nom d'utilisateur ou succès secret obtenu. */
+export const unlocked = (t: Theme, s: Unlock) =>
+  (!t.unlockName || simplify(s.name ?? '') === simplify(t.unlockName)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps)
+
+/** Thèmes proposés (les thèmes cachés seulement une fois débloqués). Accepte aussi un simple nom. */
+export const themesFor = (s: Unlock | string | undefined) => {
+  const u = typeof s === 'object' ? s : { name: s }
+  return THEMES.filter((t) => unlocked(t, u))
+}
 
 /** Thème réellement appliqué : un thème caché dont le nom ne correspond plus (ou un thème retiré) revient au thème spartiate. */
-export function activeTheme(s: { theme?: ThemeId; name?: string }) {
+export function activeTheme(s: { theme?: ThemeId; name?: string; feats?: Feats }) {
   const t = themeOf(s.theme)
-  return themesFor(s.name).includes(t) ? t : THEMES[0]
+  return themesFor(s).includes(t) ? t : THEMES[0]
 }
 
 /** Applique le thème au document (variables CSS via data-theme, couleur de la barre d'état). */

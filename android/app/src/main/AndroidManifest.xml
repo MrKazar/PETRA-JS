@@ -122,6 +122,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+        <activity-alias
+            android:name=".IconLambda"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_lambda"
+            android:roundIcon="@mipmap/ic_launcher_lambda_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <!-- Boutons « +15 s » et « Passer » de la notification de repos (RestTimerPlugin). -->
         <receiver android:name=".RestActionReceiver" android:exported="false" />
