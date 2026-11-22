@@ -17,6 +17,8 @@ export interface Theme {
   unlockTaps?: number
   /** Niveau d'XP à atteindre pour débloquer ce thème (thèmes non secrets, tous ouverts au niveau 50). */
   unlockLevel?: number
+  /** Thème secret débloqué par un succès secret (id du succès). */
+  unlockSecret?: string
 }
 
 export const THEMES: Theme[] = [
@@ -163,6 +165,78 @@ export const THEMES: Theme[] = [
     swatches: ['#0e0708', '#1b0d0e', '#b3141c', '#e8bd62'],
     statusBar: '#0E0708',
   },
+  {
+    id: 'loup',
+    label: 'Loup-garou',
+    description: 'Nuit de pleine lune, bleu nuit et argent : le loup hurle sur son rocher.',
+    emblem: 'emblem-loup.webp',
+    unlockSecret: 'loup_garou',
+    swatches: ['#060b1a', '#0e1730', '#3f63b8', '#e8dcae'],
+    statusBar: '#060B1A',
+  },
+  {
+    id: 'phalange',
+    label: 'Les 300',
+    description: 'Noir, bronze et rouge sang : la phalange des Thermopyles.',
+    emblem: 'emblem-phalange.webp',
+    unlockSecret: 'thermopyles',
+    swatches: ['#0d0605', '#1c0f0b', '#9e1b16', '#c79a52'],
+    statusBar: '#0D0605',
+  },
+  {
+    id: 'phenix',
+    label: 'Phénix',
+    description: 'Braise, orange incandescent et or : renaître de ses cendres.',
+    emblem: 'emblem-phenix.webp',
+    unlockSecret: 'retour_flamme',
+    swatches: ['#120604', '#22100a', '#e2561a', '#ffc247'],
+    statusBar: '#120604',
+  },
+  {
+    id: 'nuit',
+    label: 'Garde de nuit',
+    description: 'Bleu marine profond et éclats d’étoiles, l’heure où tout le monde dort.',
+    emblem: 'emblem-nuit.webp',
+    unlockSecret: 'garde_nuit',
+    swatches: ['#04061a', '#0b1030', '#3b4fa8', '#cfd8ff'],
+    statusBar: '#04061A',
+  },
+  {
+    id: 'miroir',
+    label: 'Miroir',
+    description: 'Chrome et acier noir, tout en reflets.',
+    emblem: 'emblem-miroir.webp',
+    unlockSecret: 'heure_miroir',
+    swatches: ['#0f1113', '#1b1e22', '#9aa3ab', '#f2f5f7'],
+    statusBar: '#0F1113',
+  },
+  {
+    id: 'citrouille',
+    label: 'Citrouille',
+    description: 'Violet de minuit et orange lanterne.',
+    emblem: 'emblem-citrouille.webp',
+    unlockSecret: 'citrouilles',
+    swatches: ['#120a16', '#21122a', '#ff7a1a', '#b26cff'],
+    statusBar: '#120A16',
+  },
+  {
+    id: 'leonidas',
+    label: 'Léonidas',
+    description: 'Or royal, rouge et laurier : la garde du roi de Sparte.',
+    emblem: 'emblem-leonidas.webp',
+    unlockName: 'Léonidas',
+    swatches: ['#120a06', '#21140b', '#a3161b', '#e6c27a'],
+    statusBar: '#120A06',
+  },
+  {
+    id: 'immortel',
+    label: 'Immortel',
+    description: 'Marbre blanc et or pur, réservé aux légendes.',
+    emblem: 'emblem-immortel.webp',
+    unlockSecret: 'legende',
+    swatches: ['#f4f1ea', '#ffffff', '#b58a1e', '#2a2214'],
+    statusBar: '#F4F1EA',
+  },
 ]
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]
@@ -170,14 +244,15 @@ export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === 
 /** Nom comparé sans accents, majuscules ni espaces autour : « neodyme » débloque « NéoDyme ». */
 const simplify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
 
-type Unlock = { name?: string; feats?: Feats; theme?: ThemeId; level?: number }
+type Unlock = { name?: string; feats?: Feats; theme?: ThemeId; level?: number; secrets?: string[] }
 
 /** Thème secret : lié à un nom d'utilisateur ou à un succès secret, jamais au niveau. */
-export const isSecret = (t: Theme) => !!(t.unlockName || t.unlockTaps)
+export const isSecret = (t: Theme) => !!(t.unlockName || t.unlockTaps || t.unlockSecret)
 
 /** Secret trouvé (bon nom d'utilisateur ou succès secret obtenu). */
 const secretOpen = (t: Theme, s: Unlock) =>
-  (!t.unlockName || simplify(s.name ?? '') === simplify(t.unlockName)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps)
+  (!t.unlockName || simplify(s.name ?? '') === simplify(t.unlockName)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps) &&
+  (!t.unlockSecret || !!s.secrets?.includes(t.unlockSecret))
 
 /** Palier atteint. Le thème déjà choisi avant l'arrivée des paliers reste utilisable tant qu'on le garde. */
 const levelOpen = (t: Theme, s: Unlock) => !t.unlockLevel || (s.level ?? 1) >= t.unlockLevel || s.theme === t.id

@@ -29,7 +29,7 @@ import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
 import { listenRestNotification } from './logic/actions'
 import { activeTheme, applyTheme } from './ui/theme'
-import { currentLevel } from './logic/level'
+import { progress } from './logic/level'
 import { syncAppIcon } from './logic/appIcon'
 import { autoSync, startLiveSync } from './logic/pcsync'
 import { desktop, isDesktop, startDesktop, useUpdateState } from './logic/desktop'
@@ -100,7 +100,7 @@ export default function App() {
     return () => window.clearTimeout(id)
   }, [reminderKey])
 
-  const theme = activeTheme({ ...data.settings, level: currentLevel(data) }).id
+  const theme = activeTheme({ ...data.settings, ...progress(data) }).id
   useEffect(() => {
     applyTheme(theme)
     syncAppIcon(theme)

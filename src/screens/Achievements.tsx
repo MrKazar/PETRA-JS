@@ -1,4 +1,4 @@
-import { themesUnlockedBetween } from '../ui/theme'
+import { THEMES, themesUnlockedBetween } from '../ui/theme'
 import { useMemo, useState } from 'react'
 import { useData } from '../data/store'
 import type { AppData } from '../data/types'
@@ -147,6 +147,9 @@ export function SessionGains({ sessionId }: { sessionId: string }) {
           <div className="small muted">{up ? `Niveau ${g.after.level} atteint · ${g.after.title}` : `Niveau ${g.after.level} · ${fmt(g.after.into)} / ${fmt(g.after.need)} XP`}</div>
         </div>
       </div>
+      {g.gains.flatMap((x) => THEMES.filter((t) => t.unlockSecret && t.unlockSecret === x.achievement.def.id)).map((t) => (
+        <div key={t.id} className="small" style={{ textAlign: 'left', marginTop: 8 }}>Thème secret débloqué : <b>{t.label}</b> (Paramètres, Apparence)</div>
+      ))}
       {up && themesUnlockedBetween(g.before.level, g.after.level).map((t) => (
         <div key={t.id} className="small" style={{ textAlign: 'left', marginTop: 8 }}>Nouveau thème débloqué : <b>{t.label}</b> (Paramètres, Apparence)</div>
       ))}

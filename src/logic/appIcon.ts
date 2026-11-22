@@ -26,6 +26,14 @@ export const ICON_ALIAS: Record<ThemeId, string> = {
   pompier: 'Pompier',
   neon: 'Neon',
   lambda: 'Lambda',
+  loup: 'Loup',
+  phalange: 'Phalange',
+  phenix: 'Phenix',
+  nuit: 'Nuit',
+  miroir: 'Miroir',
+  citrouille: 'Citrouille',
+  leonidas: 'Leonidas',
+  immortel: 'Immortel',
 }
 
 /** Met l'icône du téléphone au thème choisi (Android seulement). */

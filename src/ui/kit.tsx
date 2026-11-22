@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { IconBack } from './icons'
 import { useData } from '../data/store'
 import { activeTheme } from './theme'
-import { currentLevel } from '../logic/level'
+import { progress } from '../logic/level'
 
 export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: () => void; right?: ReactNode }) {
   return (
@@ -24,7 +24,7 @@ export const imgUrl = (file: string) => `${IMG}${file}`
 
 const useTheme = () => {
   const data = useData()
-  return activeTheme({ ...data.settings, level: currentLevel(data) })
+  return activeTheme({ ...data.settings, ...progress(data) })
 }
 
 export const Emblem = ({ size = 40, onClick }: { size?: number; onClick?: () => void }) => <img className="emblem" src={imgUrl(useTheme().emblem)} width={size} height={size} alt="" onClick={onClick} />

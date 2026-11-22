@@ -1,15 +1,16 @@
 import { useData } from '../data/store'
 import { useNav } from '../nav'
 import { bumpFeats, saveSettings } from '../logic/actions'
-import { currentLevel } from '../logic/level'
+import { progress } from '../logic/level'
 import { activeTheme, isSecret, nextLevelTheme, themesShown, unlocked } from '../ui/theme'
 import { LogoFull, TopBar, imgUrl, toast } from '../ui/kit'
 
 export function AppearanceScreen() {
   const data = useData()
   const nav = useNav()
-  const level = currentLevel(data)
-  const s = { ...data.settings, level }
+  const pr = progress(data)
+  const level = pr.level
+  const s = { ...data.settings, ...pr }
   const current = activeTheme(s)
   const next = nextLevelTheme(level)
   return (

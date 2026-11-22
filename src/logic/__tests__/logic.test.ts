@@ -7,6 +7,7 @@ import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, nextWorkLoad, overloadSuggestion, withOverload } from '../progress'
 import { loadKind, roundForEquipment, stepLoad } from '../loads'
+import { DEFS } from '../achievements'
 import { THEMES, activeTheme, isSecret, themeOf, themesFor, themesShown, themesUnlockedBetween } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { PlannedSet, Program, Routine } from '../../data/types'
@@ -227,7 +228,7 @@ describe('mises à jour', () => {
 
 describe('thèmes', () => {
   it('spartiate par défaut, anciens thèmes militaire / police / gendarmerie / forces retirés', () => {
-    expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'abysse', 'givre', 'lave', 'sakura', 'carbone', 'minimal', 'vantablack', 'pompier', 'neon', 'lambda'])
+    expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'abysse', 'givre', 'lave', 'sakura', 'carbone', 'minimal', 'vantablack', 'pompier', 'neon', 'lambda', 'loup', 'phalange', 'phenix', 'nuit', 'miroir', 'citrouille', 'leonidas', 'immortel'])
     expect(themeOf(undefined).id).toBe('spartiate')
     expect(themeOf('militaire' as never).id).toBe('spartiate')
     expect(themesFor('').some((t) => t.id === 'neon')).toBe(false)
@@ -264,6 +265,23 @@ describe('thèmes par paliers de niveau', () => {
     expect(themesShown({ level: 1 }).some((t) => t.id === 'vantablack')).toBe(true)
     expect(themesShown({ level: 1 }).some((t) => t.id === 'lambda')).toBe(false)
     expect(themesUnlockedBetween(11, 16).map((t) => t.id)).toEqual(['jade', 'carbone'])
+  })
+})
+
+describe('thèmes secrets liés aux succès secrets', () => {
+  it('chaque thème secret apparaît seulement avec son succès secret', () => {
+    expect(themesShown({ level: 100 }).some((t) => t.id === 'loup')).toBe(false)
+    expect(themesFor({ level: 1, secrets: ['loup_garou'] }).some((t) => t.id === 'loup')).toBe(true)
+    expect(themesFor({ secrets: ['thermopyles'] }).some((t) => t.id === 'phalange')).toBe(true)
+    expect(themesFor({ secrets: ['legende'] }).some((t) => t.id === 'immortel')).toBe(true)
+    expect(activeTheme({ theme: 'phenix' }).id).toBe('spartiate')
+    expect(activeTheme({ theme: 'phenix', secrets: ['retour_flamme'] }).id).toBe('phenix')
+    expect(themesFor('Léonidas').some((t) => t.id === 'leonidas')).toBe(true)
+    expect(themesFor('leonidas ').some((t) => t.id === 'neon')).toBe(false)
+  })
+  it('chaque thème secret a un succès secret qui existe', () => {
+    const ids = new Set(DEFS.filter((d) => d.family === 'secrets').map((d) => d.id))
+    for (const t of THEMES.filter((x) => x.unlockSecret)) expect(ids.has(t.unlockSecret!)).toBe(true)
   })
 })
 

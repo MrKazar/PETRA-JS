@@ -136,6 +136,111 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias
+            android:name=".IconLoup"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_loup"
+            android:roundIcon="@mipmap/ic_launcher_loup_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconPhalange"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_phalange"
+            android:roundIcon="@mipmap/ic_launcher_phalange_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconPhenix"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_phenix"
+            android:roundIcon="@mipmap/ic_launcher_phenix_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconNuit"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_nuit"
+            android:roundIcon="@mipmap/ic_launcher_nuit_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconMiroir"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_miroir"
+            android:roundIcon="@mipmap/ic_launcher_miroir_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconCitrouille"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_citrouille"
+            android:roundIcon="@mipmap/ic_launcher_citrouille_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconLeonidas"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_leonidas"
+            android:roundIcon="@mipmap/ic_launcher_leonidas_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconImmortel"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_immortel"
+            android:roundIcon="@mipmap/ic_launcher_immortel_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <!-- Boutons « +15 s » et « Passer » de la notification de repos (RestTimerPlugin). -->
         <receiver android:name=".RestActionReceiver" android:exported="false" />
 
