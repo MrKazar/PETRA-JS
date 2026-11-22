@@ -7,7 +7,7 @@ import { programFor, routinesFor } from './planner'
 import { e1rm, liftsOf } from './stats'
 import { exerciseKey } from './progress'
 import { addDays, dateKey, parseKey } from './util'
-import { themesFor } from '../ui/theme'
+import { themesFor, themesShown } from '../ui/theme'
 
 /**
  * Succès et XP (PETRA 1.3.13). Tout se calcule à partir de l'historique déjà enregistré : les
@@ -524,7 +524,7 @@ export const DEFS: Def[] = [
   S('retour_flamme', 'Retour de flamme', 'Battre un record après 30 jours ou plus de pause', 'Le phénix renaît', (f) => f.phoenix),
   S('changement_tenue', 'Changement de tenue', 'Essayer tous les thèmes', 'Chaque armure a son style', (_f, d) => {
     const tried = new Set(d.settings.feats?.themes ?? [])
-    return themesFor(d.settings.name).every((t) => tried.has(t.id))
+    return themesShown(d.settings).every((t) => tried.has(t.id))
   }),
   S('utile_demain', 'Plus utile demain', 'Séance le lendemain d’un record battu', 'La devise, au pied de la lettre', (f) => f.dayAfterRecord),
   // Ces deux-là dépendent des autres succès : calculés à part dans evaluate().

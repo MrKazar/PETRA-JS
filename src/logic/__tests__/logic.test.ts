@@ -7,7 +7,7 @@ import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, nextWorkLoad, overloadSuggestion, withOverload } from '../progress'
 import { loadKind, roundForEquipment, stepLoad } from '../loads'
-import { THEMES, activeTheme, themeOf, themesFor } from '../../ui/theme'
+import { THEMES, activeTheme, isSecret, themeOf, themesFor, themesShown, themesUnlockedBetween } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { PlannedSet, Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS, normalize } from '../../data/store'
@@ -244,6 +244,26 @@ describe('thèmes', () => {
     expect(themesFor({ feats: { logoTaps: 7 } }).some((t) => t.id === 'neon')).toBe(false)
     expect(activeTheme({ theme: 'lambda' }).id).toBe('spartiate')
     expect(activeTheme({ theme: 'lambda', feats: { logoTaps: 7 } }).id).toBe('lambda')
+  })
+})
+
+describe('thèmes par paliers de niveau', () => {
+  it('tous les thèmes non secrets sont ouverts au niveau 50, les secrets restent liés à leur secret', () => {
+    expect(themesFor({ level: 50 }).map((t) => t.id)).toEqual(THEMES.filter((t) => !isSecret(t)).map((t) => t.id))
+    expect(THEMES.filter((t) => !isSecret(t)).every((t) => (t.unlockLevel ?? 1) <= 50)).toBe(true)
+    expect(THEMES.filter(isSecret).every((t) => !t.unlockLevel)).toBe(true)
+  })
+  it('au niveau 1 seuls Spartiate et Minimaliste sont ouverts', () => {
+    expect(themesFor({ level: 1 }).map((t) => t.id)).toEqual(['spartiate', 'minimal'])
+    expect(themesFor({ level: 12 }).some((t) => t.id === 'jade')).toBe(true)
+    expect(themesFor({ level: 11 }).some((t) => t.id === 'jade')).toBe(false)
+  })
+  it('le thème déjà choisi reste appliqué, les thèmes verrouillés restent visibles', () => {
+    expect(activeTheme({ theme: 'vantablack', level: 1 }).id).toBe('vantablack')
+    expect(themesFor({ level: 1 }).some((t) => t.id === 'vantablack')).toBe(false)
+    expect(themesShown({ level: 1 }).some((t) => t.id === 'vantablack')).toBe(true)
+    expect(themesShown({ level: 1 }).some((t) => t.id === 'lambda')).toBe(false)
+    expect(themesUnlockedBetween(11, 16).map((t) => t.id)).toEqual(['jade', 'carbone'])
   })
 })
 

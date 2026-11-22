@@ -15,6 +15,8 @@ export interface Theme {
   unlockName?: string
   /** Thème caché débloqué par un succès secret de l'appareil (ici les 7 appuis sur l'emblème). */
   unlockTaps?: number
+  /** Niveau d'XP à atteindre pour débloquer ce thème (thèmes non secrets, tous ouverts au niveau 50). */
+  unlockLevel?: number
 }
 
 export const THEMES: Theme[] = [
@@ -34,6 +36,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-olympe.webp',
     swatches: ['#f3efe6', '#fffdf8', '#a8822f', '#8a6a22'],
     statusBar: '#F3EFE6',
+    unlockLevel: 5,
   },
   {
     id: 'arene',
@@ -42,6 +45,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-arene.webp',
     swatches: ['#17110b', '#241a12', '#b3541e', '#e2c290'],
     statusBar: '#17110B',
+    unlockLevel: 8,
   },
   {
     id: 'acier',
@@ -50,6 +54,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-acier.webp',
     swatches: ['#0b0e12', '#151a21', '#2f6f9f', '#9fd4ff'],
     statusBar: '#0B0E12',
+    unlockLevel: 3,
   },
   {
     id: 'jade',
@@ -58,6 +63,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-jade.webp',
     swatches: ['#070a09', '#0f1513', '#1f7a55', '#5fe0a6'],
     statusBar: '#070A09',
+    unlockLevel: 12,
   },
   {
     id: 'crepuscule',
@@ -66,6 +72,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-crepuscule.webp',
     swatches: ['#140a10', '#21121a', '#a3324f', '#f2a97f'],
     statusBar: '#140A10',
+    unlockLevel: 35,
   },
   {
     id: 'abysse',
@@ -74,6 +81,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-abysse.webp',
     swatches: ['#050d14', '#0b1822', '#0f8a8a', '#ff8a6b'],
     statusBar: '#050D14',
+    unlockLevel: 25,
   },
   {
     id: 'givre',
@@ -82,6 +90,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-givre.webp',
     swatches: ['#eef4f8', '#ffffff', '#1f4f80', '#2b6cb0'],
     statusBar: '#EEF4F8',
+    unlockLevel: 20,
   },
   {
     id: 'lave',
@@ -90,6 +99,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-lave.webp',
     swatches: ['#0a0706', '#15100d', '#e2470f', '#ffb23a'],
     statusBar: '#0A0706',
+    unlockLevel: 40,
   },
   {
     id: 'sakura',
@@ -98,6 +108,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-sakura.webp',
     swatches: ['#fbf3f4', '#ffffff', '#c2557a', '#a8456a'],
     statusBar: '#FBF3F4',
+    unlockLevel: 30,
   },
   {
     id: 'carbone',
@@ -106,6 +117,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-carbone.webp',
     swatches: ['#0c0c0c', '#171717', '#ffd600', '#ffd600'],
     statusBar: '#0C0C0C',
+    unlockLevel: 16,
   },
   {
     id: 'minimal',
@@ -122,6 +134,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-vantablack.webp',
     swatches: ['#000000', '#050505', '#161616', '#d9d9d9'],
     statusBar: '#000000',
+    unlockLevel: 50,
   },
   {
     id: 'pompier',
@@ -130,6 +143,7 @@ export const THEMES: Theme[] = [
     emblem: 'emblem-pompier.webp',
     swatches: ['#120d0c', '#1d1412', '#9e1c1c', '#d4a24c'],
     statusBar: '#120D0C',
+    unlockLevel: 45,
   },
   {
     id: 'neon',
@@ -156,11 +170,20 @@ export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === 
 /** Nom comparé sans accents, majuscules ni espaces autour : « neodyme » débloque « NéoDyme ». */
 const simplify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
 
-type Unlock = { name?: string; feats?: Feats }
+type Unlock = { name?: string; feats?: Feats; theme?: ThemeId; level?: number }
 
-/** Thème caché ouvert pour ces réglages : bon nom d'utilisateur ou succès secret obtenu. */
-export const unlocked = (t: Theme, s: Unlock) =>
+/** Thème secret : lié à un nom d'utilisateur ou à un succès secret, jamais au niveau. */
+export const isSecret = (t: Theme) => !!(t.unlockName || t.unlockTaps)
+
+/** Secret trouvé (bon nom d'utilisateur ou succès secret obtenu). */
+const secretOpen = (t: Theme, s: Unlock) =>
   (!t.unlockName || simplify(s.name ?? '') === simplify(t.unlockName)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps)
+
+/** Palier atteint. Le thème déjà choisi avant l'arrivée des paliers reste utilisable tant qu'on le garde. */
+const levelOpen = (t: Theme, s: Unlock) => !t.unlockLevel || (s.level ?? 1) >= t.unlockLevel || s.theme === t.id
+
+/** Thème ouvert pour ces réglages et ce niveau. */
+export const unlocked = (t: Theme, s: Unlock) => secretOpen(t, s) && levelOpen(t, s)
 
 /** Thèmes proposés (les thèmes cachés seulement une fois débloqués). Accepte aussi un simple nom. */
 export const themesFor = (s: Unlock | string | undefined) => {
@@ -168,8 +191,19 @@ export const themesFor = (s: Unlock | string | undefined) => {
   return THEMES.filter((t) => unlocked(t, u))
 }
 
+/** Thèmes visibles dans Apparence : tous les thèmes non secrets (verrouillés ou non) et les secrets trouvés. */
+export const themesShown = (s: Unlock) => THEMES.filter((t) => secretOpen(t, s))
+
+/** Thèmes débloqués en passant du niveau `from` au niveau `to`. */
+export const themesUnlockedBetween = (from: number, to: number) =>
+  THEMES.filter((t) => t.unlockLevel && t.unlockLevel > from && t.unlockLevel <= to)
+
+/** Prochain thème à débloquer par le niveau. */
+export const nextLevelTheme = (level: number) =>
+  THEMES.filter((t) => t.unlockLevel && t.unlockLevel > level).sort((a, b) => a.unlockLevel! - b.unlockLevel!)[0]
+
 /** Thème réellement appliqué : un thème caché dont le nom ne correspond plus (ou un thème retiré) revient au thème spartiate. */
-export function activeTheme(s: { theme?: ThemeId; name?: string; feats?: Feats }) {
+export function activeTheme(s: Unlock) {
   const t = themeOf(s.theme)
   return themesFor(s).includes(t) ? t : THEMES[0]
 }
