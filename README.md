@@ -54,4 +54,6 @@ Chaque exercice du catalogue a son animation 3D (mannequin + matériel, three 0.
 node scripts/3d/build_3d.cjs <pipeline>/src   # écrit public/3d/moteur.js et src/data/anim3d.ts
 ```
 
+Depuis la 1.4.0.3, la triangulation des muscles du mannequin (85 % du temps de préparation d'un exercice) est faite par `build_3d.cjs` à partir de `src/data/bodyPlate.ts` et rangée dans le moteur : préparer un exercice est 5 à 7 fois plus rapide. Après une retouche de la planche, relancer `build_3d.cjs` (sinon les contours modifiés sont recalculés au téléphone, une seule fois par lancement). Node 22.13+ est nécessaire.
+
 `public/3d/moteur.js` est chargé au premier affichage d'une animation (`src/ui/engine3d.ts`) ; un seul contexte WebGL dessine toutes les vignettes (`src/ui/Ex3D.tsx`). Le test `anim3d.test.ts` vérifie que chaque exercice du catalogue a sa scène.
