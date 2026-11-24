@@ -29,3 +29,16 @@ describe('animations 3D (1.4.0)', () => {
     }
   })
 })
+
+describe('écran d’attente (1.4.0.1)', () => {
+  it('prépare la séance en cours en priorité, sinon le début des programmes', async () => {
+    const { idsToWarm } = await import('../../ui/Splash')
+    const { emptyData } = await import('../../data/store')
+    const d = emptyData()
+    const ex = (catalogId: string) => ({ id: catalogId, catalogId, name: catalogId, group: 'pectoraux', parCote: false, restSec: 60, sets: [] })
+    d.programs = [{ id: 'p', name: 'Push', createdAt: 0, exercises: ['dev_couche_barre', 'pompes', 'dips_pecs', 'pec_deck'].map(ex) }]
+    expect(idsToWarm(d)).toEqual(['dev_couche_barre', 'pompes', 'dips_pecs'])
+    d.active = { id: 's', programName: 'Push', startedAt: 0, exercises: [ex('squat_barre')] }
+    expect(idsToWarm(d)).toEqual(['squat_barre'])
+  })
+})

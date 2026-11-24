@@ -15,6 +15,7 @@ export function Ex3D({ id, size = 'thumb', views = false }: { id?: string; size?
   const [phase, setPhase] = useState('')
   const [view, setView] = useState<View3D>('iso')
   const [failed, setFailed] = useState(false)
+  const [ready, setReady] = useState(false)
   const ok = hasAnim(id)
 
   useEffect(() => {
@@ -22,15 +23,16 @@ export function Ex3D({ id, size = 'thumb', views = false }: { id?: string; size?
     let alive = true
     const el = ref.current
     setView('iso')
+    setReady(false)
     loadEngine()
-      .then((e) => { if (alive) handle.current = e.attach(el, id, { big, onPhase: big ? setPhase : undefined }) })
+      .then((e) => { if (alive) handle.current = e.attach(el, id, { big, onPhase: big ? setPhase : undefined, onReady: () => alive && setReady(true) }) })
       .catch((err) => { console.warn('3D', err); if (alive) setFailed(true) })
     return () => { alive = false; handle.current?.destroy(); handle.current = null }
   }, [id, ok, big])
 
   if (!ok || failed) return null
   return (
-    <div ref={ref} className={`ex3d ${size}`} aria-hidden={!big || undefined} role={big ? 'img' : undefined} aria-label={big ? 'Animation de l’exercice' : undefined}>
+    <div ref={ref} className={`ex3d ${size}${ready ? ' ready' : ''}`} aria-hidden={!big || undefined} role={big ? 'img' : undefined} aria-label={big ? 'Animation de l’exercice' : undefined}>
       {big && phase && <span className="ex3d-phase">{phase}</span>}
       {views && (
         <div className="ex3d-views">

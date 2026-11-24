@@ -1,5 +1,6 @@
   // --- Moteur de rendu de l'appli : un seul contexte WebGL, recopié dans le canevas de chaque vignette ---
-  // API : attach(el, id, { big, onPhase }) → { setView(vue), destroy() } ; has(id).
+  // API : attach(el, id, { big, onPhase, onReady }) → { setView(vue), destroy() } ; has(id) ;
+  // warm(ids, onProgress) prépare les scènes à l'avance (géométrie envoyée, shaders compilés) pour qu'elles apparaissent sans attendre.
   const BYID = {}; for (const d of REGISTRY) BYID[d.id] = d
   const VIEWS = { iso: Math.PI / 4, side: Math.PI / 2, front: 0 }
   const PERIOD = 3.4 // secondes par répétition
@@ -66,6 +67,28 @@
     r.render(b.scene, cam)
     t.ctx.clearRect(0, 0, w, h)
     t.ctx.drawImage(r.domElement, 0, RH - h, w, h, 0, 0, w, h)
+    if (!t.ready) { t.ready = true; t.onReady?.() }
+  }
+
+  const pause = () => new Promise((res) => setTimeout(res, 0))
+  async function warm(ids, onProgress) {
+    const list = [...new Set(ids)].filter((id) => BYID[id]).slice(0, CACHE_MAX - 4)
+    const r = renderer()
+    const cam = new T.OrthographicCamera(-1, 1, 1, -1, 0.1, 20)
+    if (RW < 64 || RH < 64) { RW = Math.max(RW, 64); RH = Math.max(RH, 64); r.setSize(RW, RH, false) }
+    let done = 0
+    for (const id of list) {
+      try {
+        const d = BYID[id], b = built(d)
+        b.animate(0)
+        cam.position.set(d.cible.x + 4, d.cible.y + 4, d.cible.z + 4); cam.lookAt(d.cible)
+        r.compile(b.scene, cam)
+        r.setViewport(0, 0, 64, 64); r.setScissor(0, 0, 64, 64); r.setScissorTest(true)
+        r.render(b.scene, cam) // envoie la géométrie et les ombres au GPU
+      } catch (e) { console.warn('3D warm', id, e) }
+      onProgress?.(++done, list.length)
+      await pause()
+    }
   }
 
   let raf = 0, last = 0, acc = 0, n = 0
@@ -89,7 +112,7 @@
     if (!d) return null
     const cv = document.createElement('canvas'); el.prepend(cv)
     const views = d.vues ?? VIEWS
-    const t = { el, cv, ctx: cv.getContext('2d'), d, big: !!opts.big, views, yaw: views.iso, yawTarget: views.iso, on: false, off: opts.big ? 0 : Math.random(), onPhase: opts.onPhase, label: '', cam: new T.OrthographicCamera(-1, 1, 1, -1, 0.1, 20) }
+    const t = { el, cv, ctx: cv.getContext('2d'), d, big: !!opts.big, views, yaw: views.iso, yawTarget: views.iso, on: false, off: opts.big ? 0 : Math.random(), onPhase: opts.onPhase, onReady: opts.onReady, ready: false, label: '', cam: new T.OrthographicCamera(-1, 1, 1, -1, 0.1, 20) }
     const io = new IntersectionObserver((es) => { t.on = es[es.length - 1].isIntersecting; if (t.on) kick() }, { rootMargin: '80px' })
     io.observe(el)
     let x0 = null
@@ -107,4 +130,4 @@
     }
   }
 
-  return { attach, has: (id) => !!BYID[id] }
+  return { attach, warm, has: (id) => !!BYID[id] }
