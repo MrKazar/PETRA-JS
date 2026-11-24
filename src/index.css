@@ -975,6 +975,10 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 .splash .bar { width: min(220px, 60vw); height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; margin-top: 8px; }
 .splash .bar > div { height: 100%; background: var(--olive-light); transition: width 0.25s ease; }
 .splash .what { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); min-height: 1.2em; }
+.splash.mini { z-index: 85; gap: 12px; }
+.splash.mini img { width: 64px; height: 64px; }
+.splash.mini .word { font-size: 20px; letter-spacing: 0.16em; text-transform: uppercase; max-width: 90%; }
+.splash.out { transition-duration: 0.3s; }
 @keyframes splash-in { from { opacity: 0; transform: scale(0.92); } }
 @media (prefers-reduced-motion: reduce) { .splash img { animation: none; } }
 .ex3d.thumb { width: 64px; height: 64px; }

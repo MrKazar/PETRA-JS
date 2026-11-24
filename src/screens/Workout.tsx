@@ -1,5 +1,6 @@
 import { Ex3D } from '../ui/Ex3D'
 import { hasAnim } from '../ui/engine3d'
+import { ScreenLoader } from '../ui/Splash'
 import { useEffect, useRef, useState } from 'react'
 import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
@@ -130,6 +131,7 @@ export function WorkoutScreen() {
   return (
     <>
     <div className="screen">
+      {data.settings.anim3d !== false && <ScreenLoader ids={s.exercises.flatMap((e) => [e.catalogId, ...(e.parts ?? []).map((x) => x.catalogId)])} label={s.programName} />}
       <div className="screen-inner">
         <TopBar
           title={s.programName}
