@@ -49,4 +49,9 @@ export async function preloadAnims(ids: (string | undefined)[], onProgress?: (do
   if (!list.length) return
   const e = await loadEngine()
   await e.warm(list, onProgress)
+  list.forEach((id) => warmed.add(id))
 }
+
+const warmed = new Set<string>()
+/** Vrai si toutes ces animations sont déjà prêtes (aucun écran de chargement nécessaire). */
+export const allWarm = (ids: (string | undefined)[]) => ids.filter(hasAnim).every((id) => warmed.has(id))
