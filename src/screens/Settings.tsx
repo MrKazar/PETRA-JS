@@ -161,6 +161,13 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
           </div>
           <div className="row">
             <div className="grow">
+              <div style={{ fontWeight: 600 }}>Animations 3D en séance</div>
+              <div className="small muted">Le geste de l’exercice en cours au-dessus des séries, et le suivant pendant le repos</div>
+            </div>
+            <Toggle on={s.anim3d !== false} onChange={(v) => saveSettings({ anim3d: v })} label="Animations 3D" />
+          </div>
+          <div className="row">
+            <div className="grow">
               <div style={{ fontWeight: 600 }}>Succès et XP</div>
               <div className="small muted">Médailles, niveau et XP sur l’accueil et en fin de séance</div>
             </div>

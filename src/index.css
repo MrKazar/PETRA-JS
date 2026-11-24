@@ -955,3 +955,22 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 :root[data-theme='immortel'] .stripe { box-shadow: 0 0 0 1px var(--line); }
 :root[data-theme='loup'] .tab, :root[data-theme='phalange'] .tab, :root[data-theme='phenix'] .tab, :root[data-theme='nuit'] .tab, :root[data-theme='miroir'] .tab,
 :root[data-theme='citrouille'] .tab, :root[data-theme='leonidas'] .tab, :root[data-theme='immortel'] .tab { font-family: var(--font-body); }
+
+/* ---------- Exercices animés en 3D (1.4.0) ---------- */
+.ex3d { position: relative; flex: none; overflow: hidden; border-radius: 10px; border: 1px solid var(--line); background: radial-gradient(ellipse at 50% 35%, var(--surface-2), var(--bg) 85%); touch-action: pan-y; }
+.ex3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ex3d.thumb { width: 64px; height: 64px; }
+.ex3d.mini { width: 58px; height: 58px; }
+.ex3d.live { width: 100%; height: 200px; margin: 2px 0 10px; border-radius: 12px; }
+.ex3d.hero { width: 100%; height: 270px; border-radius: 14px; margin-top: 2px; }
+.ex3d-phase { position: absolute; left: 10px; top: 9px; z-index: 1; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--khaki); background: rgba(0, 0, 0, 0.5); padding: 3px 8px; border-radius: 6px; }
+.ex3d-views { position: absolute; z-index: 1; left: 50%; bottom: 9px; transform: translateX(-50%); display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(0, 0, 0, 0.55); }
+.ex3d-views button { border: 0; background: transparent; color: var(--muted); font: 600 12px var(--font-body); padding: 5px 11px; border-radius: 999px; cursor: pointer; }
+.ex3d-views button[aria-pressed='true'] { background: var(--olive); color: var(--on-primary); }
+.ex3d.live .ex3d-views { left: auto; right: 9px; transform: none; }
+.ex3d-muscles { display: flex; flex-wrap: wrap; gap: 6px; }
+.ex3d-muscles .m { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
+.ex3d-muscles .m i { width: 9px; height: 9px; border-radius: 50%; background: #d8392a; }
+.ex3d-muscles .m.sec i { background: #ee957f; }
+.ex3d-cue { margin: 0; font-size: 14px; line-height: 1.45; color: var(--muted); border-left: 2px solid var(--khaki); padding-left: 10px; }
+.rest-next { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); gap: 12px; }

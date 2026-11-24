@@ -192,6 +192,8 @@ export interface Settings {
   pc?: PcLink
   /** Succès et XP affichés (oui par défaut). */
   achievements?: boolean
+  /** Animations 3D des exercices pendant la séance (oui par défaut, 1.4.0). */
+  anim3d?: boolean
   /** Compteurs de quelques succès secrets, propres à cet appareil. */
   feats?: Feats
 }

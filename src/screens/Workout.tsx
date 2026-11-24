@@ -1,3 +1,5 @@
+import { Ex3D } from '../ui/Ex3D'
+import { hasAnim } from '../ui/engine3d'
 import { useEffect, useRef, useState } from 'react'
 import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
@@ -135,7 +137,7 @@ export function WorkoutScreen() {
           right={<span className="badge gold" style={{ fontSize: 14, padding: '4px 10px', fontVariantNumeric: 'tabular-nums' }}>{formatClock((now - s.startedAt) / 1000)}</span>}
         />
 
-        {s.rest && <RestPanel rest={s.rest} now={now} onAdd={() => apply((a) => extendRest(a, 15))} onLess={() => apply((a) => shortenRest(a, 15))} onSkip={() => apply((a) => ({ ...a, rest: undefined }))} />}
+        {s.rest && <RestPanel anim={data.settings.anim3d !== false} next={up ? { id: up.exercise.catalogId, name: up.exercise.name, set: setLabels(up.exercise.sets)[up.index] } : undefined} rest={s.rest} now={now} onAdd={() => apply((a) => extendRest(a, 15))} onLess={() => apply((a) => shortenRest(a, 15))} onSkip={() => apply((a) => ({ ...a, rest: undefined }))} />}
 
         <div className="row small muted between">
           <span>
@@ -150,6 +152,7 @@ export function WorkoutScreen() {
         {s.exercises.map((ex) => (
           <ExerciseCard
             key={ex.id}
+            anim={data.settings.anim3d !== false}
             cardRef={(el) => (el ? cards.current.set(ex.id, el) : cards.current.delete(ex.id))}
             ex={ex}
             last={lastTime(data.sessions, ex, s.startedAt)}
@@ -353,7 +356,7 @@ function Stepper({ label, value, unit, step, next, onChange }: { label: string; 
   )
 }
 
-function RestPanel({ rest, now, onAdd, onLess, onSkip }: { rest: NonNullable<ActiveSession['rest']>; now: number; onAdd: () => void; onLess: () => void; onSkip: () => void }) {
+function RestPanel({ anim, next, rest, now, onAdd, onLess, onSkip }: { anim: boolean; next?: { id?: string; name: string; set: string }; rest: NonNullable<ActiveSession['rest']>; now: number; onAdd: () => void; onLess: () => void; onSkip: () => void }) {
   const left = (rest.endsAt - now) / 1000
   const total = (rest.endsAt - rest.startedAt) / 1000
   const over = left <= 0
@@ -390,11 +393,22 @@ function RestPanel({ rest, now, onAdd, onLess, onSkip }: { rest: NonNullable<Act
           <div style={{ width: `${Math.min(100, (1 - left / total) * 100)}%` }} />
         </div>
       )}
+      {next && (
+        <div className="row rest-next">
+          {anim && <Ex3D id={next.id} size="mini" />}
+          <div className="grow" style={{ minWidth: 0 }}>
+            <div className="eyebrow">Ensuite · {next.set}</div>
+            <div className="ellipsis" style={{ fontWeight: 600 }}>{next.name}</div>
+            {anim && hasAnim(next.id) && <div className="small muted">Regarde le geste pendant que tu récupères</div>}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 function ExerciseCard({
+  anim,
   cardRef,
   ex,
   last,
@@ -407,6 +421,7 @@ function ExerciseCard({
   onRemoveSet,
   onRemove,
 }: {
+  anim: boolean
   cardRef: (el: HTMLDivElement | null) => void
   ex: SessionExercise
   /** Le même exercice la dernière fois. */
@@ -442,6 +457,7 @@ function ExerciseCard({
   return (
     <div ref={cardRef} className={`card${current >= 0 ? ' accent' : ''}`} style={{ opacity: allDone ? 0.75 : 1, scrollMarginTop: 120 }}>
       <div className="row" style={{ marginBottom: 6 }}>
+        {anim && current < 0 && <Ex3D id={ex.catalogId} size="mini" />}
         <div className="grow">
           <h3>
             {ex.name} {allDone && <IconCheck style={{ width: 16, color: 'var(--success)', verticalAlign: -2 }} />}
@@ -454,6 +470,7 @@ function ExerciseCard({
         </div>
         <button className={`btn sm${editing ? ' primary' : ' ghost'}`} onClick={() => setEditing(!editing)}>{editing ? 'OK' : 'Modifier'}</button>
       </div>
+      {anim && current >= 0 && <Ex3D id={ex.catalogId} size="live" views />}
       {ex.note && <div className="small faint" style={{ marginBottom: 6 }}>{ex.note}</div>}
       {ex.sets.map((set, i) => {
         const timed = set.durationSec != null

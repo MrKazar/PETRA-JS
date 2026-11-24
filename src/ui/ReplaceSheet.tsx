@@ -1,3 +1,4 @@
+import { Ex3D } from './Ex3D'
 import { useState } from 'react'
 import { CATALOG, exerciseFromCatalog, findCatalog, groupLabel, type CatalogExercise } from '../data/catalog'
 import { findMuscle, kindOf, muscleIdOf } from '../data/muscles'
@@ -38,6 +39,7 @@ export function ReplaceSheet({ ex, mode, defaultRest, onClose, onPick }: { ex: S
               <div className="list">
                 {g.list.map((e) => (
                   <button key={e.id} className="list-item clickable" style={{ textAlign: 'left', width: '100%' }} onClick={() => pick(e)}>
+                    <Ex3D id={e.id} />
                     <div className="grow">
                       <div style={{ fontWeight: 600 }}>{e.nom}</div>
                       <div className="small muted">{e.equipement}</div>

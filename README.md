@@ -45,3 +45,13 @@ Sans ces secrets, l'APK est signé avec une clé de debug temporaire : il s'inst
 ## Catalogue d'exercices
 
 `src/data/exercices.json` est généré par `python3 scripts/build_catalog.py` : ajoute un exercice dans la liste `NEW` du script avec son profil (`poly_lourd`, `poly`, `poly_guide`, `iso`, `iso_petit`, `pdc`, `abdos`, `gainage`…), puis relance-le.
+
+## Animations 3D des exercices (1.4.0)
+
+Chaque exercice du catalogue a son animation 3D (mannequin + matériel, three 0.149). Le moteur est généré à partir des scènes validées du pipeline des rendus 3D :
+
+```
+node scripts/3d/build_3d.cjs <pipeline>/src   # écrit public/3d/moteur.js et src/data/anim3d.ts
+```
+
+`public/3d/moteur.js` est chargé au premier affichage d'une animation (`src/ui/engine3d.ts`) ; un seul contexte WebGL dessine toutes les vignettes (`src/ui/Ex3D.tsx`). Le test `anim3d.test.ts` vérifie que chaque exercice du catalogue a sa scène.
