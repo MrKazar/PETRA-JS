@@ -9,6 +9,7 @@ import { personalRecords } from '../logic/session'
 import { UpdateBody } from '../ui/UpdateCard'
 import { ScanSheet } from '../ui/Share'
 import { activeTheme } from '../ui/theme'
+import { progress } from '../logic/level'
 import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
 import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor } from '../ui/icons'
 import { syncNow, unpair } from '../logic/pcsync'
@@ -49,10 +50,10 @@ export function SettingsScreen() {
         </div>
 
         <button className="list-item clickable" style={{ width: '100%', textAlign: 'left' }} onClick={() => nav.push({ name: 'appearance' })}>
-          <img src={imgUrl(activeTheme(s).emblem)} alt="" style={{ width: 40, height: 40, objectFit: 'contain' }} />
+          <img src={imgUrl(activeTheme({ ...s, ...progress(data) }).emblem)} alt="" style={{ width: 40, height: 40, objectFit: 'contain' }} />
           <div className="grow">
             <div style={{ fontWeight: 600 }}>Apparence</div>
-            <div className="small muted">Thème {activeTheme(s).label}</div>
+            <div className="small muted">Thème {activeTheme({ ...s, ...progress(data) }).label}</div>
           </div>
           <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
         </button>

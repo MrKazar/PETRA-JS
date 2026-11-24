@@ -22,6 +22,15 @@ THEMES = {
     "vantablack": ("emblem-vantablack.webp", (0, 0, 0), 0.74),
     "pompier": ("emblem-pompier.webp", (24, 16, 14), 0.86),
     "neon": ("emblem-neon.webp", (10, 4, 20), 0.86),
+    # Thèmes secrets (PETRA 1.3.14)
+    "loup": ("emblem-loup.webp", (6, 11, 26), 0.92),
+    "phalange": ("emblem-phalange.webp", (13, 6, 5), 0.92),
+    "phenix": ("emblem-phenix.webp", (18, 6, 4), 0.92),
+    "nuit": ("emblem-nuit.webp", (4, 6, 26), 0.92),
+    "miroir": ("emblem-miroir.webp", (15, 17, 19), 0.92),
+    "citrouille": ("emblem-citrouille.webp", (18, 10, 22), 0.92),
+    "leonidas": ("emblem-leonidas.webp", (18, 10, 6), 0.92),
+    "immortel": ("emblem-immortel.webp", (244, 241, 234), 0.92),
 }
 
 ADAPTIVE = """<?xml version="1.0" encoding="utf-8"?>

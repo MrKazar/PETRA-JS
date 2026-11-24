@@ -7,7 +7,7 @@ import { programFor, routinesFor } from './planner'
 import { e1rm, liftsOf } from './stats'
 import { exerciseKey } from './progress'
 import { addDays, dateKey, parseKey } from './util'
-import { themesFor } from '../ui/theme'
+import { themesFor, themesShown } from '../ui/theme'
 
 /**
  * Succès et XP (PETRA 1.3.13). Tout se calcule à partir de l'historique déjà enregistré : les
@@ -504,32 +504,32 @@ export const DEFS: Def[] = [
   D('outils', 'gear', 'maitre_oeuvre', 'Maître d’œuvre', 'Programmes créés', [1, 5], (_f, d) => d.programs.length),
   D('outils', 'gear', 'transmission', 'Transmission', 'Partager un programme ou un finisher par QR code', [1], (_f, d) => Math.min(1, d.settings.feats?.shares ?? 0)),
 
-  S('mot_de_passe', 'Mot de passe', 'Débloquer le thème caché', 'Un nom qui ouvre des portes', (_f, d) => themesFor(d.settings.name).some((t) => t.unlockName)),
+  S('mot_de_passe', 'Mot de passe', 'Débloquer un thème caché avec ton nom d’utilisateur', 'Un nom qui ouvre des portes', (_f, d) => themesFor(d.settings.name).some((t) => t.unlockName)),
   S('curiosite', 'Curiosité', 'Appuyer 7 fois sur l’emblème de l’accueil : débloque le bouclier Lambda et son thème', 'Ce bouclier cache quelque chose', (_f, d) => (d.settings.feats?.logoTaps ?? 0) >= 7),
   S('defile', 'Défilé', 'Séance un 14 juillet', 'Jour de fête nationale', (f) => md(f, '07-14')),
   S('sainte_barbe', 'Sainte-Barbe', 'Séance un 4 décembre', 'La patronne des soldats du feu', (f) => md(f, '12-04')),
   S('resolution', 'Bonne résolution', 'Séance un 1er janvier', 'Premier jour', (f) => md(f, '01-01')),
   S('hors_treve', 'Hors trêve', 'Séance un 25 décembre', 'Même les jours de fête', (f) => md(f, '12-25')),
   S('valentin', 'Amoureux de la fonte', 'Séance un 14 février', 'Ton vrai rendez-vous', (f) => md(f, '02-14')),
-  S('citrouilles', 'Nuit des citrouilles', 'Séance un 31 octobre', 'Des monstres dans la salle', (f) => md(f, '10-31')),
+  S('citrouilles', 'Nuit des citrouilles', 'Séance un 31 octobre : débloque le thème Citrouille', 'Des monstres dans la salle', (f) => md(f, '10-31')),
   S('vendredi13', 'Pas superstitieux', 'Séance un vendredi 13', 'Un jour qui porte malheur', (f) => f.friday13),
   S('solstice', 'Solstice', 'Séance le 21 juin', 'Le jour le plus long', (f) => md(f, '06-21')),
-  S('loup_garou', 'Loup-garou', 'Séance un soir de pleine lune', 'Regarde le ciel', (f) => f.fullMoon),
-  S('garde_nuit', 'Garde de nuit', 'Séance commencée entre minuit et 4 h', 'Quand tout le monde dort', (f) => f.night),
-  S('heure_miroir', 'Heure miroir', 'Séance terminée à une heure miroir (11:11, 22:22…)', 'Fais un vœu', (f) => f.mirror),
+  S('loup_garou', 'Loup-garou', 'Séance un soir de pleine lune : débloque le thème Loup-garou', 'Regarde le ciel', (f) => f.fullMoon),
+  S('garde_nuit', 'Garde de nuit', 'Séance commencée entre minuit et 4 h : débloque le thème Garde de nuit', 'Quand tout le monde dort', (f) => f.night),
+  S('heure_miroir', 'Heure miroir', 'Séance terminée à une heure miroir (11:11, 22:22…) : débloque le thème Miroir', 'Fais un vœu', (f) => f.mirror),
   S('anniversaire', 'Anniversaire', 'Séance un an jour pour jour après ta première', 'Souffle une bougie', (f) => f.anniversary),
   S('compte_bon', 'Le compte est bon', 'Une série à 100 kg pile pour 10 répétitions pile', 'Des chiffres bien ronds', (f) => f.hundredTen),
-  S('thermopyles', 'Thermopyles', '300 répétitions dans une même séance', 'Ils étaient trois cents', (f) => f.thermopyles),
+  S('thermopyles', 'Thermopyles', '300 répétitions dans une même séance : débloque le thème Les 300', 'Ils étaient trois cents', (f) => f.thermopyles),
   S('sans_retraite', 'Sans retraite', '10 séances complètes d’affilée', 'Ne recule jamais', (f) => f.perfectRun >= 10),
-  S('retour_flamme', 'Retour de flamme', 'Battre un record après 30 jours ou plus de pause', 'Le phénix renaît', (f) => f.phoenix),
+  S('retour_flamme', 'Retour de flamme', 'Battre un record après 30 jours ou plus de pause : débloque le thème Phénix', 'Le phénix renaît', (f) => f.phoenix),
   S('changement_tenue', 'Changement de tenue', 'Essayer tous les thèmes', 'Chaque armure a son style', (_f, d) => {
     const tried = new Set(d.settings.feats?.themes ?? [])
-    return themesFor(d.settings.name).every((t) => tried.has(t.id))
+    return themesShown(d.settings).every((t) => tried.has(t.id))
   }),
   S('utile_demain', 'Plus utile demain', 'Séance le lendemain d’un record battu', 'La devise, au pied de la lettre', (f) => f.dayAfterRecord),
   // Ces deux-là dépendent des autres succès : calculés à part dans evaluate().
   S('premier_platine', 'Premier platine', 'Obtenir une première médaille de platine', 'Plus précieux que l’or', () => false),
-  S('legende', 'Légende', 'Atteindre le niveau 100', 'Au sommet de l’Olympe', () => false),
+  S('legende', 'Légende', 'Atteindre le niveau 100 : débloque le thème Immortel', 'Au sommet de l’Olympe', () => false),
 ]
 
 /* ---------- Médailles, XP, niveaux ---------- */

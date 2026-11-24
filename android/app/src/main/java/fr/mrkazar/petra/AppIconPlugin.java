@@ -19,7 +19,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "AppIcon")
 public class AppIconPlugin extends Plugin {
 
-    private static final String[] ICONS = { "Militaire", "Police", "Gendarmerie", "Forces", "Minimal", "Vantablack", "Pompier", "Neon", "Lambda" };
+    private static final String[] ICONS = { "Militaire", "Police", "Gendarmerie", "Forces", "Minimal", "Vantablack", "Pompier", "Neon", "Lambda", "Loup", "Phalange", "Phenix", "Nuit", "Miroir", "Citrouille", "Leonidas", "Immortel" };
 
     @PluginMethod
     public void set(PluginCall call) {
