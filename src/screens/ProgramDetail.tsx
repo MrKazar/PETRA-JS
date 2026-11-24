@@ -1,4 +1,5 @@
 import { Ex3D } from '../ui/Ex3D'
+import { ScreenLoader } from '../ui/Splash'
 import { isDesktop } from '../logic/desktop'
 import { ProgramBody } from '../ui/ProgramBody'
 import { useState } from 'react'
@@ -75,6 +76,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
 
   return (
     <div className="screen">
+      <ScreenLoader ids={program.exercises.flatMap((e) => [e.catalogId, ...(e.parts ?? []).map((x) => x.catalogId)])} label={program.name} />
       <div className="screen-inner">
         <TopBar
           title={program.name}

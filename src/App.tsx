@@ -8,6 +8,7 @@ import { scheduleReminders, setNotifVibration } from './logic/native'
 import { dateKey } from './logic/util'
 import { ToastHost } from './ui/kit'
 import { StorageAlert } from './ui/StorageAlert'
+import { Splash } from './ui/Splash'
 import { IconBody, IconBook, IconChart, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
 import { TodayScreen } from './screens/Today'
 import { ProgramsScreen } from './screens/Programs'
@@ -122,6 +123,7 @@ export default function App() {
     <NavContext.Provider value={nav}>
       <div className={`app${isDesktop ? ' desktop' : ''}`}>
         <Screen route={route} key={JSON.stringify(route)} />
+        <Splash />
         {data.active && route.name !== 'workout' && <LiveBanner name={data.active.programName} startedAt={data.active.startedAt} restEnd={data.active.rest?.endsAt} onOpen={() => nav.push({ name: 'workout' })} />}
         {isDesktop && <PctraUpdateBanner />}
         {showTabs && (

@@ -958,7 +958,29 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 
 /* ---------- Exercices animés en 3D (1.4.0) ---------- */
 .ex3d { position: relative; flex: none; overflow: hidden; border-radius: 10px; border: 1px solid var(--line); background: radial-gradient(ellipse at 50% 35%, var(--surface-2), var(--bg) 85%); touch-action: pan-y; }
-.ex3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ex3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 0.35s ease; }
+.ex3d.ready canvas { opacity: 1; }
+/* En attendant la première image : silhouette qui respire, jamais de case vide qui « saute ». */
+.ex3d::before { content: ''; position: absolute; inset: 18% 30%; border-radius: 40% 40% 12% 12%; background: var(--line); opacity: 0.35; animation: ex3d-wait 1.4s ease-in-out infinite; transition: opacity 0.35s ease; }
+.ex3d.ready::before { opacity: 0; animation: none; }
+@keyframes ex3d-wait { 50% { opacity: 0.12; } }
+@media (prefers-reduced-motion: reduce) { .ex3d::before { animation: none; } }
+
+/* Écran d'attente au démarrage : prépare les animations du jour. */
+.splash { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; background-color: var(--bg); background-image: var(--bg-image); background-size: cover; color: var(--text); text-align: center; transition: opacity 0.4s ease; }
+.splash.out { opacity: 0; pointer-events: none; }
+.splash img { width: 112px; height: 112px; object-fit: contain; animation: splash-in 0.6s ease both; }
+.splash .word { font-family: var(--font-head); font-weight: var(--head-weight); font-size: 30px; letter-spacing: 0.22em; color: var(--khaki); }
+.splash .motto { font-size: 15px; color: var(--muted); max-width: 26ch; line-height: 1.45; }
+.splash .bar { width: min(220px, 60vw); height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; margin-top: 8px; }
+.splash .bar > div { height: 100%; background: var(--olive-light); transition: width 0.25s ease; }
+.splash .what { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); min-height: 1.2em; }
+.splash.mini { z-index: 85; gap: 12px; }
+.splash.mini img { width: 64px; height: 64px; }
+.splash.mini .word { font-size: 20px; letter-spacing: 0.16em; text-transform: uppercase; max-width: 90%; }
+.splash.out { transition-duration: 0.3s; }
+@keyframes splash-in { from { opacity: 0; transform: scale(0.92); } }
+@media (prefers-reduced-motion: reduce) { .splash img { animation: none; } }
 .ex3d.thumb { width: 64px; height: 64px; }
 .ex3d.mini { width: 58px; height: 58px; }
 .ex3d.live { width: 100%; height: 200px; margin: 2px 0 10px; border-radius: 12px; }

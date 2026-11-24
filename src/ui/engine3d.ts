@@ -5,7 +5,9 @@ import { ANIM_CUES } from '../data/anim3d'
 
 /** Moteur des animations 3D (public/3d/moteur.js, généré par scripts/3d/build_3d.cjs). */
 export interface Engine3D {
-  attach: (el: HTMLElement, id: string, opts?: { big?: boolean; onPhase?: (label: string) => void }) => { setView: (v: View3D) => void; destroy: () => void } | null
+  attach: (el: HTMLElement, id: string, opts?: { big?: boolean; onPhase?: (label: string) => void; onReady?: () => void }) => { setView: (v: View3D) => void; destroy: () => void } | null
+  /** Prépare les scènes à l'avance pour qu'elles s'affichent sans attendre. */
+  warm: (ids: string[], onProgress?: (done: number, total: number) => void) => Promise<void>
   has: (id: string) => boolean
 }
 export type View3D = 'iso' | 'side' | 'front'
@@ -39,4 +41,12 @@ export function loadEngine(): Promise<Engine3D> {
   })()
   engine.catch(() => { engine = undefined })
   return engine
+}
+
+/** Charge le moteur et prépare les animations de ces exercices (sans effet si rien n'est animé). */
+export async function preloadAnims(ids: (string | undefined)[], onProgress?: (done: number, total: number) => void): Promise<void> {
+  const list = [...new Set(ids.filter(hasAnim))]
+  if (!list.length) return
+  const e = await loadEngine()
+  await e.warm(list, onProgress)
 }

@@ -84,6 +84,8 @@ export function setRoutineStatus(date: string, routineId: string, status: TaskSt
 /* ---------- Séance active ---------- */
 
 export function beginSession(program: Program | null) {
+  // Les animations de la séance se préparent pendant que l'écran s'ouvre.
+  if (program) void import('../ui/engine3d').then((m) => m.preloadAnims(program.exercises.flatMap((e) => [e.catalogId, ...(e.parts ?? []).map((p) => p.catalogId)]))).catch(() => {})
   const s = startFrom(program)
   update((d) => ({ ...d, active: s }))
   if (getData().settings.keepAwake) setKeepAwake(true)

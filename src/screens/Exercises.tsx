@@ -4,6 +4,7 @@ import { getData, useData } from '../data/store'
 import { saveProgram } from '../logic/actions'
 import { CatalogBrowse, CatalogDetail, CatalogMedia, CatalogFilters, CatalogResults, useCatalogSearch } from '../ui/ExercisePicker'
 import { Empty, Header, Sheet, toast } from '../ui/kit'
+import { ScreenLoader } from '../ui/Splash'
 import { IconBook } from '../ui/icons'
 
 export function ExercisesScreen() {
@@ -40,6 +41,7 @@ export function ExercisesScreen() {
         )}
       </div>
 
+      {detail && <ScreenLoader key={detail.id} ids={[detail.id]} label={detail.nom} />}
       <Sheet open={!!detail} onClose={() => setDetail(undefined)} title={detail?.nom}>
         {detail && (
           <div className="stack">
