@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { CATALOG, type CatalogExercise } from '../data/catalog'
 import { getData, useData } from '../data/store'
 import { saveProgram } from '../logic/actions'
-import { CatalogBrowse, CatalogDetail, CatalogFilters, CatalogResults, useCatalogSearch } from '../ui/ExercisePicker'
+import { CatalogBrowse, CatalogDetail, CatalogMedia, CatalogFilters, CatalogResults, useCatalogSearch } from '../ui/ExercisePicker'
 import { Empty, Header, Sheet, toast } from '../ui/kit'
 import { IconBook } from '../ui/icons'
 
@@ -43,6 +43,7 @@ export function ExercisesScreen() {
       <Sheet open={!!detail} onClose={() => setDetail(undefined)} title={detail?.nom}>
         {detail && (
           <div className="stack">
+            <CatalogMedia ex={detail} />
             {data.programs.length > 0 && (
               <label className="field">
                 <span>Ajouter au programme</span>
@@ -54,6 +55,7 @@ export function ExercisesScreen() {
             <CatalogDetail
               key={detail.id}
               ex={detail}
+              media={false}
               addLabel={target ? `Ajouter à ${target.name}` : 'Crée d’abord un programme'}
               onAdd={(ex) => {
                 const p = getData().programs.find((x) => x.id === target?.id)

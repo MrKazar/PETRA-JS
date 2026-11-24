@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { CATALOG, cardioSummary, exerciseFromCatalog, isLoadedLift, pdcSummary, groupLabel, type CatalogExercise } from '../data/catalog'
+import { CATALOG, cardioSummary, exerciseFromCatalog, isLoadedLift, pdcSummary, type CatalogExercise } from '../data/catalog'
 import { KINDS, ZONES, findMuscle, findZone, kindOf, muscleIdOf, norm, worksSecondary, type Kind } from '../data/muscles'
 import type { ProgramExercise } from '../data/types'
 import { uid } from '../logic/util'
 import { NumInput, Sheet } from './kit'
 import { IconChevron, IconPlus, IconSearch } from './icons'
 import { Prescription, exerciseSubtitle } from './Prescription'
+import { Ex3D, Ex3DInfo } from './Ex3D'
 
 export function useCatalogSearch() {
   const [q, setQ] = useState('')
@@ -125,6 +126,7 @@ export function CatalogResults({ search, onOpen, limit = 400 }: { search: Search
 export function CatalogRow({ e, onClick }: { e: CatalogExercise; onClick: () => void }) {
   return (
     <button className="list-item clickable" style={{ textAlign: 'left', width: '100%' }} onClick={onClick}>
+      <Ex3D id={e.id} />
       <div className="grow">
         <div style={{ fontWeight: 600 }}>{e.nom}</div>
         <div className="small muted">
@@ -139,17 +141,22 @@ export function CatalogRow({ e, onClick }: { e: CatalogExercise; onClick: () => 
 
 /** Fiche d'un exercice du catalogue, avec saisie de la charge de travail avant l'ajout. */
 /** bare : sans les séries préconisées ni la charge (choix d'un exercice de superset, réglé ensuite). */
-export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false, mode = 'guidee' }: { ex: CatalogExercise; onAdd: (p: ProgramExercise) => void; addLabel?: string; bare?: boolean; mode?: 'guidee' | 'libre' }) {
+export function CatalogMedia({ ex }: { ex: CatalogExercise }) {
+  return (
+    <>
+      <Ex3D id={ex.id} size="hero" views />
+      <Ex3DInfo id={ex.id} />
+    </>
+  )
+}
+
+export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false, mode = 'guidee', media = true }: { ex: CatalogExercise; onAdd: (p: ProgramExercise) => void; addLabel?: string; bare?: boolean; mode?: 'guidee' | 'libre'; media?: boolean }) {
   const [load, setLoad] = useState<number>()
   const free = mode === 'libre' && isLoadedLift(ex)
   return (
     <div className="stack">
       <div className="small muted" style={{ marginTop: -6 }}>{exerciseSubtitle(ex)}</div>
-      {ex.muscles_secondaires.length > 0 && (
-        <div className="chips">
-          {ex.muscles_secondaires.map((m) => <span key={m} className="badge">{groupLabel(m)}</span>)}
-        </div>
-      )}
+      {media && <CatalogMedia ex={ex} />}
       {!bare && free && (
         <div className="card tight">
           <div className="eyebrow" style={{ marginBottom: 4 }}>Construction libre</div>

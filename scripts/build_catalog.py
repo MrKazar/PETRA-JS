@@ -126,7 +126,6 @@ NEW = [
     ("pullover_machine", "Pull-over machine", "dos", ["pectoraux"], "machine", "iso", False),
     # Lombaires
     ("superman", "Superman", "lombaires", ["fessiers"], "poids du corps", "pdc", False),
-    ("hyperextension_inverse", "Hyperextension inversée", "lombaires", ["fessiers", "ischio_jambiers"], "banc", "pdc", False),
     ("bird_dog", "Bird dog", "lombaires", ["abdominaux", "fessiers"], "poids du corps", "abdos", True),
     # Trapèzes
     ("shrugs_smith", "Shrugs à la Smith machine", "trapezes", [], "smith", "iso_petit", False),
@@ -211,7 +210,6 @@ NEW = [
     ("mollets_debout_halteres", "Mollets debout aux haltères", "mollets", [], "haltères", "iso_petit", False),
     ("mollets_unilateral", "Mollets unilatéral sur marche", "mollets", [], "haltère", "iso_petit", True),
     ("mollets_smith", "Mollets à la Smith machine", "mollets", [], "smith", "iso_petit", False),
-    ("mollets_donkey", "Mollets donkey (machine)", "mollets", [], "machine", "iso_petit", False),
     ("releves_pointes", "Relevés de pointes (tibial)", "mollets", [], "poids du corps", "pdc", False),
     # Abdominaux
     ("crunch_inverse", "Crunch inversé", "abdominaux", [], "poids du corps", "abdos", False),

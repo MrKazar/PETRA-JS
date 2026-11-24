@@ -1,3 +1,4 @@
+import { Ex3D } from '../ui/Ex3D'
 import { isDesktop } from '../logic/desktop'
 import { ProgramBody } from '../ui/ProgramBody'
 import { useState } from 'react'
@@ -105,6 +106,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
             {program.exercises.map((e, i) => (
               <div key={e.id} className="card tight">
                 <div className="row">
+                  {!e.parts && <Ex3D id={e.catalogId} size="mini" />}
                   <div className="grow" onClick={() => setEditingEx(e.id)} style={{ cursor: 'pointer' }}>
                     <div style={{ fontWeight: 600 }}>{e.parts && <span className="ss-tag">Superset</span>}{e.name}</div>
                     {e.parts ? (

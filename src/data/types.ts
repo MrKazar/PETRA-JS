@@ -153,7 +153,7 @@ export type TaskStatus = 'fait' | 'reporte' | 'saute'
 
 export type FinisherType = 'abdos' | 'dos' | 'pecs' | 'jambes' | 'epaules_bras'
 
-export type ThemeId = 'spartiate' | 'olympe' | 'arene' | 'acier' | 'jade' | 'crepuscule' | 'abysse' | 'givre' | 'lave' | 'sakura' | 'carbone' | 'minimal' | 'vantablack' | 'pompier' | 'neon' | 'lambda'
+export type ThemeId = 'spartiate' | 'olympe' | 'arene' | 'acier' | 'jade' | 'crepuscule' | 'abysse' | 'givre' | 'lave' | 'sakura' | 'carbone' | 'minimal' | 'vantablack' | 'pompier' | 'neon' | 'lambda' | 'loup' | 'phalange' | 'phenix' | 'nuit' | 'miroir' | 'citrouille' | 'leonidas' | 'immortel'
 /** Thèmes retirés en 1.3.13 (remplacés par le thème spartiate). */
 export const OLD_THEMES = ['militaire', 'police', 'gendarmerie', 'forces']
 
@@ -192,6 +192,8 @@ export interface Settings {
   pc?: PcLink
   /** Succès et XP affichés (oui par défaut). */
   achievements?: boolean
+  /** Animations 3D des exercices pendant la séance (oui par défaut, 1.4.0). */
+  anim3d?: boolean
   /** Compteurs de quelques succès secrets, propres à cet appareil. */
   feats?: Feats
 }
