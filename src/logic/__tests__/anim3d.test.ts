@@ -28,6 +28,15 @@ describe('animations 3D (1.4.0)', () => {
       if (!had) delete g.window
     }
   })
+
+  it('les pièces des muscles de la planche sont précalculées dans le moteur (1.4.0.3)', () => {
+    const code = readFileSync(new URL('../../../public/3d/moteur.js', import.meta.url), 'utf8')
+    const m = code.match(/const PRE = JSON\.parse\((".*?")\), calc = musclePiece/)
+    expect(m).toBeTruthy()
+    const table = JSON.parse(JSON.parse(m![1])) as Record<string, unknown>
+    const paths = (['front', 'back'] as const).flatMap((v) => PLATE.views[v].muscles.flatMap((x) => x.paths))
+    expect(paths.filter((d) => !table[d])).toEqual([])
+  })
 })
 
 describe('écran d’attente (1.4.0.1)', () => {
