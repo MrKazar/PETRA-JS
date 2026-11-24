@@ -3956,26 +3956,6 @@
    }
   },
   {
-   "id": "hyperextension_inverse",
-   "nom": "Hyperextension inversée",
-   "groupe_musculaire": "lombaires",
-   "muscles_secondaires": [
-    "fessiers",
-    "ischio_jambiers"
-   ],
-   "equipement": "banc",
-   "par_cote": false,
-   "type": "polyarticulaire",
-   "charge": false,
-   "profil": "pdc",
-   "pdc": {
-    "mode": "reps",
-    "series": 3,
-    "repos_sec": 60,
-    "reps": 15
-   }
-  },
-  {
    "id": "bird_dog",
    "nom": "Bird dog",
    "groupe_musculaire": "lombaires",
@@ -5678,31 +5658,6 @@
    "groupe_musculaire": "mollets",
    "muscles_secondaires": [],
    "equipement": "smith",
-   "par_cote": false,
-   "type": "isolation",
-   "charge": true,
-   "profil": "iso_petit",
-   "chauffe": {
-    "reps": "15",
-    "repos_sec": 45,
-    "charge_pct": 40
-   },
-   "travail": {
-    "reps": "10-12",
-    "repos_sec": 75
-   },
-   "hypertrophie": {
-    "reps": "15-20",
-    "repos_sec": 60,
-    "charge_pct": 65
-   }
-  },
-  {
-   "id": "mollets_donkey",
-   "nom": "Mollets donkey (machine)",
-   "groupe_musculaire": "mollets",
-   "muscles_secondaires": [],
-   "equipement": "machine",
    "par_cote": false,
    "type": "isolation",
    "charge": true,
