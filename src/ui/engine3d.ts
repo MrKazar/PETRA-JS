@@ -9,6 +9,22 @@ export interface Engine3D {
   /** Prépare les scènes à l'avance pour qu'elles s'affichent sans attendre. */
   warm: (ids: string[], onProgress?: (done: number, total: number) => void) => Promise<void>
   has: (id: string) => boolean
+  /** Mannequin debout du schéma du corps (PCTRA) : muscles colorés, rotation lente, clic sur un muscle. */
+  body: (el: HTMLElement, opts: BodyOpts) => BodyHandle
+}
+export interface BodyOpts {
+  /** id du muscle → couleur ; un muscle absent garde la teinte neutre du mannequin. */
+  colors: Record<string, string>
+  selected?: string
+  onPick?: (id: string) => void
+  onHover?: (id: string | undefined) => void
+  onReady?: () => void
+  /** Secondes pour un tour complet. */
+  period?: number
+}
+export interface BodyHandle {
+  set: (o: { colors?: Record<string, string>; selected?: string }) => void
+  destroy: () => void
 }
 export type View3D = 'iso' | 'side' | 'front'
 

@@ -13,6 +13,8 @@ import { UpdateBanner } from '../ui/UpdateCard'
 import { LevelCard, achievementsOn } from './Achievements'
 import { bumpFeats, saveSettings } from '../logic/actions'
 import { themeOf } from '../ui/theme'
+import { isDesktop } from '../logic/desktop'
+import { PcHome } from './PcHome'
 
 function greeting(name: string): string {
   const hello = new Date().getHours() >= 18 ? 'Bonsoir' : 'Bonjour'
@@ -68,6 +70,33 @@ export function TodayScreen() {
     if (!data.active) beginSession(p)
     nav.push({ name: 'workout' })
   }
+
+  const lambdaSheet = (
+    <Sheet open={reveal} onClose={() => setReveal(false)} title="Le bouclier s’ouvre">
+      <div className="stack reveal" style={{ gap: 12, alignItems: 'center', textAlign: 'center' }}>
+        <img className="reveal-shield" src={imgUrl(lambda.emblem)} alt="Bouclier Lambda" />
+        <div><b>Thème {lambda.label} débloqué</b></div>
+        <div className="small muted">Le Λ que les Spartiates peignaient sur leurs boucliers. Le thème t’attend aussi dans Paramètres &gt; Apparence.</div>
+        {data.settings.theme === 'lambda' ? (
+          <button className="btn" onClick={() => setReveal(false)}>Déjà porté</button>
+        ) : (
+          <div className="row" style={{ gap: 8 }}>
+            <button className="btn ghost" onClick={() => setReveal(false)}>Plus tard</button>
+            <button className="btn" onClick={wearLambda}>Porter le bouclier</button>
+          </div>
+        )}
+      </div>
+    </Sheet>
+  )
+
+  // PCTRA : un vrai tableau de bord sur grand écran.
+  if (isDesktop)
+    return (
+      <>
+        <PcHome onEmblem={tapEmblem} extra={<UpdateBanner />} />
+        {lambdaSheet}
+      </>
+    )
 
   return (
     <div className="screen">
@@ -219,21 +248,7 @@ export function TodayScreen() {
         <IconPlus /> Tâche
       </button>
       {editing && <RoutineEditor routine={editing} onClose={() => setEditing(null)} />}
-      <Sheet open={reveal} onClose={() => setReveal(false)} title="Le bouclier s’ouvre">
-        <div className="stack reveal" style={{ gap: 12, alignItems: 'center', textAlign: 'center' }}>
-          <img className="reveal-shield" src={imgUrl(lambda.emblem)} alt="Bouclier Lambda" />
-          <div><b>Thème {lambda.label} débloqué</b></div>
-          <div className="small muted">Le Λ que les Spartiates peignaient sur leurs boucliers. Le thème t’attend aussi dans Paramètres &gt; Apparence.</div>
-          {data.settings.theme === 'lambda' ? (
-            <button className="btn" onClick={() => setReveal(false)}>Déjà porté</button>
-          ) : (
-            <div className="row" style={{ gap: 8 }}>
-              <button className="btn ghost" onClick={() => setReveal(false)}>Plus tard</button>
-              <button className="btn" onClick={wearLambda}>Porter le bouclier</button>
-            </div>
-          )}
-        </div>
-      </Sheet>
+      {lambdaSheet}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useData } from '../data/store'
-import { BodyFigure } from '../ui/BodyMap'
+import { Body3D, Body3DLegend } from '../ui/Body3D'
 import { Header, toast } from '../ui/kit'
 import { exerciseFromCatalog, type CatalogExercise } from '../data/catalog'
 import { ZONES_FINE } from '../data/anatomy'
@@ -66,17 +66,9 @@ export function BodyScreen() {
         </div>
 
         <div className="bm-layout">
-          <div className="card bm-figures">
-            <BodyFigure side="front" levelOf={lv} selected={selected} neglected={neglected} onSelect={setSelected} labelOf={label} />
-            <BodyFigure side="back" levelOf={lv} selected={selected} neglected={neglected} onSelect={setSelected} labelOf={label} />
-            <div className="bm-legend">
-              {LEVELS.map((l) => (
-                <span key={l.level}>
-                  <i className={`bm-swatch lv${l.level}`} />
-                  {l.label} <span className="faint">({l.range})</span>
-                </span>
-              ))}
-            </div>
+          <div className="card bm-figures is3d">
+            <Body3D levelOf={lv} selected={selected} onSelect={setSelected} labelOf={label} />
+            <Body3DLegend />
           </div>
 
           <div className="stack bm-side">
