@@ -1058,3 +1058,37 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 .bm-figures.is3d .bm-legend, .bm-figures.is3d .bm-fig figcaption { color: var(--muted) !important; }
 .bm-figures.is3d .bm-legend .faint, .bm-figures.is3d .body3d-hint { color: var(--faint); }
 .bm-figures.is3d .body3d-tip { background: color-mix(in srgb, var(--bg) 85%, transparent); border-color: var(--line); color: var(--text); }
+
+/* ---------- Courbe d'XP (PCTRA) ---------- */
+.xp-card { display: flex; flex-direction: column; gap: 12px; }
+.xp-head { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.xp-seg { flex: none; width: auto; }
+.xp-seg button { white-space: nowrap; }
+.xp-kpis { display: flex; gap: 28px; flex-wrap: wrap; }
+.xp-kpis > div { display: flex; flex-direction: column; }
+.xp-kpis b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.xp-kpis span { font-size: 12px; color: var(--muted); }
+.xp-ch { cursor: crosshair; }
+.xp-ch .line { stroke-width: 2.25; }
+.xp-ch .xp-lv { stroke: var(--muted); stroke-width: 1.5; opacity: 0.6; }
+.xp-ch .xp-lv-lbl { font-size: 11px; }
+.xp-ch .xp-edge { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.xp-ch .xp-cursor { stroke: var(--text); stroke-width: 1; opacity: 0.35; stroke-dasharray: 3 3; }
+.xp-ch .xp-count { fill: var(--text); font-weight: 700; font-size: 12px; }
+.xp-medal circle { stroke: var(--surface); stroke-width: 1.5; transition: r 0.12s; }
+.xp-medal.on circle { stroke: var(--text); stroke-width: 2; }
+.xp-medal.bronze circle, .xp-sw.bronze { fill: #c27a3e; background: #c27a3e; }
+.xp-medal.argent circle, .xp-sw.argent { fill: #b9bec5; background: #b9bec5; }
+.xp-medal.or circle, .xp-sw.or { fill: #e2b13f; background: #e2b13f; }
+.xp-medal.platine circle, .xp-sw.platine { fill: #9fd0e2; background: #9fd0e2; }
+.xp-legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.xp-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.xp-sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.xp-detail { border-top: 1px solid var(--line); padding-top: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 120px; }
+.xp-detail-head { display: flex; gap: 12px; align-items: flex-end; }
+.xp-detail-title { font-size: 17px; font-weight: 700; }
+.xp-detail-num { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.xp-detail-num b { font-size: 18px; color: var(--success); font-variant-numeric: tabular-nums; }
+.xp-unlocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 14px; }
+.xp-unlock { display: flex; align-items: center; gap: 10px; }
+.xp-unlock .n { font-weight: 600; font-size: 14px; }

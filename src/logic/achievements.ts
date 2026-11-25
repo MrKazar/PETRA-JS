@@ -190,7 +190,7 @@ export function isPerfect(s: Session, data: Pick<AppData, 'programs'>): boolean 
   return planned != null && planned > 0 && doneSets(s) >= planned
 }
 
-export function factsOf(data: AppData): Facts {
+export function factsOf(data: AppData, now = Date.now()): Facts {
   const sessions = [...data.sessions].filter((s) => s.endedAt).sort((a, b) => a.startedAt - b.startedAt)
   const f: Facts = {
     sessions, xpSessions: 0, perfect: 0, express: 0, hours: 0, weeksHeld: 0, monthsHeld: 0, comebacks: 0, monthStreak: 0,
@@ -354,7 +354,7 @@ export function factsOf(data: AppData): Facts {
   f.finisherIdsDone = list.filter((x) => finIds.has(x.id)).length
   f.monthsOfYear = months.size
 
-  Object.assign(f, weeklyFacts(data, sessions))
+  Object.assign(f, weeklyFacts(data, sessions, now))
 
   // Routines : jours où toutes les tâches du jour sont faites.
   for (const day of Object.keys(data.routineLog)) {
@@ -365,10 +365,9 @@ export function factsOf(data: AppData): Facts {
 }
 
 /** Semaines tenues, mois sans faille, carte du corps semaine par semaine, équilibre pousser / tirer. */
-function weeklyFacts(data: AppData, sessions: Session[]) {
+function weeklyFacts(data: AppData, sessions: Session[], now: number) {
   const out = { weeksHeld: 0, monthsHeld: 0, monthStreak: 0, fullWeeks: 0, specialists: 0, balanced: 0 }
   if (!sessions.length) return out
-  const now = Date.now()
   const start = weekStart(sessions[0].startedAt)
   const heldByMonth = new Map<string, number>()
   const levels: Map<RegionId, number[]> = new Map(REGIONS.map((r) => [r.id, []]))
@@ -591,8 +590,9 @@ export function medalXpOf(a: Achievement): number {
   return xp
 }
 
-export function evaluate(data: AppData): Evaluation {
-  const facts = factsOf(data)
+/** `now` : date d'évaluation (par défaut maintenant), pour rejouer l'historique à une date passée. */
+export function evaluate(data: AppData, now = Date.now()): Evaluation {
+  const facts = factsOf(data, now)
   const list: Achievement[] = DEFS.map((def) => {
     const value = def.value(facts, data)
     const reached = def.tiers.filter((t) => value >= t).length
