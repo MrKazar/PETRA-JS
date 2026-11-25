@@ -3,12 +3,14 @@ import { uid } from './util'
 import { isCardio } from '../data/catalog'
 
 export function startFrom(program: Program | null, now = Date.now()): ActiveSession {
+  const exercises = (program?.exercises ?? []).map(toSessionExercise)
   return {
     id: uid(),
     programId: program?.id,
     programName: program?.name ?? 'Séance libre',
     startedAt: now,
-    exercises: (program?.exercises ?? []).map(toSessionExercise),
+    exercises,
+    order: exercises.map((e) => e.id),
   }
 }
 
@@ -80,10 +82,52 @@ export function shortenRest(s: ActiveSession, seconds: number, now = Date.now())
 }
 
 /** « Plus tard » : l'exercice passe en fin de séance (machine prise, par exemple). */
-export function moveToEnd(s: ActiveSession, exId: string): ActiveSession {
-  const ex = s.exercises.find((e) => e.id === exId)
-  if (!ex) return s
-  return { ...s, exercises: [...s.exercises.filter((e) => e.id !== exId), ex] }
+/** « Plus tard » : l'exercice passe juste après le prochain exercice pas encore terminé (sinon à la fin). */
+export function moveLater(s: ActiveSession, exId: string): ActiveSession {
+  const from = s.exercises.findIndex((e) => e.id === exId)
+  if (from < 0) return s
+  const ex = s.exercises[from]
+  const rest = s.exercises.filter((e) => e.id !== exId)
+  const next = rest.findIndex((e, i) => i >= from && e.sets.some((x) => !x.done))
+  const at = next < 0 ? rest.length : next + 1
+  return { ...s, exercises: [...rest.slice(0, at), ex, ...rest.slice(at)] }
+}
+
+/**
+ * Séance faite pile dans l'ordre du programme (succès « Psychorigide ») : toutes les séries prévues
+ * validées, aucun exercice ajouté, et chaque exercice terminé avant de commencer le suivant.
+ */
+export function inPlannedOrder(s: Session, programs: Program[] = []): boolean {
+  if (!s.programId) return false
+  const done = s.exercises.filter((e) => e.sets.some((x) => x.done))
+  let seq: SessionExercise[]
+  if (s.order) {
+    if (done.length !== s.order.length) return false
+    const byId = new Map(done.map((e) => [e.id, e]))
+    seq = s.order.map((id) => byId.get(id)!)
+    if (seq.some((e) => !e)) return false
+  } else {
+    // Séances plus anciennes : l'ordre de départ n'était pas gardé, on compare au programme actuel, par nom.
+    const p = programs.find((x) => x.id === s.programId)
+    if (!p || p.exercises.length !== done.length) return false
+    const left = [...done]
+    seq = []
+    for (const pe of p.exercises) {
+      const i = left.findIndex((e) => e.name === pe.name)
+      if (i < 0) return false
+      seq.push(left.splice(i, 1)[0])
+    }
+  }
+  if (s.planned != null && seq.reduce((n, e) => n + e.sets.filter((x) => x.done).length, 0) < s.planned) return false
+  let last = -Infinity
+  for (const e of seq) {
+    const times = e.sets.filter((x) => x.done).map((x) => x.doneAt)
+    if (times.some((t) => t == null)) return false
+    const ts = times as number[]
+    if (Math.min(...ts) < last) return false
+    last = Math.max(...ts)
+  }
+  return seq.length >= 2
 }
 
 const liftsWithLoad = (e: Pick<ProgramExercise, 'usesLoad' | 'parts' | 'group' | 'sets'>) => e.usesLoad !== false && !e.parts && !isCardio(e) && e.sets.every((x) => x.durationSec == null)

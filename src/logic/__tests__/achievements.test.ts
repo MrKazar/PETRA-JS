@@ -30,7 +30,7 @@ describe('succès', () => {
     expect(ev.xp).toBe(0)
     expect(ev.level).toMatchObject({ level: 1, title: 'Recrue', into: 0, need: 100 })
     expect(new Set(DEFS.map((d) => d.id)).size).toBe(DEFS.length)
-    expect(DEFS.filter((d) => d.family !== 'secrets')).toHaveLength(48)
+    expect(DEFS.filter((d) => d.family !== 'secrets')).toHaveLength(49)
     expect(DEFS.filter((d) => d.family === 'secrets')).toHaveLength(22)
   })
 

@@ -1,3 +1,4 @@
+import { SessionBody } from '../ui/SessionBody'
 import { useData } from '../data/store'
 import { useNav } from '../nav'
 import { PHASE_LABEL } from '../data/types'
@@ -96,6 +97,8 @@ export function SessionDetailScreen({ id }: { id: string }) {
         </div>
 
         {achievementsOn(data) && data.sessions.every((x) => x.startedAt <= s.startedAt) && <SessionGains sessionId={s.id} />}
+
+        <SessionBody session={s} />
 
         {s.finisher && (
           <div className="card accent">

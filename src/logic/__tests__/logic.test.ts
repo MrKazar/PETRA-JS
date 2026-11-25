@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { DEFAULT_FINISHERS as FINISHERS, drawFinisher, finishersOf, formatItem } from '../../data/finishers'
 import { CATALOG, buildCycle, cardioPlanOf, cardioSets, cardioSummary, exerciseFromCatalog, migrateCardio, migrateExercise, parseReps, pdcPlanOf, pdcSets, setLabels, withWorkLoad } from '../../data/catalog'
 import { programFor, recursOn, routinesFor, weekLetter } from '../planner'
-import { addSet, completeSet, estimateDuration, formatEstimate, extendRest, finalize, lastTime, matchingSet, moveToEnd, nextPending, personalRecords, replaceExercise, shortenRest, startFrom, startRest, statsOf } from '../session'
+import { addSet, completeSet, estimateDuration, formatEstimate, extendRest, finalize, lastTime, matchingSet, inPlannedOrder, moveLater, nextPending, personalRecords, replaceExercise, shortenRest, startFrom, startRest, statsOf } from '../session'
 import { addDays, weekday } from '../util'
 import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, nextWorkLoad, overloadSuggestion, withOverload } from '../progress'
@@ -365,10 +365,35 @@ describe('confort de séance', () => {
     expect(shortenRest(s, 15, 0).rest!.endsAt).toBe(45_000)
     expect(shortenRest(s, 15, 50_000).rest!.endsAt).toBe(50_000)
   })
-  it('passe un exercice en fin de séance', () => {
+  it('« Plus tard » place l’exercice juste après le suivant, pas tout en bas', () => {
+    const p3: Program = { ...program, exercises: [...program.exercises, { ...program.exercises[1], id: 'e3', name: 'Dips' }, { ...program.exercises[1], id: 'e4', name: 'Gainage' }] }
+    const s = startFrom(p3, 0)
+    expect(moveLater(s, s.exercises[0].id).exercises.map((e) => e.name)).toEqual(['Fentes', 'Développé couché', 'Dips', 'Gainage'])
+    // Les exercices déjà terminés sont sautés.
+    const fentesDone = completeSet(s, s.exercises[1].id, 0)
+    expect(moveLater(fentesDone, s.exercises[0].id).exercises.map((e) => e.name)).toEqual(['Fentes', 'Dips', 'Développé couché', 'Gainage'])
+    // Le dernier reste à la fin.
+    expect(moveLater(s, s.exercises[3].id).exercises.map((e) => e.name)).toEqual(['Développé couché', 'Fentes', 'Dips', 'Gainage'])
+  })
+  it('reconnaît une séance faite pile dans l’ordre du programme', () => {
+    const doAll = (s: ReturnType<typeof s0>, ids: string[]) => {
+      let t = 1000
+      for (const id of ids) for (let i = 0; i < s.exercises.find((e) => e.id === id)!.sets.length; i++) s = completeSet(s, id, i, (t += 1000))
+      return finalize(s, t)
+    }
     const s = s0()
-    const moved = moveToEnd(s, s.exercises[0].id)
-    expect(moved.exercises.map((e) => e.name)).toEqual(['Fentes', 'Développé couché'])
+    const [a, b] = s.exercises.map((e) => e.id)
+    expect(inPlannedOrder(doAll(s, [a, b]))).toBe(true)
+    expect(inPlannedOrder(doAll(s, [b, a]))).toBe(false)
+    // Reporté puis fait plus tard : l'ordre n'est plus respecté.
+    expect(inPlannedOrder(doAll(moveLater(s, a), [b, a]))).toBe(false)
+    // Séance incomplète.
+    expect(inPlannedOrder(finalize(completeSet(completeSet(s, a, 0, 1), a, 1, 2), 3))).toBe(false)
+    // Ancienne séance sans ordre gardé : comparée au programme.
+    const { order: _o, ...old } = doAll(s, [a, b])
+    void _o
+    expect(inPlannedOrder(old, [program])).toBe(true)
+    expect(inPlannedOrder(old, [])).toBe(false)
   })
   it('remplace un exercice en gardant les séries et en vidant les charges', () => {
     const s = s0()

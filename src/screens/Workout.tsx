@@ -8,7 +8,7 @@ import type { ActiveSession, FinisherType, PartSet, SessionExercise } from '../d
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
 import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
-import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, lastTime, matchingSet, moveToEnd, nextPending, replaceExercise, shortenRest, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
+import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, lastTime, matchingSet, moveLater, nextPending, replaceExercise, shortenRest, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
 import { IntervalTimerView } from '../ui/IntervalTimer'
@@ -158,7 +158,7 @@ export function WorkoutScreen() {
             cardRef={(el) => (el ? cards.current.set(ex.id, el) : cards.current.delete(ex.id))}
             ex={ex}
             last={lastTime(data.sessions, ex, s.startedAt)}
-            onLater={() => { apply((a) => moveToEnd(a, ex.id)); toast(`${ex.name} : à la fin de la séance`) }}
+            onLater={() => { apply((a) => moveLater(a, ex.id)); toast(`${ex.name} : après le prochain exercice`) }}
             onReplace={() => setReplacing(ex)}
             current={up?.exercise.id === ex.id ? up.index : -1}
             onCheck={(i) => onCheck(ex, i)}

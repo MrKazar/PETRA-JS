@@ -6,6 +6,7 @@ import { REGIONS, levelOf, weekStart, type RegionId } from './body'
 import { programFor, routinesFor } from './planner'
 import { e1rm, liftsOf } from './stats'
 import { exerciseKey } from './progress'
+import { inPlannedOrder } from './session'
 import { addDays, dateKey, parseKey } from './util'
 import { themesFor, themesShown } from '../ui/theme'
 
@@ -105,6 +106,8 @@ export interface Facts {
   /** Séances comptées pour l'XP (une par jour). */
   xpSessions: number
   perfect: number
+  /** Séances faites pile dans l'ordre du programme. */
+  inOrder: number
   express: number
   hours: number
   weeksHeld: number
@@ -193,7 +196,7 @@ export function isPerfect(s: Session, data: Pick<AppData, 'programs'>): boolean 
 export function factsOf(data: AppData, now = Date.now()): Facts {
   const sessions = [...data.sessions].filter((s) => s.endedAt).sort((a, b) => a.startedAt - b.startedAt)
   const f: Facts = {
-    sessions, xpSessions: 0, perfect: 0, express: 0, hours: 0, weeksHeld: 0, monthsHeld: 0, comebacks: 0, monthStreak: 0,
+    sessions, xpSessions: 0, perfect: 0, inOrder: 0, express: 0, hours: 0, weeksHeld: 0, monthsHeld: 0, comebacks: 0, monthStreak: 0,
     tonnage: 0, sets: 0, reps: 0, bestSessionTonnage: 0, records: 0, bestRecordsInSession: 0, loadIncreases: 0, bestProgressPct: 0,
     best1RM: {}, bestReps: {}, bestSec: {}, cardioMin: 0, timerMin: 0, catalogIds: 0, kinds: 0, zonesWorked: 0, fullWeeks: 0,
     specialists: 0, balanced: 0, finishers: 0, finisherTypes: 0, finisherIdsDone: 0, finisherTotal: 0, finisherRun: 0,
@@ -232,6 +235,7 @@ export function factsOf(data: AppData, now = Date.now()): Facts {
     if (perfect) {
       f.perfect++
       if (dur < 35 * 60) f.express++
+      if (inPlannedOrder(s, data.programs)) f.inOrder++
       perfectRun++
     } else perfectRun = 0
     f.perfectRun = Math.max(f.perfectRun, perfectRun)
@@ -456,6 +460,7 @@ const md = (f: Facts, mmdd: string) => f.monthDays.has(mmdd)
 export const DEFS: Def[] = [
   D('assiduite', 'shield', 'en_service', 'En service', 'Séances terminées', [1, 10, 25, 50, 100, 250, 500], (f) => f.sessions.length),
   D('assiduite', 'shield', 'parfaite', 'Séance parfaite', 'Séances où toutes les séries prévues sont validées', [1, 10, 50, 100], (f) => f.perfect),
+  D('assiduite', 'shield', 'psychorigide', 'Psychorigide', 'Séances complètes faites pile dans l’ordre du programme', [1, 10, 25], (f) => f.inOrder),
   D('assiduite', 'clock', 'express', 'Séance express', 'Séances complètes en moins de 35 min', [1, 10], (f) => f.express),
   D('assiduite', 'clock', 'heures', 'Heures au front', 'Heures d’entraînement cumulées', [10, 50, 100, 250], (f) => Math.floor(f.hours), (v) => `${v} h`),
   D('regularite', 'calendar', 'semaine_tenue', 'Semaine tenue', 'Semaines où toutes les séances planifiées sont faites', [1, 4, 12, 26, 52], (f) => f.weeksHeld),
