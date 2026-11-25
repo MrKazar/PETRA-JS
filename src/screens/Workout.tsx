@@ -1,5 +1,4 @@
 import { Ex3D } from '../ui/Ex3D'
-import { hasAnim } from '../ui/engine3d'
 import { ScreenLoader } from '../ui/Splash'
 import { useEffect, useRef, useState } from 'react'
 import { getData, useData } from '../data/store'
@@ -139,7 +138,7 @@ export function WorkoutScreen() {
           right={<span className="badge gold" style={{ fontSize: 14, padding: '4px 10px', fontVariantNumeric: 'tabular-nums' }}>{formatClock((now - s.startedAt) / 1000)}</span>}
         />
 
-        {s.rest && <RestPanel anim={data.settings.anim3d !== false} next={up ? { id: up.exercise.catalogId, name: up.exercise.name, set: setLabels(up.exercise.sets)[up.index] } : undefined} rest={s.rest} now={now} onAdd={() => apply((a) => extendRest(a, 15))} onLess={() => apply((a) => shortenRest(a, 15))} onSkip={() => apply((a) => ({ ...a, rest: undefined }))} />}
+        {s.rest && <RestPanel next={up ? { name: up.exercise.name, set: setLabels(up.exercise.sets)[up.index] } : undefined} rest={s.rest} now={now} onAdd={() => apply((a) => extendRest(a, 15))} onLess={() => apply((a) => shortenRest(a, 15))} onSkip={() => apply((a) => ({ ...a, rest: undefined }))} />}
 
         <div className="row small muted between">
           <span>
@@ -358,7 +357,7 @@ function Stepper({ label, value, unit, step, next, onChange }: { label: string; 
   )
 }
 
-function RestPanel({ anim, next, rest, now, onAdd, onLess, onSkip }: { anim: boolean; next?: { id?: string; name: string; set: string }; rest: NonNullable<ActiveSession['rest']>; now: number; onAdd: () => void; onLess: () => void; onSkip: () => void }) {
+function RestPanel({ next, rest, now, onAdd, onLess, onSkip }: { next?: { name: string; set: string }; rest: NonNullable<ActiveSession['rest']>; now: number; onAdd: () => void; onLess: () => void; onSkip: () => void }) {
   const left = (rest.endsAt - now) / 1000
   const total = (rest.endsAt - rest.startedAt) / 1000
   const over = left <= 0
@@ -397,11 +396,9 @@ function RestPanel({ anim, next, rest, now, onAdd, onLess, onSkip }: { anim: boo
       )}
       {next && (
         <div className="row rest-next">
-          {anim && <Ex3D id={next.id} size="mini" />}
           <div className="grow" style={{ minWidth: 0 }}>
             <div className="eyebrow">Ensuite · {next.set}</div>
             <div className="ellipsis" style={{ fontWeight: 600 }}>{next.name}</div>
-            {anim && hasAnim(next.id) && <div className="small muted">Regarde le geste pendant que tu récupères</div>}
           </div>
         </div>
       )}
