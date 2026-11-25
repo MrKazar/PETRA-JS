@@ -6,9 +6,9 @@ import { beginSession, setRoutineStatus } from '../logic/actions'
 import { programFor, routinesFor, weekLetter } from '../logic/planner'
 import { estimateDuration, formatEstimate, personalRecords, statsOf } from '../logic/session'
 import { addDays, dateKey, formatDay, formatDuration, parseKey, uid, WEEKDAYS_SHORT, weekday } from '../logic/util'
-import { LEVELS, REGIONS, doneWork, levelOf, regionLabel, scaleWork, type RegionId } from '../logic/body'
+import { REGIONS, doneWork, levelOf, regionLabel, scaleWork, type RegionId } from '../logic/body'
 import { project, weeklyTonnage } from '../logic/stats'
-import { Body3D } from '../ui/Body3D'
+import { Body3D, Body3DLegend } from '../ui/Body3D'
 import { WeekBars } from '../ui/Charts'
 import { Header, Progress } from '../ui/kit'
 import { IconCheck, IconChevron, IconDumbbell, IconHistory, IconPlay, IconPlus } from '../ui/icons'
@@ -339,11 +339,7 @@ function BodyCard({ data, now }: { data: AppData; now: number }) {
       </div>
       <div className="bm-figures pc-body is3d">
         <Body3D compact levelOf={lv} onSelect={open} labelOf={label} />
-        <div className="bm-legend">
-          {LEVELS.map((l) => (
-            <span key={l.level}><i className={`bm-swatch lv${l.level}`} />{l.label}</span>
-          ))}
-        </div>
+        <Body3DLegend ranges={false} />
       </div>
       {total > 0 && neglected.length > 0 && (
         <>

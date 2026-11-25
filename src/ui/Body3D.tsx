@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Level, RegionId } from '../logic/body'
-import { LEVELS } from '../logic/body'
 import { MUSCLES_FINE } from '../data/anatomy'
-import { BODY_THEME } from './bodyTheme'
 import { BodyFigure } from './BodyMap'
 import { loadEngine, type BodyHandle } from './engine3d'
 
@@ -33,20 +31,15 @@ export function Body3D({
   const [ready, setReady] = useState(false)
   const [failed, setFailed] = useState(false)
 
-  const colors = useMemo(() => {
-    const out: Record<string, string> = {}
-    for (const l of LEVELS) if (l.level > 0) out[`lv${l.level}`] = BODY_THEME.levels3d[l.level]
-    return out
-  }, [])
   // Couleur de chaque muscle d'après son niveau (recalculée quand les données changent).
   const byMuscle = useMemo(() => {
     const out: Record<string, string> = {}
     for (const id of MUSCLE_IDS) {
       const lv = levelOf(id)
-      if (lv > 0) out[id] = colors[`lv${lv}`]
+      if (lv > 0) out[id] = lv >= 3 ? 'primary' : 'secondary' // les deux rouges des animations
     }
     return out
-  }, [levelOf, colors])
+  }, [levelOf])
 
   useEffect(() => {
     const el = ref.current
@@ -83,6 +76,26 @@ export function Body3D({
     <div ref={ref} className={`body3d${compact ? ' compact' : ''}${ready ? ' ready' : ''}`} role="img" aria-label="Mannequin 3D, muscles colorés selon le travail fait">
       {shown && <span className="body3d-tip">{labelOf(shown)}</span>}
       {!compact && <span className="body3d-hint">Glisse pour le tourner · clique sur un muscle</span>}
+    </div>
+  )
+}
+
+/**
+ * Légende du mannequin : les niveaux partagent les deux rouges des animations, donc on les regroupe par couleur.
+ * session : échelle d'une séance (page programme), sinon séries par semaine.
+ */
+export function Body3DLegend({ session = false, ranges = true }: { session?: boolean; ranges?: boolean }) {
+  const rows = session
+    ? [['lv0', 'Pas travaillé', '0'], ['lv1', 'Léger ou moyen', 'moins de 4'], ['lv3', 'Bien ou beaucoup', '4 et plus']]
+    : [['lv0', 'Pas travaillé', '0'], ['lv1', 'Négligé ou un peu', 'moins de 10'], ['lv3', 'Bien ou beaucoup', '10 et plus']]
+  return (
+    <div className="bm-legend">
+      {rows.map(([cls, label, range]) => (
+        <span key={cls}>
+          <i className={`bm-swatch ${cls}`} />
+          {label}{ranges && <span className="faint"> ({range})</span>}
+        </span>
+      ))}
     </div>
   )
 }

@@ -14793,7 +14793,7 @@ return fn
 
   // --- Mannequin du schéma du corps (PCTRA) : debout, muscles colorés par niveau, tourne lentement sur lui-même ---
   // API : body(el, { colors, selected, onPick, period }) → { set({ colors, selected }), destroy() }
-  // colors : id du muscle → couleur (absent : tissu neutre). onPick(id) au clic sur un muscle. period : secondes par tour.
+  // colors : id du muscle → 'primary' / 'secondary' (les deux rouges des animations, mêmes matériaux) ou une couleur ; absent : tissu neutre. onPick(id) au clic sur un muscle. period : secondes par tour.
   const bodies = new Set()
   function standing(o) {
     if (o.scap != null) o.pose.scapL = o.pose.scapR = { up: 0, fwd: o.scap }
@@ -14830,10 +14830,11 @@ return fn
     const muscles = []
     rig.traverse((m) => { if (m.isMesh && m.userData.muscle) { muscles.push(m); m.userData.tissue = m.material } })
     const mats = new Map()
+    const ROUGH = { primary: 0.5, secondary: 0.52 } // comme M2.primary / M2.secondary du mannequin
     const matFor = (c, sel) => {
       const key = c + (sel ? '*' : '')
       let m = mats.get(key)
-      if (!m) { m = mat({ color: c, roughness: 0.5, vertexColors: true, ...(sel ? { emissive: srgb('#ffffff'), emissiveIntensity: 0.28 } : {}) }); mats.set(key, m) }
+      if (!m) { m = mat({ color: COL[c] ?? c, roughness: ROUGH[c] ?? 0.5, vertexColors: true, ...(sel ? { emissive: srgb('#ffffff'), emissiveIntensity: 0.28 } : {}) }); mats.set(key, m) }
       return m
     }
     let colors = opts.colors ?? {}, selected = opts.selected
