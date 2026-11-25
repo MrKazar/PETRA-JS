@@ -61,7 +61,9 @@ export function xpTimeline(data: AppData, now = Date.now()): XpTimeline {
     const t = s.endedAt ?? s.startedAt
     const day = dateKey(new Date(s.startedAt))
     const routineLog = Object.fromEntries(Object.entries(data.routineLog).filter(([d]) => d <= day))
-    const past: AppData = { ...data, sessions: sessions.slice(0, i + 1), routineLog }
+    // Seulement les programmes qui existaient déjà : un programme créé plus tard ne compte pas avant.
+    const programs = data.programs.filter((p) => !(p.createdAt > t))
+    const past: AppData = { ...data, sessions: sessions.slice(0, i + 1), programs, routineLog }
     step(t, evaluate(past, t), { sessionId: s.id, n: i + 1, name: s.programName })
   })
   step(Math.max(now, points[points.length - 1].t), evaluate(data, now), {})
