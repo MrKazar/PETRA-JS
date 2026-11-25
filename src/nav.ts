@@ -12,7 +12,7 @@ export type Route =
   | { name: 'achievements' }
   | { name: 'routines' }
   | { name: 'appearance' }
-  | { name: 'settingsSection'; section: 'user' | 'sessions' | 'notifications' | 'data' | 'pc' | 'window' }
+  | { name: 'settingsSection'; section: 'user' | 'sessions' | 'equipment' | 'notifications' | 'data' | 'pc' | 'window' }
   | { name: 'progress'; id: string }
 
 export interface Nav {

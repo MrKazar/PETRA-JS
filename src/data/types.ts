@@ -194,6 +194,8 @@ export interface Settings {
   achievements?: boolean
   /** Animations 3D des exercices pendant la séance (oui par défaut, 1.4.0). */
   anim3d?: boolean
+  /** Mon matériel (identifiants de src/data/equipment.ts). Absent = pas réglé : aucun filtre (1.4.1). */
+  equipment?: string[]
   /** Compteurs de quelques succès secrets, propres à cet appareil. */
   feats?: Feats
 }

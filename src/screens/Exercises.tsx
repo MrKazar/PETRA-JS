@@ -5,10 +5,13 @@ import { saveProgram } from '../logic/actions'
 import { CatalogBrowse, CatalogDetail, CatalogMedia, CatalogFilters, CatalogResults, useCatalogSearch } from '../ui/ExercisePicker'
 import { Empty, Header, Sheet, toast } from '../ui/kit'
 import { ScreenLoader } from '../ui/Splash'
-import { IconBook } from '../ui/icons'
+import { IconBook, IconChevron, IconDumbbell } from '../ui/icons'
+import { useNav } from '../nav'
+import { equipmentSummary } from './Equipment'
 
 export function ExercisesScreen() {
   const data = useData()
+  const nav = useNav()
   const search = useCatalogSearch()
   const [detail, setDetail] = useState<CatalogExercise>()
   const [programId, setProgramId] = useState<string>('')
@@ -32,6 +35,16 @@ export function ExercisesScreen() {
       <div className="screen-inner">
         <Header title="Exercices" sub={`${CATALOG.length} exercices · ${CATALOG.filter((e) => e.pdc).length} au poids du corps`} />
         <CatalogFilters {...search} />
+        {search.browsing && !search.zone && (
+          <button className="list-item clickable" style={{ width: '100%', textAlign: 'left' }} onClick={() => nav.push({ name: 'settingsSection', section: 'equipment' })}>
+            <div className="icon-box"><IconDumbbell /></div>
+            <div className="grow">
+              <div style={{ fontWeight: 600 }}>Mon matériel</div>
+              <div className="small muted">{data.settings.equipment ? equipmentSummary(data.settings.equipment) : 'Indique ton matériel pour ne voir que les exercices faisables'}</div>
+            </div>
+            <IconChevron style={{ width: 18, color: 'var(--faint)', flex: 'none' }} />
+          </button>
+        )}
         <CatalogBrowse {...search} />
         <CatalogResults search={search} onOpen={setDetail} />
         {!search.browsing && !search.results.length && !search.secondary.length && (

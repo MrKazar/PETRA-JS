@@ -11,8 +11,9 @@ import { ScanSheet } from '../ui/Share'
 import { activeTheme } from '../ui/theme'
 import { progress } from '../logic/level'
 import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
-import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor } from '../ui/icons'
+import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor, IconDumbbell } from '../ui/icons'
 import { syncNow, unpair } from '../logic/pcsync'
+import { EquipmentSection, equipmentSummary } from './Equipment'
 import { encodePairing } from '../logic/sync'
 import { desktop, isDesktop, lastPhoneSync, onPhoneSync, useUpdateState, useWindowState, type PairingState, type WindowMode } from '../logic/desktop'
 
@@ -61,6 +62,7 @@ export function SettingsScreen() {
         <div className="list">
           {row('Utilisateur', s.name ? s.name : 'Prénom pour l’accueil', <IconUser />, () => nav.push({ name: 'settingsSection', section: 'user' }))}
           {row('Séances', `Repos ${s.defaultRestSec} s${s.vibrate ? ' · vibration' : ''}${s.keepAwake ? ' · écran allumé' : ''}`, <IconClock />, () => nav.push({ name: 'settingsSection', section: 'sessions' }))}
+          {row('Mon matériel', equipmentSummary(s.equipment), <IconDumbbell />, () => nav.push({ name: 'settingsSection', section: 'equipment' }))}
           {row('Notifications', notifSummary(s), <IconBell />, () => nav.push({ name: 'settingsSection', section: 'notifications' }))}
           {isDesktop && row('Fenêtre', 'Plein écran, taille, zoom, démarrage avec Windows', <IconMonitor />, () => nav.push({ name: 'settingsSection', section: 'window' }))}
           {row(isDesktop ? 'Téléphone' : 'Appli PC', pcSummary(s), <IconMonitor />, () => nav.push({ name: 'settingsSection', section: 'pc' }))}
@@ -97,9 +99,9 @@ export function SettingsScreen() {
   )
 }
 
-export type SettingsSection = 'user' | 'sessions' | 'notifications' | 'data' | 'pc' | 'window'
+export type SettingsSection = 'user' | 'sessions' | 'equipment' | 'notifications' | 'data' | 'pc' | 'window'
 
-const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', notifications: 'Notifications', data: 'Données', pc: isDesktop ? 'Téléphone' : 'Appli PC', window: 'Fenêtre' }
+const TITLES: Record<SettingsSection, string> = { user: 'Utilisateur', sessions: 'Séances', equipment: 'Mon matériel', notifications: 'Notifications', data: 'Données', pc: isDesktop ? 'Téléphone' : 'Appli PC', window: 'Fenêtre' }
 
 /** Sous-pages de Paramètres. */
 export function SettingsSectionScreen({ section }: { section: SettingsSection }) {
@@ -175,6 +177,7 @@ export function SettingsSectionScreen({ section }: { section: SettingsSection })
           </div>
         </div>
         )}
+        {section === 'equipment' && <EquipmentSection />}
         {section === 'notifications' && <NotificationsSection />}
         {section === 'data' && <DataSection />}
         {section === 'pc' && (isDesktop ? <PhoneLinkSection /> : <PcLinkSection />)}
