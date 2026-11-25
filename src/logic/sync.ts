@@ -1,4 +1,4 @@
-import { DATA_VERSION, type AppData, type Settings, type SyncMeta } from '../data/types'
+import { DATA_VERSION, type AppData, type Feats, type Settings, type SyncMeta } from '../data/types'
 
 /**
  * Synchro téléphone ↔ appli PC, sans cloud : les deux appareils gardent chacun leurs données et
@@ -31,6 +31,25 @@ const RECORDS = [
 const FIELDS = ['weekPlan', 'weekPlanB', 'lastFinisher', 'finishers'] as const
 /** Réglages communs aux deux appareils ; les autres (notifications, vibration, écran…) restent propres à chacun. */
 export const SYNCED_SETTINGS = ['name', 'defaultRestSec', 'abWeeks', 'weekAAnchor', 'finishersEnabled', 'theme', 'timerSound', 'exerciseMode'] as const satisfies readonly (keyof Settings)[]
+
+/**
+ * Compteurs des succès (`settings.feats`) : ils ne font que monter, donc la fusion garde le plus
+ * grand de chaque compteur et l'union des thèmes essayés, quel que soit l'appareil le plus récent.
+ * Sans ça, le PC n'avait pas les secrets et partages du téléphone et affichait moins d'XP.
+ */
+export function mergeFeats(a: Feats | undefined, b: Feats | undefined): Feats | undefined {
+  if (!a && !b) return undefined
+  const out: Feats = {}
+  for (const k of ['logoTaps', 'shares', 'paired'] as const) {
+    const v = Math.max(a?.[k] ?? 0, b?.[k] ?? 0)
+    if (v > 0) out[k] = v
+  }
+  const themes = [...new Set([...(a?.themes ?? []), ...(b?.themes ?? [])])]
+  if (themes.length) out.themes = themes
+  return out
+}
+
+const sameFeats = (a: Feats | undefined, b: Feats | undefined) => JSON.stringify(mergeFeats(a, {}) ?? {}) === JSON.stringify(mergeFeats(b, {}) ?? {})
 
 /** Version du format de données reçues (les données d'avant la 1.3.11 n'en ont pas : 1). */
 export function versionOf(d: { version?: unknown } | undefined): number {
@@ -92,6 +111,7 @@ export function track(prev: AppData, next: AppData, now = Date.now()): SyncMeta 
   }
   for (const f of FIELDS) if (prev[f] !== next[f]) touched(`f:${f}`)
   for (const k of SYNCED_SETTINGS) if (prev.settings[k] !== next.settings[k]) touched(`set:${k}`)
+  if (prev.settings.feats !== next.settings.feats && !sameFeats(prev.settings.feats, next.settings.feats)) touched('set:feats')
   return meta ?? base
 }
 
@@ -155,6 +175,10 @@ export function merge(local: AppData, remote: AppData, now = Date.now(), opts: {
 
   for (const f of FIELDS) if (pick(`f:${f}`, true, true) === 'r') (result as unknown as Record<string, unknown>)[f] = remote[f]
   for (const k of SYNCED_SETTINGS) if (pick(`set:${k}`, true, true) === 'r' && remote.settings[k] !== undefined) (result.settings as unknown as Record<string, unknown>)[k] = remote.settings[k]
+  // Compteurs des succès : additionnés (max / union), pas « le plus récent gagne ».
+  pick('set:feats', true, true)
+  const feats = mergeFeats(local.settings.feats, remote.settings.feats)
+  if (feats && !sameFeats(feats, local.settings.feats)) result.settings.feats = feats
 
   // Suppressions d'éléments absents des deux côtés : on les garde quand même (sinon un appareil qui a
   // encore l'élément le ferait revenir, et les deux révisions ne seraient plus les mêmes).
@@ -181,7 +205,9 @@ export function revOf(d: AppData): number {
 /** Ce qu'un appareil envoie à l'autre : tout sauf la séance en cours et l'association au PC. */
 export function toWire(d: AppData): AppData {
   const { active: _active, ...rest } = d
-  const { pc: _pc, ...settings } = d.settings
+  const { pc, ...settings } = d.settings
+  // L'association elle-même reste sur le téléphone, mais le PC doit savoir qu'elle existe (succès « Base arrière »).
+  if (pc) settings.feats = mergeFeats(settings.feats, { paired: 1 })
   return { ...rest, settings: settings as Settings }
 }
 
