@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
 import { CATALOG } from '../../data/catalog'
 import { ANIM_CUES } from '../../data/anim3d'
+import { DEFAULT_FINISHERS, FINISHER_EXERCISES, finisherAnimId } from '../../data/finishers'
 import { PLATE } from '../../data/bodyPlate'
 import { anatomyOf, MUSCLES_FINE } from '../../data/anatomy'
 
@@ -49,5 +50,18 @@ describe('écran d’attente (1.4.0.1)', () => {
     expect(idsToWarm(d)).toEqual(['dev_couche_barre', 'pompes', 'dips_pecs'])
     d.active = { id: 's', programName: 'Push', startedAt: 0, exercises: [ex('squat_barre')] }
     expect(idsToWarm(d)).toEqual(['squat_barre'])
+  })
+})
+
+describe('finishers en 3D', () => {
+  // Exercices de finisher à faire dans la page Exécutions PETRA 3D (pas encore dans le catalogue).
+  const A_FAIRE = ['releve_jambes_sol', 'planche_haute', 'elevations_y_sol', 'position_basse_pompe', 'squat_sumo_pdc', 'fentes_arriere_pdc', 'bras_croix', 'cercles_bras', 'maintien_haut_dips']
+  it('chaque exercice des finishers a une animation, ou est à faire', () => {
+    const items = [...DEFAULT_FINISHERS.flatMap((f) => f.items), ...Object.values(FINISHER_EXERCISES).flat()]
+    const sans = items.filter((it) => {
+      const id = finisherAnimId(it)
+      return !id || !(ANIM_CUES[id] || A_FAIRE.includes(id))
+    })
+    expect(sans.map((x) => x.name)).toEqual([])
   })
 })

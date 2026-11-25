@@ -6,7 +6,7 @@ import { getData, useData } from '../data/store'
 import { useNav } from '../nav'
 import type { ActiveSession, FinisherType, PartSet, SessionExercise } from '../data/types'
 import { groupLabel, isCardio, setLabels } from '../data/catalog'
-import { FINISHER_TYPES, drawFinisher, finishersOf, formatItem, type Finisher } from '../data/finishers'
+import { FINISHER_TYPES, drawFinisher, finisherAnimId, finishersOf, formatItem, type Finisher } from '../data/finishers'
 import { abandonSession, finishSession, setActive } from '../logic/actions'
 import { PREP_SEC, addSet, buildIntervals, completeSet, extendRest, lastTime, matchingSet, moveLater, nextPending, replaceExercise, shortenRest, patchSet, pauseTimer, removeSet, repCircuit, resumeTimer, skipStep, startRest, startTimer, statsOf, syncTimer, toSessionExercise, toTimed } from '../logic/session'
 import { buzzRestOver, tap } from '../logic/native'
@@ -239,7 +239,7 @@ export function WorkoutScreen() {
         />
       )}
 
-      {finishing && <FinisherSheet finishers={finishersOf(data)} lastByType={data.lastFinisher} onClose={() => setFinishing(false)} onDone={complete} />}
+      {finishing && <FinisherSheet anim={data.settings.anim3d !== false} finishers={finishersOf(data)} lastByType={data.lastFinisher} onClose={() => setFinishing(false)} onDone={complete} />}
     </div>
 
     {s.timer && (
@@ -626,10 +626,10 @@ function SupersetCard({
   )
 }
 
-function FinisherSheet({ finishers, lastByType, onClose, onDone }: { finishers: Finisher[]; lastByType: Partial<Record<FinisherType, string>>; onClose: () => void; onDone: (f?: Finisher) => void }) {
+function FinisherSheet({ finishers, lastByType, anim, onClose, onDone }: { finishers: Finisher[]; lastByType: Partial<Record<FinisherType, string>>; anim: boolean; onClose: () => void; onDone: (f?: Finisher) => void }) {
   const [drawn, setDrawn] = useState<Finisher>()
   const [running, setRunning] = useState(false)
-  if (drawn && running) return <FinisherRun finisher={drawn} onStop={() => setRunning(false)} onDone={() => onDone(drawn)} />
+  if (drawn && running) return <FinisherRun finisher={drawn} anim={anim} onStop={() => setRunning(false)} onDone={() => onDone(drawn)} />
   return (
     <Sheet open onClose={onClose} title={drawn ? drawn.name : 'Un finisher pour finir ?'}>
       {!drawn ? (
@@ -673,7 +673,7 @@ function FinisherSheet({ finishers, lastByType, onClose, onDone }: { finishers: 
 /** Finisher en micro-séance : un exercice à la fois, à la chaîne ; un temps tenu a son compte à rebours. */
 const cap = (s: string) => s.replace(/^./, (c) => c.toUpperCase())
 
-function FinisherRun({ finisher, onStop, onDone }: { finisher: Finisher; onStop: () => void; onDone: () => void }) {
+function FinisherRun({ finisher, anim, onStop, onDone }: { finisher: Finisher; anim: boolean; onStop: () => void; onDone: () => void }) {
   const [i, setI] = useState(0)
   const [startedAt] = useState(() => Date.now())
   const [holdEnd, setHoldEnd] = useState<number>()
@@ -704,6 +704,7 @@ function FinisherRun({ finisher, onStop, onDone }: { finisher: Finisher; onStop:
           <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatClock((now - startedAt) / 1000)}</span>
         </div>
         <div className="progress"><div style={{ width: `${(i / finisher.items.length) * 100}%` }} /></div>
+        {anim && hasAnim(finisherAnimId(it)) && <Ex3D key={i} id={finisherAnimId(it)} size="live" />}
         <div className="card accent fin-now">
           <div className="fin-value">{it.kind === 'reps' ? it.value ?? 0 : it.kind === 'temps' ? formatClock(held ? 0 : left ?? it.value ?? 0) : 'Max'}</div>
           <div className="fin-name">{cap(it.kind === 'echec' ? `${it.name} jusqu’à l’échec` : it.name)}</div>
