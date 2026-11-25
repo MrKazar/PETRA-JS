@@ -628,6 +628,8 @@ function SupersetCard({
 
 function FinisherSheet({ finishers, lastByType, onClose, onDone }: { finishers: Finisher[]; lastByType: Partial<Record<FinisherType, string>>; onClose: () => void; onDone: (f?: Finisher) => void }) {
   const [drawn, setDrawn] = useState<Finisher>()
+  const [running, setRunning] = useState(false)
+  if (drawn && running) return <FinisherRun finisher={drawn} onStop={() => setRunning(false)} onDone={() => onDone(drawn)} />
   return (
     <Sheet open onClose={onClose} title={drawn ? drawn.name : 'Un finisher pour finir ?'}>
       {!drawn ? (
@@ -646,13 +648,16 @@ function FinisherSheet({ finishers, lastByType, onClose, onDone }: { finishers: 
       ) : (
         <div className="stack">
           <div className="card accent">
-            <div className="eyebrow">Un seul tour · à fond</div>
+            <div className="eyebrow">Un seul tour · à fond · {drawn.items.length} exercices</div>
             <ol className="finisher-list">
               {drawn.items.map((it, i) => <li key={i}>{formatItem(it)}</li>)}
             </ol>
           </div>
-          <button className="btn primary block big" onClick={() => onDone(drawn)}>
-            <IconCheck /> Finisher fait, terminer
+          <button className="btn primary block big" onClick={() => setRunning(true)}>
+            <IconPlay /> Lancer le finisher
+          </button>
+          <button className="btn block" onClick={() => onDone(drawn)}>
+            <IconCheck /> Déjà fait, terminer
           </button>
           <div className="row">
             <button className="btn grow" onClick={() => setDrawn(undefined)}>Changer de type</button>
@@ -664,3 +669,61 @@ function FinisherSheet({ finishers, lastByType, onClose, onDone }: { finishers: 
   )
 }
 
+
+/** Finisher en micro-séance : un exercice à la fois, à la chaîne ; un temps tenu a son compte à rebours. */
+const cap = (s: string) => s.replace(/^./, (c) => c.toUpperCase())
+
+function FinisherRun({ finisher, onStop, onDone }: { finisher: Finisher; onStop: () => void; onDone: () => void }) {
+  const [i, setI] = useState(0)
+  const [startedAt] = useState(() => Date.now())
+  const [holdEnd, setHoldEnd] = useState<number>()
+  // Dernier exercice en temps : le chrono s'arrête à zéro, on termine soi-même.
+  const [held, setHeld] = useState(false)
+  const now = useNow(250)
+  const it = finisher.items[i]
+  const last = i === finisher.items.length - 1
+  const left = holdEnd != null ? Math.max(0, Math.ceil((holdEnd - now) / 1000)) : undefined
+  const next = () => {
+    tap()
+    setHoldEnd(undefined)
+    if (last) onDone()
+    else setI(i + 1)
+  }
+  // Fin du temps tenu : vibration, puis exercice suivant.
+  useEffect(() => {
+    if (holdEnd == null || now < holdEnd) return
+    buzzRestOver()
+    if (last) { setHoldEnd(undefined); setHeld(true) } else next()
+  }, [now, holdEnd]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <Sheet open onClose={onStop} title={finisher.name}>
+      <div className="stack fin-run">
+        <div className="row small muted between">
+          <span>Exercice {i + 1}/{finisher.items.length}</span>
+          <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatClock((now - startedAt) / 1000)}</span>
+        </div>
+        <div className="progress"><div style={{ width: `${(i / finisher.items.length) * 100}%` }} /></div>
+        <div className="card accent fin-now">
+          <div className="fin-value">{it.kind === 'reps' ? it.value ?? 0 : it.kind === 'temps' ? formatClock(held ? 0 : left ?? it.value ?? 0) : 'Max'}</div>
+          <div className="fin-name">{cap(it.kind === 'echec' ? `${it.name} jusqu’à l’échec` : it.name)}</div>
+        </div>
+        {it.kind === 'temps' && holdEnd == null && !held ? (
+          <button className="btn primary block big" onClick={() => { tap(); setHoldEnd(Date.now() + (it.value ?? 0) * 1000) }}>
+            <IconPlay /> Démarrer le chrono
+          </button>
+        ) : (
+          <button className="btn primary block big" onClick={next}>
+            <IconCheck /> {last ? 'Fini, terminer la séance' : 'Fait, suivant'}
+          </button>
+        )}
+        {!last && <div className="small muted" style={{ textAlign: 'center' }}>Ensuite : {formatItem(finisher.items[i + 1])}</div>}
+        <div className="row">
+          {i > 0 && <button className="btn grow" onClick={() => { setHoldEnd(undefined); setHeld(false); setI(i - 1) }}>Précédent</button>}
+          {it.kind === 'temps' && holdEnd != null && <button className="btn grow" onClick={next}><IconSkip /> Passer</button>}
+          <button className="btn grow" onClick={onStop}>Revoir la liste</button>
+        </div>
+      </div>
+    </Sheet>
+  )
+}
