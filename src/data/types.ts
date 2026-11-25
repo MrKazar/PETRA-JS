@@ -194,8 +194,9 @@ export interface Settings {
   achievements?: boolean
   /** Animations 3D des exercices pendant la séance (oui par défaut, 1.4.0). */
   anim3d?: boolean
-  /** Mon matériel (identifiants de src/data/equipment.ts). Absent = pas réglé : aucun filtre (1.4.1). */
-  equipment?: string[]
+  /** Mon matériel (identifiants de src/data/equipment.ts). Absent ou null = pas de filtre (1.4.1) ; null
+   * (« Ne plus filtrer ») passe par la synchro, contrairement à undefined. */
+  equipment?: string[] | null
   /** Compteurs de quelques succès (secrets, partages…), mis en commun entre téléphone et PC. */
   feats?: Feats
 }

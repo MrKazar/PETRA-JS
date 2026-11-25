@@ -11,7 +11,7 @@ export function doableCount(equipment: readonly string[]): number {
   return CATALOG.filter((e) => canDo(e.id, owned)).length
 }
 
-export function equipmentSummary(equipment: readonly string[] | undefined): string {
+export function equipmentSummary(equipment: readonly string[] | null | undefined): string {
   if (!equipment) return 'Pas réglé : tous les exercices sont proposés'
   return `${doableCount(equipment)} exercices faisables sur ${CATALOG.length}`
 }
@@ -43,7 +43,7 @@ export function EquipmentSection() {
           ))}
         </div>
         <div className="small faint">Un préréglage remplace la liste ; tu peux ensuite cocher ou décocher chaque élément.</div>
-        {equipment && <button className="btn block" onClick={() => saveSettings({ equipment: undefined })}>Ne plus filtrer par matériel</button>}
+        {equipment && <button className="btn block" onClick={() => saveSettings({ equipment: null })}>Ne plus filtrer par matériel</button>}
       </div>
 
       {CATEGORIES.map((cat) => {
