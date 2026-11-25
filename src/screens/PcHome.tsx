@@ -8,7 +8,7 @@ import { estimateDuration, formatEstimate, personalRecords, statsOf } from '../l
 import { addDays, dateKey, formatDay, formatDuration, parseKey, uid, WEEKDAYS_SHORT, weekday } from '../logic/util'
 import { LEVELS, REGIONS, doneWork, levelOf, regionLabel, scaleWork, type RegionId } from '../logic/body'
 import { project, weeklyTonnage } from '../logic/stats'
-import { BodyFigure } from '../ui/BodyMap'
+import { Body3D } from '../ui/Body3D'
 import { WeekBars } from '../ui/Charts'
 import { Header, Progress } from '../ui/kit'
 import { IconCheck, IconChevron, IconDumbbell, IconHistory, IconPlay, IconPlus } from '../ui/icons'
@@ -337,9 +337,8 @@ function BodyCard({ data, now }: { data: AppData; now: number }) {
         <h3 className="grow">Corps · 4 dernières semaines</h3>
         <button className="btn ghost sm" onClick={open}>Détail <IconChevron style={{ width: 16 }} /></button>
       </div>
-      <div className="bm-figures pc-body">
-        <BodyFigure side="front" levelOf={lv} onSelect={open} labelOf={label} />
-        <BodyFigure side="back" levelOf={lv} onSelect={open} labelOf={label} />
+      <div className="bm-figures pc-body is3d">
+        <Body3D compact levelOf={lv} onSelect={open} labelOf={label} />
         <div className="bm-legend">
           {LEVELS.map((l) => (
             <span key={l.level}><i className={`bm-swatch lv${l.level}`} />{l.label}</span>

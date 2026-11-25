@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { AppData, Program } from '../data/types'
 import { REGIONS, SESSION_LEVELS, levelOf, programWork, regionLabel, sessionLevelOf, timesPerWeek, type RegionId } from '../logic/body'
-import { BodyFigure } from './BodyMap'
+import { Body3D } from './Body3D'
 
 const fmt = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',')
 
@@ -21,9 +21,8 @@ export function ProgramBody({ program, data }: { program: Program; data: Pick<Ap
       <div className="small muted">
         Séries de travail de cette séance{times > 0 ? `, prévue ${fmt(times)} fois par semaine au planning` : ', pas encore au planning'}. Se met à jour à chaque modification.
       </div>
-      <div className="bm-figures pb-figures">
-        <BodyFigure side="front" levelOf={lv} selected={selected} onSelect={(id) => setSelected(id === selected ? undefined : id)} labelOf={label} />
-        <BodyFigure side="back" levelOf={lv} selected={selected} onSelect={(id) => setSelected(id === selected ? undefined : id)} labelOf={label} />
+      <div className="bm-figures pb-figures is3d">
+        <Body3D compact levelOf={lv} selected={selected} onSelect={(id) => setSelected(id === selected ? undefined : id)} labelOf={label} />
         <div className="bm-legend">
           {SESSION_LEVELS.map((l) => (
             <span key={l.level}>
