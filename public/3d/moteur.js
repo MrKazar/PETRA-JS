@@ -14796,17 +14796,22 @@ return fn
   // colors : id du muscle → couleur (absent : tissu neutre). onPick(id) au clic sur un muscle. period : secondes par tour.
   const bodies = new Set()
   function standing(o) {
+    if (o.scap != null) o.pose.scapL = o.pose.scapR = { up: 0, fwd: o.scap }
     const F = o.frames(o.pose)
     for (const sx of [1, -1]) {
       const k = sx > 0 ? 'L' : 'R'
       // bras un peu écartés du corps (on voit l'intérieur des bras et les flancs), mains ouvertes, paumes vers les cuisses
       Object.assign(o.pose, {
         ['hand' + k]: F['shoulder' + k].clone().add(V(sx * 0.16, -0.5, 0.02)), ['handMode' + k]: 'flat',
-        ['fingers' + k]: V(sx * 0.25, -1, 0).normalize(), ['palm' + k]: V(-sx, 0.2, 0).normalize(), ['thumb' + k]: V(0, 0, 1), ['elbow' + k]: V(sx * 0.4, 0, -1),
+        ...(o.palmsFwd
+          ? { ['fingers' + k]: V(sx * 0.2, -1, 0).normalize(), ['palm' + k]: V(-sx * 0.25, 0, 1).normalize(), ['thumb' + k]: V(sx, 0, 0), ['elbow' + k]: V(sx * 0.3, 0, -1) }
+          : { ['fingers' + k]: V(sx * 0.25, -1, 0).normalize(), ['palm' + k]: V(-sx, 0.2, 0).normalize(), ['thumb' + k]: V(0, 0, 1), ['elbow' + k]: V(sx * 0.4, 0, -1) }),
       })
     }
     return o.pose
   }
+  const PALMS_FWD = true // paumes vers l'avant (position anatomique) : bras en rotation externe, épaules ouvertes
+  const SCAP = -0.03 // omoplates : < 0 = épaules ramenées en arrière
   function body(el, opts = {}) {
     const scene = new T.Scene()
     scene.add(new T.HemisphereLight(0xf2eee4, 0x2a2238, 0.85))
@@ -14821,7 +14826,7 @@ return fn
     const rig = new T.Group(); scene.add(rig)
     const pose = __mannequin0(rig, { primary: [], secondary: [] })
     const base = { P: V(0, 0.94, 0), u: V(0, 1, 0), f: V(0, 0, 1), ankleL: V(0.12, 0.07, 0), ankleR: V(-0.12, 0.07, 0), toeL: V(0.14, 0.03, 0.15), toeR: V(-0.14, 0.03, 0.15), kneeL: V(0, 0, 1), kneeR: V(0, 0, 1) }
-    pose(standing({ frames: pose.frames, pose: base }))
+    pose(standing({ frames: pose.frames, pose: base, scap: opts.scap ?? SCAP, palmsFwd: opts.palmsFwd ?? PALMS_FWD }))
     const muscles = []
     rig.traverse((m) => { if (m.isMesh && m.userData.muscle) { muscles.push(m); m.userData.tissue = m.material } })
     const mats = new Map()
@@ -14841,7 +14846,7 @@ return fn
     paint()
 
     const cv = document.createElement('canvas'); el.prepend(cv)
-    const t = { el, cv, ctx: cv.getContext('2d'), cam: new T.OrthographicCamera(-1, 1, 1, -1, 0.1, 20), yaw: 0.35, on: false, ready: false, hold: 0 }
+    const t = { el, cv, ctx: cv.getContext('2d'), cam: new T.OrthographicCamera(-1, 1, 1, -1, 0.1, 20), yaw: opts.yaw ?? 0.35, on: false, ready: false, hold: 0 }
     const period = opts.period ?? 28
     t.draw = (dt) => {
       const dpr = DPR()

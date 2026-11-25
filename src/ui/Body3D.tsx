@@ -35,7 +35,7 @@ export function Body3D({
 
   const colors = useMemo(() => {
     const out: Record<string, string> = {}
-    for (const l of LEVELS) if (l.level > 0) out[`lv${l.level}`] = BODY_THEME.levels[l.level]
+    for (const l of LEVELS) if (l.level > 0) out[`lv${l.level}`] = BODY_THEME.levels3d[l.level]
     return out
   }, [])
   // Couleur de chaque muscle d'après son niveau (recalculée quand les données changent).
