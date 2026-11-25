@@ -136,3 +136,29 @@ describe('synchro PC : QR code d’association', () => {
     expect(() => decodePairing('PETRA-PC:@@@')).toThrow()
   })
 })
+
+describe('synchro PC : compteurs des succès (1.4.0.5)', () => {
+  it('additionne les compteurs (max) et les thèmes essayés, sans regarder qui est le plus récent', () => {
+    const phone = emptyData()
+    phone.settings.feats = { logoTaps: 7, shares: 2, themes: ['spartiate', 'lambda'] }
+    const pcData = emptyData()
+    pcData.settings.feats = { themes: ['neon'] }
+    const onPc = merge(pcData, toWire(phone), 100, { preferRemote: true })
+    expect(onPc.settings.feats).toEqual({ logoTaps: 7, shares: 2, themes: ['neon', 'spartiate', 'lambda'] })
+    const back = merge(phone, toWire(onPc), 100)
+    expect(back.settings.feats?.themes?.sort()).toEqual(['lambda', 'neon', 'spartiate'])
+  })
+
+  it('le PC sait que le téléphone est associé (succès « Base arrière »)', () => {
+    const phone = emptyData()
+    phone.settings.pc = { hosts: ['1.2.3.4'], port: 47123, token: 't', name: 'PC' } as AppData['settings']['pc']
+    const wire = toWire(phone)
+    expect(wire.settings.pc).toBeUndefined()
+    expect(wire.settings.feats?.paired).toBe(1)
+  })
+
+  it('date un changement des compteurs pour que l’autre appareil le reçoive', () => {
+    const d = edit(emptyData(), (x) => ({ ...x, settings: { ...x.settings, feats: { logoTaps: 7 } } }), 42)
+    expect(d.sync?.stamps['set:feats']).toBe(42)
+  })
+})

@@ -3,6 +3,7 @@ import { emptyData } from '../../data/store'
 import type { AppData, Session, SessionSet } from '../../data/types'
 import { DEFS, evaluate, gainsOf, levelCost, levelFor, metalOf, moonAge, titleOf, type Achievement } from '../achievements'
 import { finalize, syncTimer, startTimer } from '../session'
+import { merge, toWire } from '../sync'
 
 const DAY = 86400000
 const T0 = new Date(2026, 0, 5, 18).getTime() // lundi 5 janvier 2026, 18 h
@@ -104,5 +105,18 @@ describe('succès', () => {
     const timed = syncTimer(startTimer(s, 0), 10_000 + 20_000 + 1)
     expect(timed.exercises[0].sets[0]).toMatchObject({ done: true, timer: true })
     expect(finalize(timed, 60_000).planned).toBe(2)
+  })
+})
+
+describe('mêmes chiffres sur le téléphone et le PC (1.4.0.5)', () => {
+  it('après synchro, le PC trouve la même XP, le même niveau et les mêmes succès', () => {
+    const phone = emptyData()
+    phone.settings.pc = { hosts: ['1.2.3.4'], port: 47123, token: 't', name: 'PC' } as typeof phone.settings.pc
+    phone.settings.feats = { logoTaps: 7, shares: 1 }
+    const pc = merge(emptyData(), toWire(phone), 1, { preferRemote: true })
+    const a = evaluate(phone)
+    const b = evaluate(pc)
+    expect(b.xp).toBe(a.xp)
+    expect(b.list.filter((x) => x.reached).length).toBe(a.list.filter((x) => x.reached).length)
   })
 })

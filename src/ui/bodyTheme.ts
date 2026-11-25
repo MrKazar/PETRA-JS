@@ -31,6 +31,11 @@ export const BODY_THEME = {
   shade: 0.42,
   /** Couleur par niveau : 0 pas travaillé, 1 négligé, 2 un peu, 3 bien, 4 beaucoup. */
   levels: ['#3a235f', '#f2bd4b', '#a5cf6a', '#5c9b39', '#2f7194'],
+  /**
+   * Mannequin 3D (PCTRA) : échelle « chaleur » (2026-11-25, demandée par l'utilisateur) : jaune (négligé),
+   * orange (un peu), rouge des animations (#d8392a, bien), rouge sombre (beaucoup). Niveau 0 : beige du mannequin.
+   */
+  levels3d: ['#d4cdbd', '#f2c84b', '#ee8a2f', '#d8392a', '#8e1a1a'],
 } as const
 
 /** Variables CSS du thème, à poser sur l'écran qui affiche le schéma et sa légende. */
@@ -48,5 +53,6 @@ export function bodyThemeVars(t: typeof BODY_THEME = BODY_THEME): CSSProperties 
     '--bm-selected': t.selected,
   }
   t.levels.forEach((c, i) => (v[`--bm-lv${i}`] = c))
+  t.levels3d.forEach((c, i) => (v[`--bm3d-lv${i}`] = c))
   return v as CSSProperties
 }

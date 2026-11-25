@@ -1,5 +1,5 @@
   // --- Moteur de rendu de l'appli : un seul contexte WebGL, recopié dans le canevas de chaque vignette ---
-  // API : attach(el, id, { big, onPhase, onReady }) → { setView(vue), destroy() } ; has(id) ;
+  // API : attach(el, id, { big, onPhase, onReady }) → { setView(vue), destroy() } ; has(id) ; body(el, opts) (mannequin du schéma du corps, plus bas) ;
   // warm(ids, onProgress) prépare les scènes à l'avance (géométrie envoyée, shaders compilés) pour qu'elles apparaissent sans attendre.
   const BYID = {}; for (const d of REGISTRY) BYID[d.id] = d
   const VIEWS = { iso: Math.PI / 4, side: Math.PI / 2, front: 0 }
@@ -91,17 +91,163 @@
     }
   }
 
+
+  // --- Mannequin du schéma du corps (PCTRA) : debout, muscles colorés par niveau, tourne lentement sur lui-même ---
+  // API : body(el, { colors, selected, onPick, period }) → { set({ colors, selected }), destroy() }
+  // colors : id du muscle → 'primary' / 'secondary' (les deux rouges des animations, mêmes matériaux) ou une couleur ; absent : tissu neutre. onPick(id) au clic sur un muscle. period : secondes par tour.
+  const bodies = new Set()
+  function standing(o) {
+    if (o.scap != null) o.pose.scapL = o.pose.scapR = { up: 0, fwd: o.scap }
+    const F = o.frames(o.pose)
+    for (const sx of [1, -1]) {
+      const k = sx > 0 ? 'L' : 'R'
+      // bras un peu écartés du corps (on voit l'intérieur des bras et les flancs), mains ouvertes, paumes vers les cuisses
+      Object.assign(o.pose, {
+        ['hand' + k]: F['shoulder' + k].clone().add(V(sx * 0.16, -0.5, 0.02)), ['handMode' + k]: 'flat',
+        ...(o.palmsFwd
+          ? { ['fingers' + k]: V(sx * 0.2, -1, 0).normalize(), ['palm' + k]: V(-sx * 0.25, 0, 1).normalize(), ['thumb' + k]: V(sx, 0, 0), ['elbow' + k]: V(sx * 0.3, 0, -1) }
+          : { ['fingers' + k]: V(sx * 0.25, -1, 0).normalize(), ['palm' + k]: V(-sx, 0.2, 0).normalize(), ['thumb' + k]: V(0, 0, 1), ['elbow' + k]: V(sx * 0.4, 0, -1) }),
+      })
+    }
+    return o.pose
+  }
+  const PALMS_FWD = true // paumes vers l'avant (position anatomique) : bras en rotation externe, épaules ouvertes
+  const SCAP = -0.03 // omoplates : < 0 = épaules ramenées en arrière
+
+  // Main au repos (mannequin du schéma du corps) : mêmes volumes que la main à plat du noyau, doigts un peu
+  // repliés vers la paume en cascade (index le moins, auriculaire le plus), pouce un peu ramené devant.
+  // Repère de la main : x = travers (pouce côté +x), y = vers les doigts, z = normale de la paume.
+  function relaxedHand(h) {
+    const g = new T.Group(); h.add(g)
+    const skin = mat({ color: COL.skin }), facet = mat({ color: COL.skin, flatShading: true }), UPV = V(0, 1, 0)
+    const add = (geo, m) => { const o = new T.Mesh(geo, m); o.castShadow = true; o.receiveShadow = true; g.add(o); return o }
+    const blob = (sx, sy, sz, x, y, z) => { const b = add(SPHERE, skin); b.scale.set(sx, sy, sz); b.position.set(x, y, z) }
+    const seg = (p0, p1, r) => { const d = p1.clone().sub(p0), m = add(new T.CylinderGeometry(r * 0.92, r, d.length(), 6), facet); m.position.copy(p0).add(p1).multiplyScalar(0.5); m.quaternion.setFromUnitVectors(UPV, d.normalize()) }
+    const joint = (p, r) => add(new T.IcosahedronGeometry(r, 0), facet).position.copy(p)
+    const chain = (pts, r) => { joint(pts[0], r * 1.12); for (let i = 1; i < pts.length; i++) { const ri = r * (1 - 0.1 * (i - 1)); seg(pts[i - 1], pts[i], ri); joint(pts[i], ri * (i === pts.length - 1 ? 0.95 : 1.08)) } }
+    blob(0.03, 0.026, 0.022, 0, 0.004, -0.002)
+    blob(0.042, 0.046, 0.017, 0, 0.046, 0.006)
+    blob(0.017, 0.026, 0.015, 0.027, 0.022, 0.009)
+    const fingers = [[0.026, 0.0086, 1, 0], [0.0088, 0.009, 1.08, 1], [-0.0085, 0.0086, 1.02, 2], [-0.025, 0.0074, 0.85, 3]]
+    for (const [x, r, k, i] of fingers) {
+      const bends = [0.32, 0.72, 0.5].map((b) => b * (1 + 0.18 * i)), lens = [0.044, 0.028, 0.022].map((l) => l * k)
+      let p = V(x * 0.94, 0.084, 0.008), a = 0
+      const pts = [p.clone()]
+      for (let s = 0; s < 3; s++) { a += bends[s]; p = p.clone().add(V(-x * 0.03, Math.cos(a) * lens[s], Math.sin(a) * lens[s])); pts.push(p) }
+      chain(pts, r)
+    }
+    chain([V(0.03, 0.028, 0.014), V(0.044, 0.056, 0.03), V(0.04, 0.078, 0.046)], 0.0092) // pouce le long de l'index
+    return g
+  }
+  function body(el, opts = {}) {
+    const scene = new T.Scene()
+    scene.add(new T.HemisphereLight(0xf2eee4, 0x2a2238, 0.85))
+    const sun = new T.DirectionalLight(0xfff3ea, 0.95)
+    sun.position.set(1.2, 3.4, 2.2); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024)
+    Object.assign(sun.shadow.camera, { left: -1.2, right: 1.2, top: 2.2, bottom: -0.2, near: 0.5, far: 8 })
+    scene.add(sun)
+    const back = new T.DirectionalLight(0xc7b6ff, 0.35); back.position.set(-1.5, 1.8, -2.5); scene.add(back)
+    // ombre au sol seulement (pas de sol visible)
+    const disc = new T.Mesh(new T.CircleGeometry(0.55, 48).rotateX(-Math.PI / 2), new T.ShadowMaterial({ opacity: 0.35 }))
+    disc.receiveShadow = true; scene.add(disc)
+    const rig = new T.Group(); scene.add(rig)
+    const pose = __mannequin0(rig, { primary: [], secondary: [] })
+    const base = { P: V(0, 0.94, 0), u: V(0, 1, 0), f: V(0, 0, 1), ankleL: V(0.12, 0.07, 0), ankleR: V(-0.12, 0.07, 0), toeL: V(0.14, 0.03, 0.15), toeR: V(-0.14, 0.03, 0.15), kneeL: V(0, 0, 1), kneeR: V(0, 0, 1) }
+    pose(standing({ frames: pose.frames, pose: base, scap: opts.scap ?? SCAP, palmsFwd: opts.palmsFwd ?? PALMS_FWD }))
+    // mains au repos à la place des mains à plat (doigts tendus)
+    rig.traverse((o) => { if (o.userData.flat && o.userData.grip) { o.userData.flat.visible = false; o.userData.grip.visible = false; relaxedHand(o) } })
+    const muscles = []
+    rig.traverse((m) => { if (m.isMesh && m.userData.muscle) { muscles.push(m); m.userData.tissue = m.material } })
+    const mats = new Map()
+    const ROUGH = { primary: 0.5, secondary: 0.52 } // comme M2.primary / M2.secondary du mannequin
+    const matFor = (c, sel) => {
+      const key = c + (sel ? '*' : '')
+      let m = mats.get(key)
+      if (!m) { m = mat({ color: COL[c] ?? c, roughness: ROUGH[c] ?? 0.5, vertexColors: true, ...(sel ? { emissive: srgb('#ffffff'), emissiveIntensity: 0.28 } : {}) }); mats.set(key, m) }
+      return m
+    }
+    let colors = opts.colors ?? {}, selected = opts.selected
+    const paint = () => {
+      for (const m of muscles) {
+        const id = m.userData.muscle, c = colors[id], sel = id === selected
+        m.material = c ? matFor(c, sel) : sel ? matFor(COL.tissue, true) : m.userData.tissue
+      }
+    }
+    paint()
+
+    const cv = document.createElement('canvas'); el.prepend(cv)
+    const t = { el, cv, ctx: cv.getContext('2d'), cam: new T.OrthographicCamera(-1, 1, 1, -1, 0.1, 20), yaw: opts.yaw ?? 0.35, on: false, ready: false, hold: 0 }
+    const period = opts.period ?? 28
+    t.draw = (dt) => {
+      const dpr = DPR()
+      const w = Math.round(el.clientWidth * dpr), h = Math.round(el.clientHeight * dpr)
+      if (!w || !h) return
+      const r = renderer()
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h }
+      if (w > RW || h > RH) { RW = Math.max(RW, w); RH = Math.max(RH, h); r.setSize(RW, RH, false) }
+      if (!reduce && drag == null) { if (t.hold > 0) t.hold -= dt; else t.yaw += (dt / period) * Math.PI * 2 }
+      rig.rotation.y = t.yaw
+      const a = w / h, half = (opts.half ?? 1.02) * (a < 0.56 ? 0.56 / a : 1)
+      Object.assign(t.cam, { left: -half * a, right: half * a, top: half, bottom: -half })
+      t.cam.updateProjectionMatrix()
+      const tg = V(opts.tx ?? 0, opts.ty ?? 0.93, 0), el2 = 0.12
+      t.cam.position.set(0, tg.y + 6 * Math.sin(el2), 6 * Math.cos(el2)); t.cam.lookAt(tg)
+      r.setViewport(0, 0, w, h); r.setScissor(0, 0, w, h); r.setScissorTest(true)
+      r.clear(); r.render(scene, t.cam)
+      t.ctx.clearRect(0, 0, w, h)
+      t.ctx.drawImage(r.domElement, 0, RH - h, w, h, 0, 0, w, h)
+      if (!t.ready) { t.ready = true; opts.onReady?.() }
+    }
+    // clic sur un muscle : rayon depuis la caméra
+    const ray = new T.Raycaster()
+    const pick = (e) => {
+      const b = el.getBoundingClientRect()
+      ray.setFromCamera(new T.Vector2(((e.clientX - b.left) / b.width) * 2 - 1, -((e.clientY - b.top) / b.height) * 2 + 1), t.cam)
+      const hit = ray.intersectObjects(muscles, false)[0]
+      return hit?.object.userData.muscle
+    }
+    let drag = null, moved = 0
+    const down = (e) => { drag = e.clientX; moved = 0; el.setPointerCapture?.(e.pointerId) }
+    const move = (e) => {
+      if (drag != null) { t.yaw += (e.clientX - drag) * 0.012; moved += Math.abs(e.clientX - drag); drag = e.clientX; kick(); return }
+      const id = pick(e); el.style.cursor = id ? 'pointer' : 'grab'; opts.onHover?.(id)
+    }
+    const up = (e) => {
+      if (drag == null) return
+      drag = null; t.hold = 2.5 // reprend sa rotation 2,5 s après qu'on l'a lâché
+      if (moved < 4) { const id = pick(e); if (id) opts.onPick?.(id) }
+    }
+    const leave = () => opts.onHover?.(undefined)
+    el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('pointerleave', leave)
+    const io = new IntersectionObserver((es) => { t.on = es[es.length - 1].isIntersecting; if (t.on) kick() }, { rootMargin: '80px' })
+    io.observe(el)
+    bodies.add(t); kick()
+    return {
+      set: (o) => { if (o.colors) colors = o.colors; if ('selected' in o) selected = o.selected; paint(); kick() },
+      destroy: () => {
+        bodies.delete(t); io.disconnect(); cv.remove()
+        el.removeEventListener('pointerdown', down); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); el.removeEventListener('pointerleave', leave)
+        scene.traverse((o) => { if (o.geometry) o.geometry.dispose() })
+      },
+    }
+  }
+
   let raf = 0, last = 0, acc = 0, n = 0
   function frame(now) {
     raf = 0
-    if (!tiles.size) return
+    if (!tiles.size && !bodies.size) return
     n++
-    acc += Math.min(0.05, (now - (last || now)) / 1000) / PERIOD; last = now
+    const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now
+    acc += dt / PERIOD
     const time = reduce ? 0.5 : acc
     for (const t of tiles) {
       if (!t.on || document.hidden) continue
       if (!t.big && n % 2) continue // vignettes à mi-cadence
       try { draw(t, time % 1) } catch (e) { console.warn('3D', t.d.id, e) }
+    }
+    for (const b of bodies) {
+      if (!b.on || document.hidden) continue
+      try { b.draw(dt) } catch (e) { console.warn('3D corps', e) }
     }
     raf = requestAnimationFrame(frame)
   }
@@ -130,4 +276,4 @@
     }
   }
 
-  return { attach, warm, has: (id) => !!BYID[id] }
+  return { attach, warm, body, has: (id) => !!BYID[id] }

@@ -196,7 +196,7 @@ export interface Settings {
   anim3d?: boolean
   /** Mon matériel (identifiants de src/data/equipment.ts). Absent = pas réglé : aucun filtre (1.4.1). */
   equipment?: string[]
-  /** Compteurs de quelques succès secrets, propres à cet appareil. */
+  /** Compteurs de quelques succès (secrets, partages…), mis en commun entre téléphone et PC. */
   feats?: Feats
 }
 
@@ -207,6 +207,8 @@ export interface Feats {
   themes?: string[]
   /** Partages par QR code. */
   shares?: number
+  /** 1 dès qu'un appareil a été associé à PCTRA (pour que le PC compte aussi « Base arrière »). */
+  paired?: number
 }
 
 /** Appli PC associée en scannant son QR code. */
