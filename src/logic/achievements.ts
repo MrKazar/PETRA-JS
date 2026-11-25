@@ -500,7 +500,7 @@ export const DEFS: Def[] = [
   D('moments', 'calendar', 'week_end', 'Week-end', 'Séances le samedi ou le dimanche', [10, 50], (f) => f.weekend),
   D('moments', 'calendar', 'toutes_saisons', 'Toutes saisons', 'Au moins une séance dans chacun des 12 mois', [12], (f) => f.monthsOfYear, (v) => `${v} mois`),
   D('outils', 'shield', 'discipline', 'Discipline', 'Jours où toutes les tâches du jour sont faites', [7, 30, 100, 365], (f) => f.routineDays),
-  D('outils', 'gear', 'base_arriere', 'Base arrière', 'Appli PC PCTRA associée', [1], (_f, d) => (d.settings.pc ? 1 : 0)),
+  D('outils', 'gear', 'base_arriere', 'Base arrière', 'Appli PC PCTRA associée', [1], (_f, d) => (d.settings.pc || d.settings.feats?.paired ? 1 : 0)),
   D('outils', 'gear', 'maitre_oeuvre', 'Maître d’œuvre', 'Programmes créés', [1, 5], (_f, d) => d.programs.length),
   D('outils', 'gear', 'transmission', 'Transmission', 'Partager un programme ou un finisher par QR code', [1], (_f, d) => Math.min(1, d.settings.feats?.shares ?? 0)),
 
