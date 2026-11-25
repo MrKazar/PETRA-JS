@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { XpChart } from '../ui/XpChart'
+import { achievementsOn } from './Achievements'
 import { update, useData } from '../data/store'
 import { useNav } from '../nav'
 import { ZONES_FINE, type FineId } from '../data/anatomy'
@@ -9,9 +11,10 @@ import { addDays, dateKey, formatDuration, parseKey, uid } from '../logic/util'
 import { Empty, Header, NumInput, confirmAction, toast } from '../ui/kit'
 import { TimeLine, WeekBars } from '../ui/Charts'
 
-type View = 'tonnage' | 'e1rm' | 'compare' | 'goals'
+type View = 'xp' | 'tonnage' | 'e1rm' | 'compare' | 'goals'
 
 const VIEWS: { view: View; label: string }[] = [
+  { view: 'xp', label: 'Expérience' },
   { view: 'tonnage', label: 'Tonnage' },
   { view: 'e1rm', label: '1RM estimé' },
   { view: 'compare', label: 'Comparer' },
@@ -35,7 +38,9 @@ function Delta({ value, suffix = '%', digits = 0 }: { value?: number; suffix?: s
 /** PCTRA : graphiques de progression, comparaisons et objectifs. */
 export function StatsScreen() {
   const data = useData()
-  const [view, setView] = useState<View>('tonnage')
+  const xpOn = achievementsOn(data)
+  const [picked, setView] = useState<View>(xpOn ? 'xp' : 'tonnage')
+  const view = picked === 'xp' && !xpOn ? 'tonnage' : picked
   const [lift, setLift] = useState<string>()
   const options = useMemo(() => liftOptions(data.sessions), [data.sessions])
   const current = lift && options.some((o) => o.key === lift) ? lift : options[0]?.key
@@ -49,13 +54,15 @@ export function StatsScreen() {
       <div className="screen-inner">
         <Header title="Graphiques" sub="Ta progression semaine après semaine, et où tu vas" />
         <div className="seg" role="tablist">
-          {VIEWS.map((v) => (
+          {VIEWS.filter((v) => v.view !== 'xp' || xpOn).map((v) => (
             <button key={v.view} role="tab" aria-selected={view === v.view} className={view === v.view ? 'on' : ''} onClick={() => setView(v.view)}>
               {v.label}
             </button>
           ))}
         </div>
-        {!data.sessions.length ? (
+        {view === 'xp' ? (
+          <XpChart />
+        ) : !data.sessions.length ? (
           <Empty title="Pas encore de séance">Les graphiques se remplissent avec les séances faites sur le téléphone, une fois synchronisées.</Empty>
         ) : view === 'tonnage' ? (
           <TonnageView sessions={data.sessions} />
