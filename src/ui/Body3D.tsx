@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Level, RegionId } from '../logic/body'
 import { MUSCLES_FINE } from '../data/anatomy'
+import { BODY_THEME } from './bodyTheme'
+import { LEVELS, SESSION_LEVELS } from '../logic/body'
 import { BodyFigure } from './BodyMap'
 import { loadEngine, type BodyHandle } from './engine3d'
 
@@ -36,7 +38,7 @@ export function Body3D({
     const out: Record<string, string> = {}
     for (const id of MUSCLE_IDS) {
       const lv = levelOf(id)
-      if (lv > 0) out[id] = lv >= 3 ? 'primary' : 'secondary' // les deux rouges des animations
+      if (lv > 0) out[id] = BODY_THEME.levels3d[lv] // échelle chaleur : jaune → orange → rouge → rouge sombre
     }
     return out
   }, [levelOf])
@@ -80,20 +82,14 @@ export function Body3D({
   )
 }
 
-/**
- * Légende du mannequin : les niveaux partagent les deux rouges des animations, donc on les regroupe par couleur.
- * session : échelle d'une séance (page programme), sinon séries par semaine.
- */
+/** Légende du mannequin (5 niveaux). session : échelle d'une séance (page programme), sinon séries par semaine. */
 export function Body3DLegend({ session = false, ranges = true }: { session?: boolean; ranges?: boolean }) {
-  const rows = session
-    ? [['lv0', 'Pas travaillé', '0'], ['lv1', 'Léger ou moyen', 'moins de 4'], ['lv3', 'Bien ou beaucoup', '4 et plus']]
-    : [['lv0', 'Pas travaillé', '0'], ['lv1', 'Négligé ou un peu', 'moins de 10'], ['lv3', 'Bien ou beaucoup', '10 et plus']]
   return (
     <div className="bm-legend">
-      {rows.map(([cls, label, range]) => (
-        <span key={cls}>
-          <i className={`bm-swatch ${cls}`} />
-          {label}{ranges && <span className="faint"> ({range})</span>}
+      {(session ? SESSION_LEVELS : LEVELS).map((l) => (
+        <span key={l.level}>
+          <i className={`bm-swatch lv${l.level}`} />
+          {l.label}{ranges && <span className="faint"> ({l.range})</span>}
         </span>
       ))}
     </div>

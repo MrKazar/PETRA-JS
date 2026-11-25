@@ -32,10 +32,10 @@ export const BODY_THEME = {
   /** Couleur par niveau : 0 pas travaillé, 1 négligé, 2 un peu, 3 bien, 4 beaucoup. */
   levels: ['#3a235f', '#f2bd4b', '#a5cf6a', '#5c9b39', '#2f7194'],
   /**
-   * Mannequin 3D (PCTRA) : exactement les deux rouges des animations d'exercices. Rouge pâle (secondaire, #ee957f)
-   * pour les niveaux 1-2, rouge (principal, #d8392a) pour 3-4. Niveau 0 : teinte beige du mannequin.
+   * Mannequin 3D (PCTRA) : échelle « chaleur » (2026-11-25, demandée par l'utilisateur) : jaune (négligé),
+   * orange (un peu), rouge des animations (#d8392a, bien), rouge sombre (beaucoup). Niveau 0 : beige du mannequin.
    */
-  levels3d: ['#d4cdbd', '#ee957f', '#ee957f', '#d8392a', '#d8392a'],
+  levels3d: ['#d4cdbd', '#f2c84b', '#ee8a2f', '#d8392a', '#8e1a1a'],
 } as const
 
 /** Variables CSS du thème, à poser sur l'écran qui affiche le schéma et sa légende. */
