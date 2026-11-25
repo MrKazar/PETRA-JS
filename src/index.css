@@ -990,6 +990,12 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 .ex3d-views button { border: 0; background: transparent; color: var(--muted); font: 600 12px var(--font-body); padding: 5px 11px; border-radius: 999px; cursor: pointer; }
 .ex3d-views button[aria-pressed='true'] { background: var(--olive); color: var(--on-primary); }
 .ex3d.live .ex3d-views { left: auto; right: 9px; transform: none; }
+.ex3d-work { display: grid; gap: 3px; }
+.ex3d-work p { margin: 0; font-size: 14px; line-height: 1.4; }
+.ex3d-work p::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #d8392a; margin-right: 8px; vertical-align: 1px; }
+.ex3d-work p.sec { color: var(--muted); }
+.ex3d-work p.sec::before { background: #ee957f; }
+.app.desktop .ex3d.hero { height: min(46vh, 420px); }
 .ex3d-muscles { display: flex; flex-wrap: wrap; gap: 6px; }
 .ex3d-muscles .m { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
 .ex3d-muscles .m i { width: 9px; height: 9px; border-radius: 50%; background: #d8392a; }

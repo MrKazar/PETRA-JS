@@ -1,4 +1,4 @@
-import { Ex3D } from '../ui/Ex3D'
+import { Ex3D, Ex3DInfo } from '../ui/Ex3D'
 import { ScreenLoader } from '../ui/Splash'
 import { isDesktop } from '../logic/desktop'
 import { ProgramBody } from '../ui/ProgramBody'
@@ -8,7 +8,7 @@ import { useNav } from '../nav'
 import type { Phase, PlannedSet, Program, ProgramExercise } from '../data/types'
 import { PHASE_LABEL } from '../data/types'
 import { beginSession, deleteProgram, saveProgram } from '../logic/actions'
-import { cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, loadFor, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
+import { CATALOG, cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, loadFor, pdcPlanOf, pdcSets, withWorkLoad, type CardioPlan, type PdcPlan } from '../data/catalog'
 import { formatDuration, uid } from '../logic/util'
 import { describePart, estimateDuration, formatEstimate } from '../logic/session'
 import { SupersetEditor } from '../ui/SupersetEditor'
@@ -284,9 +284,14 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
       sets: e.sets.map((s) => (timed ? { phase: s.phase, reps: 10 } : { phase: s.phase, durationSec: 60 })),
     })
 
+  // Exercice du catalogue : son animation 3D en grand et les muscles travaillés, comme dans le catalogue.
+  const animId = e.catalogId ?? CATALOG.find((c) => c.nom.toLowerCase() === e.name.trim().toLowerCase())?.id
+
   return (
     <Sheet open onClose={onClose} title={e.name}>
       <div className="stack">
+        <Ex3D id={animId} size="hero" views />
+        <Ex3DInfo id={animId} />
         <label className="field">
           <span>Nom</span>
           <input className="input" value={e.name} onChange={(ev) => onChange({ ...e, name: ev.target.value })} />
