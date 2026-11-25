@@ -45,7 +45,7 @@ const ALL_TABS: { tab: Tab; label: string; Icon: typeof IconToday; pc?: boolean 
   { tab: 'settings', label: 'Paramètres', Icon: IconSettings },
 ]
 /** Le schéma du corps et les graphiques n'existent que dans PCTRA. */
-const TABS = ALL_TABS.filter((t) => !t.pc || isDesktop)
+const TABS = ALL_TABS.filter((t) => !t.pc || isDesktop).map((t) => (isDesktop && t.tab === 'today' ? { ...t, label: 'Accueil' } : t))
 
 export default function App() {
   const [stack, setStack] = useState<Route[]>([{ name: 'today' }])

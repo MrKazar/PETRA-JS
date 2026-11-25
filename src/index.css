@@ -996,3 +996,50 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 .ex3d-muscles .m.sec i { background: #ee957f; }
 .ex3d-cue { margin: 0; font-size: 14px; line-height: 1.45; color: var(--muted); border-left: 2px solid var(--khaki); padding-left: 10px; }
 .rest-next { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); gap: 12px; }
+
+/* ---------- PCTRA : tableau de bord d'accueil ---------- */
+.app.desktop .screen-inner.pc-home { max-width: 1480px; }
+.pc-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.pc-kpi { display: flex; flex-direction: column; gap: 4px; text-align: left; color: var(--text); font: inherit; min-width: 0; }
+.pc-kpi.clickable:hover { border-color: var(--olive-light); }
+.pc-kpi-v { font-size: 26px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.pc-up { color: var(--success); }
+.pc-grid { display: grid; grid-template-columns: minmax(280px, 0.95fr) minmax(360px, 1.3fr) minmax(320px, 1.1fr); gap: 12px; align-items: start; }
+.pc-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+@media (max-width: 1280px) { .pc-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); } .pc-grid > .pc-col:last-child { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); } }
+@media (max-width: 860px) { .pc-grid { grid-template-columns: 1fr; } .pc-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.pc-cal { display: grid; grid-template-columns: 92px repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 12px; align-items: stretch; }
+.pc-cal-h { text-align: center; font-size: 12px; font-weight: 600; color: var(--faint); }
+.pc-cal-row { display: flex; align-items: center; line-height: 1.2; }
+.pc-day { position: relative; width: 100%; margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 64px; padding: 6px 7px; border-radius: 8px; background: var(--surface-2); border: 1px solid transparent; color: var(--faint); font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.pc-day:disabled { cursor: default; opacity: 0.55; }
+.pc-day-n { font-size: 12px; font-weight: 600; }
+.pc-day-name { font-size: 11.5px; line-height: 1.25; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: normal; word-break: normal; }
+.pc-day-ic { position: absolute; right: 6px; top: 6px; width: 14px; height: 14px; color: var(--success); }
+.pc-day.plan { border-color: var(--olive-light); }
+.pc-day.plan .pc-day-n { color: var(--khaki); }
+.pc-day.done { background: var(--success-soft); }
+.pc-day.done .pc-day-n, .pc-day.done .pc-day-name { color: var(--text); }
+.pc-day.missed { border: 1px dashed var(--warning); }
+.pc-day.missed .pc-day-name { color: var(--warning); text-decoration: line-through; text-decoration-color: rgba(215, 173, 103, 0.5); }
+.pc-day.today { box-shadow: 0 0 0 2px var(--khaki); }
+.pc-day:not(:disabled):hover { filter: brightness(1.15); }
+.pc-cal-legend { display: flex; gap: 16px; margin-top: 10px; }
+.pc-cal-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; background: var(--surface-2); }
+.pc-cal-legend i.done { background: var(--success-soft); box-shadow: inset 0 0 0 1px var(--success); }
+.pc-cal-legend i.plan { box-shadow: inset 0 0 0 1px var(--olive-light); }
+.pc-cal-legend i.missed { border: 1px dashed var(--warning); }
+
+.pc-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; table-layout: fixed; }
+.pc-table th { text-align: left; font-size: 12px; font-weight: 500; color: var(--faint); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.pc-table th:first-child { width: 26%; } .pc-table th:nth-child(3) { width: 16%; } .pc-table th:nth-child(4) { width: 12%; } .pc-table th:nth-child(5) { width: 16%; }
+.pc-table td { white-space: nowrap; padding: 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.pc-table tbody tr { cursor: pointer; }
+.pc-table tbody tr:hover td { background: var(--surface-2); }
+.pc-table tbody tr:last-child td { border-bottom: 0; }
+
+.pc-body { margin-top: 10px; }
+.pc-body .bm-legend { grid-column: 1 / -1; font-size: 12px; }
+.pc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.pc-goal { display: flex; flex-direction: column; gap: 5px; margin-top: 12px; }
