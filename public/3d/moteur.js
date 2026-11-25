@@ -14812,6 +14812,32 @@ return fn
   }
   const PALMS_FWD = true // paumes vers l'avant (position anatomique) : bras en rotation externe, épaules ouvertes
   const SCAP = -0.03 // omoplates : < 0 = épaules ramenées en arrière
+
+  // Main au repos (mannequin du schéma du corps) : mêmes volumes que la main à plat du noyau, doigts un peu
+  // repliés vers la paume en cascade (index le moins, auriculaire le plus), pouce un peu ramené devant.
+  // Repère de la main : x = travers (pouce côté +x), y = vers les doigts, z = normale de la paume.
+  function relaxedHand(h) {
+    const g = new T.Group(); h.add(g)
+    const skin = mat({ color: COL.skin }), facet = mat({ color: COL.skin, flatShading: true }), UPV = V(0, 1, 0)
+    const add = (geo, m) => { const o = new T.Mesh(geo, m); o.castShadow = true; o.receiveShadow = true; g.add(o); return o }
+    const blob = (sx, sy, sz, x, y, z) => { const b = add(SPHERE, skin); b.scale.set(sx, sy, sz); b.position.set(x, y, z) }
+    const seg = (p0, p1, r) => { const d = p1.clone().sub(p0), m = add(new T.CylinderGeometry(r * 0.92, r, d.length(), 6), facet); m.position.copy(p0).add(p1).multiplyScalar(0.5); m.quaternion.setFromUnitVectors(UPV, d.normalize()) }
+    const joint = (p, r) => add(new T.IcosahedronGeometry(r, 0), facet).position.copy(p)
+    const chain = (pts, r) => { joint(pts[0], r * 1.12); for (let i = 1; i < pts.length; i++) { const ri = r * (1 - 0.1 * (i - 1)); seg(pts[i - 1], pts[i], ri); joint(pts[i], ri * (i === pts.length - 1 ? 0.95 : 1.08)) } }
+    blob(0.03, 0.026, 0.022, 0, 0.004, -0.002)
+    blob(0.042, 0.046, 0.017, 0, 0.046, 0.006)
+    blob(0.017, 0.026, 0.015, 0.027, 0.022, 0.009)
+    const fingers = [[0.026, 0.0086, 1, 0], [0.0088, 0.009, 1.08, 1], [-0.0085, 0.0086, 1.02, 2], [-0.025, 0.0074, 0.85, 3]]
+    for (const [x, r, k, i] of fingers) {
+      const bends = [0.32, 0.72, 0.5].map((b) => b * (1 + 0.18 * i)), lens = [0.044, 0.028, 0.022].map((l) => l * k)
+      let p = V(x * 0.94, 0.084, 0.008), a = 0
+      const pts = [p.clone()]
+      for (let s = 0; s < 3; s++) { a += bends[s]; p = p.clone().add(V(-x * 0.03, Math.cos(a) * lens[s], Math.sin(a) * lens[s])); pts.push(p) }
+      chain(pts, r)
+    }
+    chain([V(0.03, 0.028, 0.014), V(0.044, 0.056, 0.03), V(0.04, 0.078, 0.046)], 0.0092) // pouce le long de l'index
+    return g
+  }
   function body(el, opts = {}) {
     const scene = new T.Scene()
     scene.add(new T.HemisphereLight(0xf2eee4, 0x2a2238, 0.85))
@@ -14827,6 +14853,8 @@ return fn
     const pose = __mannequin0(rig, { primary: [], secondary: [] })
     const base = { P: V(0, 0.94, 0), u: V(0, 1, 0), f: V(0, 0, 1), ankleL: V(0.12, 0.07, 0), ankleR: V(-0.12, 0.07, 0), toeL: V(0.14, 0.03, 0.15), toeR: V(-0.14, 0.03, 0.15), kneeL: V(0, 0, 1), kneeR: V(0, 0, 1) }
     pose(standing({ frames: pose.frames, pose: base, scap: opts.scap ?? SCAP, palmsFwd: opts.palmsFwd ?? PALMS_FWD }))
+    // mains au repos à la place des mains à plat (doigts tendus)
+    rig.traverse((o) => { if (o.userData.flat && o.userData.grip) { o.userData.flat.visible = false; o.userData.grip.visible = false; relaxedHand(o) } })
     const muscles = []
     rig.traverse((m) => { if (m.isMesh && m.userData.muscle) { muscles.push(m); m.userData.tissue = m.material } })
     const mats = new Map()
@@ -14858,10 +14886,10 @@ return fn
       if (w > RW || h > RH) { RW = Math.max(RW, w); RH = Math.max(RH, h); r.setSize(RW, RH, false) }
       if (!reduce && drag == null) { if (t.hold > 0) t.hold -= dt; else t.yaw += (dt / period) * Math.PI * 2 }
       rig.rotation.y = t.yaw
-      const a = w / h, half = 1.02 * (a < 0.56 ? 0.56 / a : 1)
+      const a = w / h, half = (opts.half ?? 1.02) * (a < 0.56 ? 0.56 / a : 1)
       Object.assign(t.cam, { left: -half * a, right: half * a, top: half, bottom: -half })
       t.cam.updateProjectionMatrix()
-      const tg = V(0, 0.93, 0), el2 = 0.12
+      const tg = V(opts.tx ?? 0, opts.ty ?? 0.93, 0), el2 = 0.12
       t.cam.position.set(0, tg.y + 6 * Math.sin(el2), 6 * Math.cos(el2)); t.cam.lookAt(tg)
       r.setViewport(0, 0, w, h); r.setScissor(0, 0, w, h); r.setScissorTest(true)
       r.clear(); r.render(scene, t.cam)
