@@ -45,7 +45,23 @@ export function Ex3D({ id, size = 'thumb', views = false }: { id?: string; size?
   )
 }
 
-/** Muscles de l'animation (mêmes couleurs que le mannequin) et consigne du geste. */
+/**
+ * « haut des pectoraux, deltoïde antérieur et triceps (chef long, chefs latéral et médial) » :
+ * les libellés « Muscle, partie » d'un même muscle sont regroupés entre parenthèses.
+ */
+const list = (labels: string[]) => {
+  const groups: { head: string; parts: string[] }[] = []
+  for (const l of labels) {
+    const [head, ...rest] = l.split(', ')
+    const part = rest.join(', ')
+    const g = groups.find((x) => x.head === head)
+    if (g) { if (part) g.parts.push(part) } else groups.push({ head, parts: part ? [part] : [] })
+  }
+  const words = groups.map((g) => (g.head.charAt(0).toLowerCase() + g.head.slice(1)) + (g.parts.length ? ` (${g.parts.join(', ')})` : ''))
+  return words.length > 1 ? `${words.slice(0, -1).join(', ')} et ${words[words.length - 1]}` : words[0]
+}
+
+/** Phrases sur les muscles travaillés (pastilles aux couleurs du mannequin) et consigne du geste. */
 export function Ex3DInfo({ id }: { id?: string }) {
   if (!hasAnim(id)) return null
   const a = anatomyOf({ catalogId: id, name: '', group: '' })
@@ -53,9 +69,9 @@ export function Ex3DInfo({ id }: { id?: string }) {
   const cue = cueOf(id)
   return (
     <>
-      <div className="ex3d-muscles">
-        {a.primary.map((m) => <span key={m} className="m"><i />{label(m)}</span>)}
-        {a.secondary.map((m) => <span key={m} className="m sec"><i />{label(m)}</span>)}
+      <div className="ex3d-work">
+        {a.primary.length > 0 && <p>Travaille surtout : {list(a.primary.map(label))}.</p>}
+        {a.secondary.length > 0 && <p className="sec">Sollicite aussi : {list(a.secondary.map(label))}.</p>}
       </div>
       {cue && <p className="ex3d-cue">{cue}</p>}
     </>
