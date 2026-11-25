@@ -30,7 +30,7 @@ const RECORDS = [
 ] as const
 const FIELDS = ['weekPlan', 'weekPlanB', 'lastFinisher', 'finishers'] as const
 /** Réglages communs aux deux appareils ; les autres (notifications, vibration, écran…) restent propres à chacun. */
-export const SYNCED_SETTINGS = ['name', 'defaultRestSec', 'abWeeks', 'weekAAnchor', 'finishersEnabled', 'theme', 'timerSound', 'exerciseMode'] as const satisfies readonly (keyof Settings)[]
+export const SYNCED_SETTINGS = ['name', 'defaultRestSec', 'abWeeks', 'weekAAnchor', 'finishersEnabled', 'theme', 'timerSound', 'exerciseMode', 'equipment'] as const satisfies readonly (keyof Settings)[]
 
 /**
  * Compteurs des succès (`settings.feats`) : ils ne font que monter, donc la fusion garde le plus

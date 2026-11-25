@@ -71,6 +71,14 @@ describe('synchro PC : fusion', () => {
     expect(onPc.sync).toEqual(onPhone.sync)
   })
 
+  it('mon matériel se synchronise, y compris « Ne plus filtrer »', () => {
+    const base = edit(emptyData(), (x) => ({ ...x, settings: { ...x.settings, equipment: ['halteres'] } }), 10)
+    const pc = merge(emptyData(), base, 1000)
+    expect(pc.settings.equipment).toEqual(['halteres'])
+    const phone = edit(base, (x) => ({ ...x, settings: { ...x.settings, equipment: null } }), 20)
+    expect(merge(pc, phone, 1000).settings.equipment).toBeNull()
+  })
+
   it('après une synchro, le téléphone et le PC ont la même révision', () => {
     const base = edit(emptyData(), (x) => ({ ...x, programs: [prog('a'), prog('b')] }), 10)
     const phone = edit(base, (x) => ({ ...x, programs: [x.programs[0]] }), 40)

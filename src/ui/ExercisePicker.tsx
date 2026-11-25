@@ -3,6 +3,8 @@ import { CATALOG, cardioSummary, exerciseFromCatalog, isLoadedLift, pdcSummary, 
 import { KINDS, ZONES, findMuscle, findZone, kindOf, muscleIdOf, norm, worksSecondary, type Kind } from '../data/muscles'
 import type { ProgramExercise } from '../data/types'
 import { uid } from '../logic/util'
+import { useData } from '../data/store'
+import { missingFor, needsOf, ownedSet } from '../logic/equipment'
 import { NumInput, Sheet } from './kit'
 import { IconChevron, IconPlus, IconSearch } from './icons'
 import { Prescription, exerciseSubtitle } from './Prescription'
@@ -13,32 +15,37 @@ export function useCatalogSearch() {
   const [zone, setZone] = useState<string>()
   const [muscle, setMuscle] = useState<string>()
   const [kind, setKind] = useState<Kind>('tous')
+  const equipment = useData().settings.equipment
+  /** Filtre « Mon matériel » : actif dès que le matériel est réglé, désactivable le temps d'une recherche. */
+  const [gearOn, setGearOn] = useState(true)
+  const owned = useMemo(() => (equipment ? ownedSet(equipment) : undefined), [equipment])
+  const gear = gearOn && !!owned
   const m = findMuscle(muscle)
   const z = findZone(zone)
-  const { results, secondary } = useMemo(() => {
+  const { results, secondary, ok } = useMemo(() => {
     const nq = norm(q.trim())
     const zoneMuscles = new Set(z?.muscles.map((x) => x.id))
-    const kindOk = (e: CatalogExercise) => kind === 'tous' || kindOf(e) === kind
+    const kindOk = (e: CatalogExercise) => (kind === 'tous' || kindOf(e) === kind) && (!gear || !owned || !missingFor(e.id, owned).length)
     const textOk = (e: CatalogExercise) => !nq || norm(e.nom).includes(nq) || norm(e.equipement).includes(nq) || norm(findMuscle(muscleIdOf(e))?.label ?? '').includes(nq)
     const results = CATALOG.filter((e) => {
       const id = muscleIdOf(e)
       return (!m || id === m.id) && (!z || m || zoneMuscles.has(id ?? '')) && kindOk(e) && textOk(e)
     })
     const secondary = m ? CATALOG.filter((e) => muscleIdOf(e) !== m.id && worksSecondary(e, m) && kindOk(e) && textOk(e)) : []
-    return { results, secondary }
-  }, [q, z, m, kind])
+    return { results, secondary, ok: kindOk }
+  }, [q, z, m, kind, gear, owned])
   /** Groupe à donner à un exercice créé à la main. */
   const group = m?.group ?? z?.muscles[0]?.group
   const browsing = !q.trim() && !m
-  return { q, setQ, zone, setZone, muscle, setMuscle, kind, setKind, results, secondary, group, browsing }
+  return { q, setQ, zone, setZone, muscle, setMuscle, kind, setKind, results, secondary, group, browsing, ok, gear, setGearOn, hasGear: !!owned, owned }
 }
 
 type Search = ReturnType<typeof useCatalogSearch>
 
-const count = (pred: (e: CatalogExercise) => boolean, kind: Kind) => CATALOG.filter((e) => pred(e) && (kind === 'tous' || kindOf(e) === kind)).length
+const count = (pred: (e: CatalogExercise) => boolean, ok: (e: CatalogExercise) => boolean) => CATALOG.filter((e) => pred(e) && ok(e)).length
 
 /** Recherche + navigation zone → muscle → exercices. */
-export function CatalogFilters({ q, setQ, zone, setZone, muscle, setMuscle, kind, setKind }: Search) {
+export function CatalogFilters({ q, setQ, zone, setZone, muscle, setMuscle, kind, setKind, gear, setGearOn, hasGear }: Search) {
   const z = findZone(zone)
   const m = findMuscle(muscle)
   return (
@@ -48,6 +55,7 @@ export function CatalogFilters({ q, setQ, zone, setZone, muscle, setMuscle, kind
         <input className="input" style={{ paddingLeft: 38 }} placeholder="Rechercher (nom, muscle, matériel)…" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
       <div className="chips scroll">
+        {hasGear && <button className={`chip${gear ? ' on' : ''}`} onClick={() => setGearOn(!gear)}>Mon matériel</button>}
         {KINDS.map((k) => (
           <button key={k.kind} className={`chip${kind === k.kind ? ' on' : ''}`} onClick={() => setKind(k.kind)}>{k.label}</button>
         ))}
@@ -64,7 +72,7 @@ export function CatalogFilters({ q, setQ, zone, setZone, muscle, setMuscle, kind
 }
 
 /** Étapes de navigation : zones, puis muscles d'une zone. Rien quand on affiche des exercices. */
-export function CatalogBrowse({ zone, setZone, muscle, setMuscle, kind, q }: Search) {
+export function CatalogBrowse({ zone, setZone, muscle, setMuscle, ok, q }: Search) {
   if (q.trim() || muscle) return null
   const z = findZone(zone)
   if (!z) {
@@ -76,7 +84,7 @@ export function CatalogBrowse({ zone, setZone, muscle, setMuscle, kind, q }: Sea
             <button key={x.id} className="zone-card" onClick={() => setZone(x.id)}>
               <span className="n">{x.label}</span>
               <span className="small muted">{x.muscles.map((mm) => mm.label.replace(/ \(.*\)/, '')).join(' · ')}</span>
-              <span className="c">{count((e) => ids.has(muscleIdOf(e) ?? ''), kind)} exercices</span>
+              <span className="c">{count((e) => ids.has(muscleIdOf(e) ?? ''), ok)} exercices</span>
             </button>
           )
         })}
@@ -91,7 +99,7 @@ export function CatalogBrowse({ zone, setZone, muscle, setMuscle, kind, q }: Sea
             <div style={{ fontWeight: 600 }}>{mm.label}</div>
             {mm.hint && <div className="small muted">{mm.hint}</div>}
           </div>
-          <span className="badge">{count((e) => muscleIdOf(e) === mm.id, kind)}</span>
+          <span className="badge">{count((e) => muscleIdOf(e) === mm.id, ok)}</span>
           <IconChevron style={{ width: 18, color: 'var(--faint)', flex: 'none' }} />
         </button>
       ))}
@@ -157,6 +165,7 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false, m
     <div className="stack">
       <div className="small muted" style={{ marginTop: -6 }}>{exerciseSubtitle(ex)}</div>
       {media && <CatalogMedia ex={ex} />}
+      <EquipmentNeeds id={ex.id} />
       {!bare && free && (
         <div className="card tight">
           <div className="eyebrow" style={{ marginBottom: 4 }}>Construction libre</div>
@@ -241,5 +250,21 @@ export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset
         </div>
       )}
     </Sheet>
+  )
+}
+
+/** Matériel nécessaire, en couleur ce qui manque quand « Mon matériel » est réglé. */
+export function EquipmentNeeds({ id }: { id: string }) {
+  const equipment = useData().settings.equipment
+  const needs = needsOf(id)
+  const missing = equipment ? new Set(missingFor(id, ownedSet(equipment)).map((x) => x.id)) : new Set<string>()
+  return (
+    <div className="small">
+      <span className="muted">Matériel : </span>
+      {needs.length ? needs.map((x, i) => (
+        <span key={x.id}>{i ? ', ' : ''}<span style={missing.has(x.id) ? { color: 'var(--warning)', fontWeight: 600 } : undefined}>{x.label}</span></span>
+      )) : 'aucun'}
+      {missing.size > 0 && <span style={{ color: 'var(--warning)' }}> · pas dans ton matériel</span>}
+    </div>
   )
 }
