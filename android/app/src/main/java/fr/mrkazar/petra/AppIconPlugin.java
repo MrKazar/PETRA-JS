@@ -19,7 +19,12 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "AppIcon")
 public class AppIconPlugin extends Plugin {
 
-    private static final String[] ICONS = { "Militaire", "Police", "Gendarmerie", "Forces", "Minimal", "Vantablack", "Pompier", "Neon", "Lambda", "Loup", "Phalange", "Phenix", "Nuit", "Miroir", "Citrouille", "Leonidas", "Immortel" };
+    private static final String[] ICONS = { "Militaire", "Police", "Gendarmerie", "Forces", "Minimal", "Vantablack", "Pompier", "Neon", "Lambda", "Loup", "Phalange", "Phenix", "Nuit", "Miroir", "Citrouille", "Leonidas", "Immortel",
+        "Olympe", "Arene", "Acier", "Jade", "Crepuscule", "Abysse", "Givre", "Lave", "Sakura", "Carbone" };
+
+    /** Fond du thème choisi, relu par MainActivity au lancement suivant. */
+    static final String PREFS = "petra";
+    static final String BG = "themeBg";
 
     @PluginMethod
     public void set(PluginCall call) {
@@ -31,6 +36,8 @@ public class AppIconPlugin extends Plugin {
             return;
         }
         Context ctx = getContext();
+        String bg = call.getString("bg");
+        if (bg != null && bg.matches("#[0-9a-fA-F]{6}")) ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(BG, bg).apply();
         String current = currentIcon(ctx.getPackageManager(), ctx);
         pending = name.equals(current) ? null : name;
         JSObject ret = new JSObject();

@@ -288,4 +288,11 @@ export function applyTheme(id: ThemeId | undefined) {
   const t = themeOf(id)
   document.documentElement.dataset.theme = t.id
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', t.statusBar)
+  // Relu par index.html avant même le chargement de l'appli (pas d'image avec l'ancien design).
+  try {
+    localStorage.setItem(THEME_KEY, JSON.stringify([t.id]))
+  } catch {
+    /* stockage refusé */
+  }
 }
+export const THEME_KEY = 'petra.theme'

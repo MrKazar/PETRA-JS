@@ -85,10 +85,25 @@ async function getJson(url: string, token: string, timeoutMs: number): Promise<u
 let knownPcRev: number | undefined
 
 let running: Promise<SyncResult> | undefined
+/** Une modification est arrivée pendant une synchro : en refaire une juste après. */
+let again = false
 
-/** Synchronise maintenant avec le PC associé. Une seule synchro à la fois. */
+/**
+ * Synchronise maintenant avec le PC associé. Une seule synchro à la fois ; une demande faite
+ * pendant une synchro en relance une derrière (sinon le changement attendait la suivante).
+ */
 export function syncNow(): Promise<SyncResult> {
-  running ??= doSync().finally(() => (running = undefined))
+  if (running) {
+    again = true
+    return running
+  }
+  running = doSync().finally(() => {
+    running = undefined
+    if (again) {
+      again = false
+      void syncNow()
+    }
+  })
   return running
 }
 

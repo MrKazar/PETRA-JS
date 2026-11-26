@@ -79,6 +79,26 @@ let dataRev = 0
 ipcMain.on('pctra:rev', (_e, rev) => {
   if (typeof rev === 'number') dataRev = rev
 })
+/** Icône de la fenêtre et de la barre des tâches : celle du thème choisi dans PETRA (build/icons). */
+const THEME_ID = /^[a-z]+$/
+const HEX = /^#[0-9a-fA-F]{6}$/
+function themeIcon(theme) {
+  const f = typeof theme === 'string' && THEME_ID.test(theme) ? path.join(__dirname, 'build', 'icons', `${theme}.png`) : ''
+  return f && fs.existsSync(f) ? f : path.join(__dirname, 'build', 'icon.png')
+}
+// La page prévient à chaque changement de thème (ici ou synchro du téléphone) ; retenu pour le prochain lancement.
+ipcMain.on('pctra:theme', (_e, theme, bg) => {
+  if (typeof theme !== 'string' || !THEME_ID.test(theme)) return
+  const c = readConfig()
+  if (c.theme !== theme || (HEX.test(bg) && c.themeBg !== bg)) {
+    c.theme = theme
+    if (HEX.test(bg)) c.themeBg = bg
+    writeConfig(c)
+  }
+  if (!win) return
+  win.setIcon(themeIcon(theme))
+  if (HEX.test(bg)) win.setBackgroundColor(bg)
+})
 ipcMain.on('pctra:sync-reply', (_e, id, result) => pending.get(id)?.(result))
 ipcMain.handle('pctra:pairing', () => pairing())
 ipcMain.handle('pctra:new-token', () => {
@@ -209,10 +229,10 @@ function createWindow() {
     minHeight: MIN.height,
     show: false,
     title: 'PCTRA',
-    backgroundColor: '#0D0F0E',
+    backgroundColor: HEX.test(readConfig().themeBg) ? readConfig().themeBg : '#0D0F0E',
     autoHideMenuBar: true,
     alwaysOnTop: p.onTop,
-    icon: path.join(__dirname, 'build', 'icon.png'),
+    icon: themeIcon(readConfig().theme),
     webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, sandbox: false },
   })
   win.once('ready-to-show', () => {

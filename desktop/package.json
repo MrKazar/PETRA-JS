@@ -29,7 +29,8 @@
       "backups.cjs",
       "window.cjs",
       "web/**",
-      "build/icon.png"
+      "build/icon.png",
+      "build/icons/*.png"
     ],
     "win": {
       "target": [

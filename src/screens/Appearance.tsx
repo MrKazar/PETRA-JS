@@ -46,7 +46,7 @@ export function AppearanceScreen() {
             )
           })}
         </div>
-        <div className="small faint">Le thème change les couleurs, les polices, le logo et l’icône de l’appli sur le téléphone. La nouvelle icône apparaît quand tu quittes l’appli. Les thèmes se débloquent en montant de niveau, tous sont ouverts au niveau 50.</div>
+        <div className="small faint">Le thème change les couleurs, les polices, le logo et l’icône de l’appli, sur le téléphone comme sur PCTRA. Sur le téléphone, la nouvelle icône apparaît quand tu quittes l’appli. Les thèmes se débloquent en montant de niveau, tous sont ouverts au niveau 50.</div>
       </div>
     </div>
   )

@@ -37,6 +37,8 @@ interface PctraBridge {
   installUpdate(): void
   /** Révision actuelle des données, que le téléphone consulte pour la synchro instantanée. */
   setRev(rev: number): void
+  /** Thème affiché : icône de la fenêtre / barre des tâches et fond au prochain lancement. */
+  setTheme?(theme: string, bg: string): void
   /** Copies des données faites après chaque synchro (Documents/PCTRA), la plus récente en premier. */
   backups?(): Promise<string[]>
   /** Réglages de la fenêtre (propres à ce PC). */
