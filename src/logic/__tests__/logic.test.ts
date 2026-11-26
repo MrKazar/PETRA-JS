@@ -288,6 +288,8 @@ describe('thèmes secrets liés aux succès secrets', () => {
     // Qui avait déjà ce nom garde son thème.
     expect(normalize({ programs: [], settings: { name: 'NéoDyme', theme: 'neon' } } as never).settings.feats?.codes).toEqual(['neon'])
     expect(normalize({ programs: [], settings: { name: 'Kazar' } } as never).settings.feats?.codes).toBeUndefined()
+    expect(normalize({ programs: [], settings: { name: 'constructor' } } as never).settings.feats?.codes).toBeUndefined()
+    expect(normalize({ programs: [], settings: { name: 42 } } as never).settings.feats?.codes).toBeUndefined()
   })
   it('chaque thème secret a un succès secret qui existe', () => {
     const ids = new Set(DEFS.filter((d) => d.family === 'secrets').map((d) => d.id))

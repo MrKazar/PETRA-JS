@@ -89,7 +89,8 @@ const withTheme = (s: Settings): Settings => (OLD_THEMES.includes(s.theme) ? { .
  */
 const NAME_CODES: Record<string, string> = { neodyme: 'neon', leonidas: 'leonidas' }
 function withNameCodes(s: Settings): Settings {
-  const id = NAME_CODES[(s.name ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()]
+  const key = typeof s.name === 'string' ? s.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase() : ''
+  const id = Object.hasOwn(NAME_CODES, key) ? NAME_CODES[key] : undefined
   if (!id || s.feats?.codes?.includes(id)) return s
   return { ...s, feats: { ...s.feats, codes: [...(s.feats?.codes ?? []), id] } }
 }
