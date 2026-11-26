@@ -105,6 +105,8 @@ export interface Session {
   finisher?: DoneFinisher
   /** Nombre de séries prévues au départ (depuis la 1.3.13) : une séance est parfaite si toutes sont faites. */
   planned?: number
+  /** Exercices dans l'ordre du programme au départ (ids de séance), pour le succès « Psychorigide ». */
+  order?: string[]
 }
 
 export interface Rest {

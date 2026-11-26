@@ -89,6 +89,40 @@ export const FINISHER_EXERCISES: Record<FinisherType, FinisherItem[]> = {
   ],
 }
 
+/**
+ * Animation 3D d'un exercice de finisher : le nom (en minuscules) renvoie à un exercice du catalogue.
+ * Les ids pas encore animés (releve_jambes_sol, planche_haute…) sont à faire dans la page Exécutions PETRA 3D :
+ * leur animation s'affichera d'elle-même une fois ajoutée au catalogue.
+ */
+const FINISHER_ANIM: Record<string, string> = {
+  'abdos': 'crunch', 'abdos lestés': 'crunch', 'crunchs': 'crunch', 'russian twists': 'russian_twist_pdc',
+  'gainage': 'planche', 'gainage sur les coudes': 'planche', 'gainage latéral de chaque côté': 'planche_laterale',
+  'gainage avec toucher d’épaules': 'planche_toucher_epaules', 'planche bras tendus avec toucher d’épaules': 'planche_toucher_epaules',
+  'gainage position haute': 'planche_haute', 'relevés de jambes': 'releve_jambes_sol', 'mountain climbers par jambe': 'mountain_climbers',
+  'v-ups': 'v_ups', 'crunchs bicyclette par côté': 'crunch_bicyclette', 'relevés de bassin': 'crunch_inverse',
+  'battements de jambes par jambe': 'battements_jambes', 'hollow hold': 'hollow_hold', 'dead bugs': 'dead_bug',
+  'touchers de pieds jambes tendues': 'toucher_pieds', 'relevés de genoux à la barre': 'releve_genoux_suspendu',
+  'tractions': 'traction_pronation', 'tractions pronation': 'traction_pronation', 'tractions prise neutre': 'traction_neutre',
+  'tractions supination': 'traction_supination', 'chin-ups (supination)': 'traction_supination', 'tractions lentes (5 s en descente)': 'traction_negative',
+  'rowings inversés': 'rowing_inverse', 'tractions australiennes': 'traction_australienne', 'superman': 'superman',
+  'superman avec 2 s de maintien': 'superman', 'suspension à la barre': 'suspension_barre', 'suspension active': 'suspension_barre',
+  'élévations en y allongé sur le ventre': 'elevations_y_sol', 'bird dogs par côté': 'bird_dog',
+  'pompes': 'pompes', 'pompes classiques': 'pompes', 'pompes militaires': 'pompes_serrees', 'pompes archer': 'pompes_archer',
+  'pompes déclinées': 'pompes_declinees', 'pompes inclinées': 'pompes_inclinees', 'pompes explosives': 'pompes_explosives',
+  'pompes larges': 'pompes_larges', 'pompes diamant': 'pompes_diamant', 'pompes lentes (3 s en descente)': 'pompes_lentes',
+  'pompes serrées': 'pompes_serrees', 'pompes sur les genoux': 'pompes_genoux', 'position basse de pompe': 'position_basse_pompe',
+  'dips': 'dips_pecs', 'dips sur banc': 'dips_banc', 'maintien bras tendus en haut des dips': 'maintien_haut_dips',
+  'squats': 'squat_poids_corps', 'squats sautés': 'squat_saute', 'squats sumo': 'squat_sumo_pdc', 'squats bulgares par jambe': 'squat_bulgare_pdc',
+  'squats pistol assistés par jambe': 'pistol_squat', 'fentes sautées par jambe': 'fentes_sautees', 'fentes arrière par jambe': 'fentes_arriere_pdc',
+  'chaise contre le mur': 'chaise_murale', 'montées sur pointes': 'mollets_pdc', 'ponts fessiers': 'pont_fessier',
+  'ponts fessiers sur une jambe (par jambe)': 'pont_fessier_unilateral', 'jumping jacks': 'jumping_jacks', 'step-ups par jambe': 'step_up_pdc',
+  'pompes piquées': 'pompes_piquees', 'pompes piquées pieds surélevés': 'pompes_piquees', 'élévations latérales légères': 'elevations_laterales_halteres',
+  'bras tendus en croix': 'bras_croix', 'cercles de bras vers l’avant': 'cercles_bras', 'cercles de bras vers l’arrière': 'cercles_bras',
+}
+
+/** Exercice du catalogue montré en 3D pour un exercice de finisher (d'après son nom), s'il y en a un. */
+export const finisherAnimId = (it: Pick<FinisherItem, 'name'>): string | undefined => FINISHER_ANIM[it.name.trim().toLowerCase().replace(/'/g, '’')]
+
 /** Texte d'un exercice : « 20 squats », « Chaise contre le mur 45 s », « Suspension à la barre jusqu'à l'échec ». */
 export function formatItem(it: FinisherItem): string {
   const cap = (t: string) => t.replace(/^./, (c) => c.toUpperCase())

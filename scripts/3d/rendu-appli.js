@@ -218,7 +218,9 @@
       if (moved < 4) { const id = pick(e); if (id) opts.onPick?.(id) }
     }
     const leave = () => opts.onHover?.(undefined)
-    el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('pointerleave', leave)
+    // geste repris par le navigateur (défilement de la page au téléphone) : pas de clic sur un muscle
+    const cancel = () => { if (drag != null) { drag = null; t.hold = 2.5 } }
+    el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', cancel); el.addEventListener('pointerleave', leave)
     const io = new IntersectionObserver((es) => { t.on = es[es.length - 1].isIntersecting; if (t.on) kick() }, { rootMargin: '80px' })
     io.observe(el)
     bodies.add(t); kick()
@@ -226,7 +228,7 @@
       set: (o) => { if (o.colors) colors = o.colors; if ('selected' in o) selected = o.selected; paint(); kick() },
       destroy: () => {
         bodies.delete(t); io.disconnect(); cv.remove()
-        el.removeEventListener('pointerdown', down); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); el.removeEventListener('pointerleave', leave)
+        el.removeEventListener('pointerdown', down); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', cancel); el.removeEventListener('pointerleave', leave)
         scene.traverse((o) => { if (o.geometry) o.geometry.dispose() })
       },
     }
