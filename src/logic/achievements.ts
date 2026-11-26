@@ -8,7 +8,7 @@ import { e1rm, liftsOf } from './stats'
 import { exerciseKey } from './progress'
 import { inPlannedOrder } from './session'
 import { addDays, dateKey, parseKey } from './util'
-import { themesFor, themesShown } from '../ui/theme'
+import { themesShown } from '../ui/theme'
 
 /**
  * Succès et XP (PETRA 1.3.13). Tout se calcule à partir de l'historique déjà enregistré : les
@@ -508,7 +508,7 @@ export const DEFS: Def[] = [
   D('outils', 'gear', 'maitre_oeuvre', 'Maître d’œuvre', 'Programmes créés', [1, 5], (_f, d) => d.programs.length),
   D('outils', 'gear', 'transmission', 'Transmission', 'Partager un programme ou un finisher par QR code', [1], (_f, d) => Math.min(1, d.settings.feats?.shares ?? 0)),
 
-  S('mot_de_passe', 'Mot de passe', 'Débloquer un thème caché avec ton nom d’utilisateur', 'Un nom qui ouvre des portes', (_f, d) => themesFor(d.settings.name).some((t) => t.unlockName)),
+  S('mot_de_passe', 'Mot de passe', 'Débloquer un thème caché avec un code', 'Un mot qui ouvre des portes', (_f, d) => !!d.settings.feats?.codes?.length),
   S('curiosite', 'Curiosité', 'Appuyer 7 fois sur l’emblème de l’accueil : débloque le bouclier Lambda et son thème', 'Ce bouclier cache quelque chose', (_f, d) => (d.settings.feats?.logoTaps ?? 0) >= 7),
   S('defile', 'Défilé', 'Séance un 14 juillet', 'Jour de fête nationale', (f) => md(f, '07-14')),
   S('sainte_barbe', 'Sainte-Barbe', 'Séance un 4 décembre', 'La patronne des soldats du feu', (f) => md(f, '12-04')),
@@ -528,7 +528,7 @@ export const DEFS: Def[] = [
   S('retour_flamme', 'Retour de flamme', 'Battre un record après 30 jours ou plus de pause : débloque le thème Phénix', 'Le phénix renaît', (f) => f.phoenix),
   S('changement_tenue', 'Changement de tenue', 'Essayer tous les thèmes', 'Chaque armure a son style', (_f, d) => {
     const tried = new Set(d.settings.feats?.themes ?? [])
-    return themesShown(d.settings).every((t) => tried.has(t.id))
+    return themesShown({ ...d.settings, devThemes: false }).every((t) => tried.has(t.id))
   }),
   S('utile_demain', 'Plus utile demain', 'Séance le lendemain d’un record battu', 'La devise, au pied de la lettre', (f) => f.dayAfterRecord),
   // Ces deux-là dépendent des autres succès : calculés à part dans evaluate().

@@ -101,7 +101,7 @@ export function TodayScreen() {
   return (
     <div className="screen">
       <div className="screen-inner">
-        <Header title="PETRA — Aujourd’hui" sub={formatDay(today).replace(/^./, (c) => c.toUpperCase())} onEmblem={tapEmblem} />
+        <Header title="PETRA" sub={formatDay(today).replace(/^./, (c) => c.toUpperCase())} onEmblem={tapEmblem} />
         <div className="muted">{greeting(data.settings.name)}</div>
         <UpdateBanner />
         {achievementsOn(data) && <LevelCard onOpen={() => nav.push({ name: 'achievements' })} />}

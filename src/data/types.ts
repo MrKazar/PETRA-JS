@@ -201,6 +201,8 @@ export interface Settings {
   equipment?: string[] | null
   /** Compteurs de quelques succès (secrets, partages…), mis en commun entre téléphone et PC. */
   feats?: Feats
+  /** Mode test (caché, propre à l'appareil) : toutes les apparences ouvertes, sans toucher à l'XP ni aux succès. */
+  devThemes?: boolean
 }
 
 export interface Feats {
@@ -208,6 +210,8 @@ export interface Feats {
   logoTaps?: number
   /** Thèmes essayés. */
   themes?: string[]
+  /** Thèmes cachés débloqués par un code (Apparence). */
+  codes?: string[]
   /** Partages par QR code. */
   shares?: number
   /** 1 dès qu'un appareil a été associé à PCTRA (pour que le PC compte aussi « Base arrière »). */

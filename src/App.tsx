@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { App as CapApp } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
 import { NavContext, type Nav, type Route, type Tab } from './nav'
@@ -29,7 +29,7 @@ import { formatClock } from './logic/util'
 import { useNow } from './ui/useNow'
 import { checkOnLaunch } from './logic/updates'
 import { listenRestNotification } from './logic/actions'
-import { activeTheme, applyTheme } from './ui/theme'
+import { activeTheme, applyTheme, themeOf } from './ui/theme'
 import { progress } from './logic/level'
 import { syncAppIcon } from './logic/appIcon'
 import { autoSync, startLiveSync } from './logic/pcsync'
@@ -77,6 +77,12 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    if (isDesktop) {
+      startDesktop()
+      return
+    }
+    // Synchro instantanée avec PCTRA (thème, programmes…) tant que l'appli est ouverte, téléphone compris.
+    startLiveSync()
     if (Capacitor.isNativePlatform()) {
       listenRestNotification()
       checkOnLaunch()
@@ -87,8 +93,6 @@ export default function App() {
         sub.then((h) => h.remove())
       }
     }
-    if (isDesktop) startDesktop()
-    else startLiveSync()
   }, [])
 
   // Rappels (séance du jour, tâches à heure fixe) reprogrammés quand le planning ou les réglages changent.
@@ -102,9 +106,11 @@ export default function App() {
   }, [reminderKey])
 
   const theme = activeTheme({ ...data.settings, ...progress(data) }).id
-  useEffect(() => {
+  // Avant l'affichage (pas après) : jamais une image avec les couleurs d'un autre thème.
+  useLayoutEffect(() => {
     applyTheme(theme)
-    syncAppIcon(theme)
+    syncAppIcon(theme, themeOf(theme).swatches[0])
+    desktop?.setTheme?.(theme, themeOf(theme).swatches[0])
   }, [theme])
 
   useEffect(() => {

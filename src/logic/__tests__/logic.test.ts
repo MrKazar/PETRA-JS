@@ -8,7 +8,7 @@ import { isNewer } from '../updates'
 import { exerciseHistory, exerciseKey, nextWorkLoad, overloadSuggestion, withOverload } from '../progress'
 import { loadKind, roundForEquipment, stepLoad } from '../loads'
 import { DEFS } from '../achievements'
-import { THEMES, activeTheme, isSecret, themeOf, themesFor, themesShown, themesUnlockedBetween } from '../../ui/theme'
+import { DEV_CODE_HASH, THEMES, activeTheme, codeHash, isSecret, themeForCode, themeOf, themesFor, themesShown, themesUnlockedBetween } from '../../ui/theme'
 import { ZONES, kindOf, muscleOf } from '../../data/muscles'
 import type { PlannedSet, Program, Routine } from '../../data/types'
 import { DEFAULT_SETTINGS, normalize } from '../../data/store'
@@ -231,15 +231,15 @@ describe('thèmes', () => {
     expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'abysse', 'givre', 'lave', 'sakura', 'carbone', 'minimal', 'vantablack', 'pompier', 'neon', 'lambda', 'loup', 'phalange', 'phenix', 'nuit', 'miroir', 'citrouille', 'leonidas', 'immortel'])
     expect(themeOf(undefined).id).toBe('spartiate')
     expect(themeOf('militaire' as never).id).toBe('spartiate')
-    expect(themesFor('').some((t) => t.id === 'neon')).toBe(false)
-    expect(themesFor(' neodyme ').some((t) => t.id === 'neon')).toBe(true)
-    expect(activeTheme({ theme: 'neon', name: 'NéoDyme' }).id).toBe('neon')
-    expect(activeTheme({ theme: 'neon', name: 'Kazar' }).id).toBe('spartiate')
+    expect(themesFor({}).some((t) => t.id === 'neon')).toBe(false)
+    expect(themesFor({ feats: { codes: ['neon'] } }).some((t) => t.id === 'neon')).toBe(true)
+    expect(activeTheme({ theme: 'neon', feats: { codes: ['neon'] } }).id).toBe('neon')
+    expect(activeTheme({ theme: 'neon' }).id).toBe('spartiate')
     expect(normalize({ programs: [], settings: { theme: 'police' } } as never).settings.theme).toBe('spartiate')
   })
 
   it('Lambda caché jusqu’aux 7 appuis sur l’emblème (succès Curiosité)', () => {
-    expect(themesFor({ name: '' }).some((t) => t.id === 'lambda')).toBe(false)
+    expect(themesFor({}).some((t) => t.id === 'lambda')).toBe(false)
     expect(themesFor({ feats: { logoTaps: 6 } }).some((t) => t.id === 'lambda')).toBe(false)
     expect(themesFor({ feats: { logoTaps: 7 } }).some((t) => t.id === 'lambda')).toBe(true)
     expect(themesFor({ feats: { logoTaps: 7 } }).some((t) => t.id === 'neon')).toBe(false)
@@ -276,8 +276,20 @@ describe('thèmes secrets liés aux succès secrets', () => {
     expect(themesFor({ secrets: ['legende'] }).some((t) => t.id === 'immortel')).toBe(true)
     expect(activeTheme({ theme: 'phenix' }).id).toBe('spartiate')
     expect(activeTheme({ theme: 'phenix', secrets: ['retour_flamme'] }).id).toBe('phenix')
-    expect(themesFor('Léonidas').some((t) => t.id === 'leonidas')).toBe(true)
-    expect(themesFor('leonidas ').some((t) => t.id === 'neon')).toBe(false)
+    expect(themesFor({ feats: { codes: ['leonidas'] } }).some((t) => t.id === 'leonidas')).toBe(true)
+    expect(themesFor({ feats: { codes: ['leonidas'] } }).some((t) => t.id === 'neon')).toBe(false)
+  })
+  it('codes : thèmes cachés et mode test (le nom d’utilisateur ne débloque plus rien)', () => {
+    expect(themeForCode(' neodyme ')?.id).toBe('neon')
+    expect(themeForCode('Leonidas')?.id).toBe('leonidas')
+    expect(themeForCode('kazar')).toBeUndefined()
+    expect(codeHash('sparte300')).toBe(DEV_CODE_HASH)
+    expect(themesFor({ devThemes: true }).length).toBe(THEMES.length)
+    // Qui avait déjà ce nom garde son thème.
+    expect(normalize({ programs: [], settings: { name: 'NéoDyme', theme: 'neon' } } as never).settings.feats?.codes).toEqual(['neon'])
+    expect(normalize({ programs: [], settings: { name: 'Kazar' } } as never).settings.feats?.codes).toBeUndefined()
+    expect(normalize({ programs: [], settings: { name: 'constructor' } } as never).settings.feats?.codes).toBeUndefined()
+    expect(normalize({ programs: [], settings: { name: 42 } } as never).settings.feats?.codes).toBeUndefined()
   })
   it('chaque thème secret a un succès secret qui existe', () => {
     const ids = new Set(DEFS.filter((d) => d.family === 'secrets').map((d) => d.id))
