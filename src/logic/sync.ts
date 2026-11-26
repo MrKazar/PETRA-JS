@@ -46,6 +46,8 @@ export function mergeFeats(a: Feats | undefined, b: Feats | undefined): Feats | 
   }
   const themes = [...new Set([...(a?.themes ?? []), ...(b?.themes ?? [])])]
   if (themes.length) out.themes = themes
+  const codes = [...new Set([...(a?.codes ?? []), ...(b?.codes ?? [])])]
+  if (codes.length) out.codes = codes
   return out
 }
 

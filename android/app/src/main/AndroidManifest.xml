@@ -241,6 +241,137 @@
             </intent-filter>
         </activity-alias>
 
+        <!-- Thèmes de palier (niveau d'XP) : chacun son icône. -->
+        <activity-alias
+            android:name=".IconOlympe"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_olympe"
+            android:roundIcon="@mipmap/ic_launcher_olympe_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconArene"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_arene"
+            android:roundIcon="@mipmap/ic_launcher_arene_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconAcier"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_acier"
+            android:roundIcon="@mipmap/ic_launcher_acier_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconJade"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_jade"
+            android:roundIcon="@mipmap/ic_launcher_jade_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconCrepuscule"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_crepuscule"
+            android:roundIcon="@mipmap/ic_launcher_crepuscule_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconAbysse"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_abysse"
+            android:roundIcon="@mipmap/ic_launcher_abysse_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconGivre"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_givre"
+            android:roundIcon="@mipmap/ic_launcher_givre_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconLave"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_lave"
+            android:roundIcon="@mipmap/ic_launcher_lave_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconSakura"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_sakura"
+            android:roundIcon="@mipmap/ic_launcher_sakura_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconCarbone"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_carbone"
+            android:roundIcon="@mipmap/ic_launcher_carbone_round"
+            android:label="@string/title_activity_main"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
         <!-- Boutons « +15 s » et « Passer » de la notification de repos (RestTimerPlugin). -->
         <receiver android:name=".RestActionReceiver" android:exported="false" />
 
