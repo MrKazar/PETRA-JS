@@ -75,13 +75,24 @@ export function normalize(raw: Partial<AppData>): AppData {
     ...base,
     ...input,
     version: input.version ?? DATA_VERSION,
-    settings: withTheme({ ...base.settings, ...(input.settings ?? {}) }),
+    settings: withNameCodes(withTheme({ ...base.settings, ...(input.settings ?? {}) })),
     programs: (input.programs ?? base.programs).map((p) => ({ ...p, exercises: p.exercises.map(migrateExercise) })),
   }
 }
 
 /** Les thèmes militaire, police, gendarmerie et forces spéciales sont remplacés par le thème spartiate (1.3.13). */
 const withTheme = (s: Settings): Settings => (OLD_THEMES.includes(s.theme) ? { ...s, theme: 'spartiate' } : s)
+
+/**
+ * Avant, Néon et Léonidas s'ouvraient avec un nom d'utilisateur ; c'est maintenant un code.
+ * Qui avait déjà ce nom garde son thème (et son succès « Mot de passe »).
+ */
+const NAME_CODES: Record<string, string> = { neodyme: 'neon', leonidas: 'leonidas' }
+function withNameCodes(s: Settings): Settings {
+  const id = NAME_CODES[(s.name ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()]
+  if (!id || s.feats?.codes?.includes(id)) return s
+  return { ...s, feats: { ...s.feats, codes: [...(s.feats?.codes ?? []), id] } }
+}
 
 /** Copie des données illisibles trouvées au démarrage, gardée à part pour ne jamais les écraser. */
 export const CORRUPT_KEY = 'petra.data.illisible'

@@ -11,8 +11,8 @@ export interface Theme {
   /** Fond, carte, action, accent : pour l'aperçu. */
   swatches: [string, string, string, string]
   statusBar: string
-  /** Thème caché : n'apparaît et ne s'applique qu'avec ce nom d'utilisateur. */
-  unlockName?: string
+  /** Thème caché débloqué par un code (empreinte `codeHash` du code, jamais le code en clair). */
+  unlockCode?: string
   /** Thème caché débloqué par un succès secret de l'appareil (ici les 7 appuis sur l'emblème). */
   unlockTaps?: number
   /** Niveau d'XP à atteindre pour débloquer ce thème (thèmes non secrets, tous ouverts au niveau 50). */
@@ -152,7 +152,7 @@ export const THEMES: Theme[] = [
     label: 'Néon',
     description: 'Violet et magenta lumineux sur nuit, logo et titres en pixel art.',
     emblem: 'emblem-neon.webp',
-    unlockName: 'NéoDyme',
+    unlockCode: '1i4sbhaafkc',
     swatches: ['#0a0414', '#140a24', '#8a2be2', '#ff46dc'],
     statusBar: '#0A0414',
   },
@@ -224,7 +224,7 @@ export const THEMES: Theme[] = [
     label: 'Léonidas',
     description: 'Or royal, rouge et laurier : la garde du roi de Sparte.',
     emblem: 'emblem-leonidas.webp',
-    unlockName: 'Léonidas',
+    unlockCode: '1ij9g4wij9',
     swatches: ['#120a06', '#21140b', '#a3161b', '#e6c27a'],
     statusBar: '#120A06',
   },
@@ -241,18 +241,15 @@ export const THEMES: Theme[] = [
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]
 
-/** Nom comparé sans accents, majuscules ni espaces autour : « neodyme » débloque « NéoDyme ». */
-const simplify = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()
+type Unlock = { feats?: Feats; theme?: ThemeId; level?: number; secrets?: string[]; devThemes?: boolean }
 
-type Unlock = { name?: string; feats?: Feats; theme?: ThemeId; level?: number; secrets?: string[]; devThemes?: boolean }
+/** Thème secret : lié à un code ou à un succès secret, jamais au niveau. */
+export const isSecret = (t: Theme) => !!(t.unlockCode || t.unlockTaps || t.unlockSecret)
 
-/** Thème secret : lié à un nom d'utilisateur ou à un succès secret, jamais au niveau. */
-export const isSecret = (t: Theme) => !!(t.unlockName || t.unlockTaps || t.unlockSecret)
-
-/** Secret trouvé (bon nom d'utilisateur ou succès secret obtenu). */
+/** Secret trouvé (bon code saisi ou succès secret obtenu). */
 const secretOpen = (t: Theme, s: Unlock) =>
   !!s.devThemes ||
-  (!t.unlockName || simplify(s.name ?? '') === simplify(t.unlockName)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps) &&
+  (!t.unlockCode || !!s.feats?.codes?.includes(t.id)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps) &&
   (!t.unlockSecret || !!s.secrets?.includes(t.unlockSecret))
 
 /** Palier atteint. Le thème déjà choisi avant l'arrivée des paliers reste utilisable tant qu'on le garde. */
@@ -261,11 +258,8 @@ const levelOpen = (t: Theme, s: Unlock) => !!s.devThemes || !t.unlockLevel || (s
 /** Thème ouvert pour ces réglages et ce niveau. */
 export const unlocked = (t: Theme, s: Unlock) => secretOpen(t, s) && levelOpen(t, s)
 
-/** Thèmes proposés (les thèmes cachés seulement une fois débloqués). Accepte aussi un simple nom. */
-export const themesFor = (s: Unlock | string | undefined) => {
-  const u = typeof s === 'object' ? s : { name: s }
-  return THEMES.filter((t) => unlocked(t, u))
-}
+/** Thèmes proposés (les thèmes cachés seulement une fois débloqués). */
+export const themesFor = (s: Unlock) => THEMES.filter((t) => unlocked(t, s))
 
 /** Thèmes visibles dans Apparence : tous les thèmes non secrets (verrouillés ou non) et les secrets trouvés. */
 export const themesShown = (s: Unlock) => THEMES.filter((t) => secretOpen(t, s))
@@ -273,8 +267,15 @@ export const themesShown = (s: Unlock) => THEMES.filter((t) => secretOpen(t, s))
 /** Ouvert sans le mode test : seul un thème vraiment débloqué compte pour les succès (« thèmes essayés »). */
 export const unlockedForReal = (t: Theme, s: Unlock) => unlocked(t, { ...s, devThemes: false })
 
+/** Thème caché ouvert par ce code, s'il y en a un. */
+export const themeForCode = (code: string) => {
+  const h = codeHash(code)
+  return THEMES.find((t) => t.unlockCode === h)
+}
+
 /**
- * Mode test des apparences : appui long sur la ligne « Niveau » d'Apparence, puis ce code.
+ * Mode test des apparences : appui long sur la ligne « Niveau » d'Apparence, puis ce code
+ * (le même champ accepte les codes des thèmes cachés).
  * Seule l'empreinte du code est dans l'appli (le code lui-même n'apparaît nulle part).
  */
 export const DEV_CODE_HASH = '25777hga5ht'

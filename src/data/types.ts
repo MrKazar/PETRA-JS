@@ -208,6 +208,8 @@ export interface Feats {
   logoTaps?: number
   /** Thèmes essayés. */
   themes?: string[]
+  /** Thèmes cachés débloqués par un code (Apparence). */
+  codes?: string[]
   /** Partages par QR code. */
   shares?: number
   /** 1 dès qu'un appareil a été associé à PCTRA (pour que le PC compte aussi « Base arrière »). */

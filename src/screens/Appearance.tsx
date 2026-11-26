@@ -3,7 +3,7 @@ import { useData } from '../data/store'
 import { useNav } from '../nav'
 import { bumpFeats, saveSettings } from '../logic/actions'
 import { progress } from '../logic/level'
-import { DEV_CODE_HASH, activeTheme, codeHash, isSecret, nextLevelTheme, themesShown, unlocked, unlockedForReal } from '../ui/theme'
+import { DEV_CODE_HASH, activeTheme, codeHash, isSecret, nextLevelTheme, themeForCode, themesShown, unlocked, unlockedForReal } from '../ui/theme'
 import { LogoFull, TopBar, imgUrl, toast } from '../ui/kit'
 
 export function AppearanceScreen() {
@@ -13,7 +13,7 @@ export function AppearanceScreen() {
   const level = pr.level
   const s = { ...data.settings, ...pr }
   const current = activeTheme(s)
-  // Mode test caché : appui long (1,5 s) sur la ligne « Niveau », puis le code.
+  // Codes cachés (thèmes secrets, mode test) : appui long (1,5 s) sur la ligne « Niveau », puis le code.
   const [asking, setAsking] = useState(false)
   const [code, setCode] = useState('')
   const press = useRef(0)
@@ -25,7 +25,14 @@ export function AppearanceScreen() {
   const submitCode = () => {
     setAsking(false)
     setCode('')
-    if (codeHash(code) !== DEV_CODE_HASH) return
+    const secret = themeForCode(code)
+    if (secret) {
+      // Thème caché : débloqué pour de bon (succès « Mot de passe », synchronisé avec PCTRA) et appliqué.
+      bumpFeats((f) => ({ ...f, codes: [...new Set([...(f.codes ?? []), secret.id])], themes: [...new Set([...(f.themes ?? []), secret.id])] }))
+      saveSettings({ theme: secret.id })
+      return toast(`Thème ${secret.label} débloqué`)
+    }
+    if (codeHash(code) !== DEV_CODE_HASH) return toast('Code inconnu')
     const on = !data.settings.devThemes
     saveSettings({ devThemes: on || undefined })
     toast(on ? 'Mode test : toutes les apparences sont ouvertes' : 'Mode test désactivé')
