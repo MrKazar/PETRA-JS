@@ -33,6 +33,7 @@ export const ICON_ALIAS: Record<ThemeId, string> = {
   citrouille: 'Citrouille',
   leonidas: 'Leonidas',
   immortel: 'Immortel',
+  architecte: 'Architecte',
 }
 
 /** Met l'icône du téléphone au thème choisi (Android seulement). */

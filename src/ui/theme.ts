@@ -19,6 +19,8 @@ export interface Theme {
   unlockLevel?: number
   /** Thème secret débloqué par un succès secret (id du succès). */
   unlockSecret?: string
+  /** Thème du développeur : débloqué pour de bon par le code du mode test, sur cet appareil et les appareils synchronisés. */
+  unlockDev?: boolean
 }
 
 export const THEMES: Theme[] = [
@@ -237,6 +239,15 @@ export const THEMES: Theme[] = [
     swatches: ['#f4f1ea', '#ffffff', '#b58a1e', '#2a2214'],
     statusBar: '#F4F1EA',
   },
+  {
+    id: 'architecte',
+    label: 'Architecte',
+    description: 'Le plan de PETRA, réservé à son créateur : bleu de plan, traits blancs, cotes et cachet doré.',
+    emblem: 'emblem-architecte.webp',
+    unlockDev: true,
+    swatches: ['#061a36', '#0b2547', '#2f86e0', '#f0be50'],
+    statusBar: '#061A36',
+  },
 ]
 
 export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === id) ?? THEMES[0]
@@ -244,12 +255,12 @@ export const themeOf = (id: ThemeId | undefined) => THEMES.find((t) => t.id === 
 type Unlock = { feats?: Feats; theme?: ThemeId; level?: number; secrets?: string[]; devThemes?: boolean }
 
 /** Thème secret : lié à un code ou à un succès secret, jamais au niveau. */
-export const isSecret = (t: Theme) => !!(t.unlockCode || t.unlockTaps || t.unlockSecret)
+export const isSecret = (t: Theme) => !!(t.unlockCode || t.unlockTaps || t.unlockSecret || t.unlockDev)
 
 /** Secret trouvé (bon code saisi ou succès secret obtenu). */
 const secretOpen = (t: Theme, s: Unlock) =>
   !!s.devThemes ||
-  (!t.unlockCode || !!s.feats?.codes?.includes(t.id)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps) &&
+  (!(t.unlockCode || t.unlockDev) || !!s.feats?.codes?.includes(t.id)) && (!t.unlockTaps || (s.feats?.logoTaps ?? 0) >= t.unlockTaps) &&
   (!t.unlockSecret || !!s.secrets?.includes(t.unlockSecret))
 
 /** Palier atteint. Le thème déjà choisi avant l'arrivée des paliers reste utilisable tant qu'on le garde. */

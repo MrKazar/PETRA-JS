@@ -25,6 +25,13 @@ export function AppearanceScreen() {
   const submitCode = () => {
     setAsking(false)
     setCode('')
+    if (codeHash(code) === DEV_CODE_HASH) {
+      const on = !data.settings.devThemes
+      // Le code du développeur ouvre aussi, pour de bon, son thème Architecte.
+      bumpFeats((f) => ({ ...f, codes: [...new Set([...(f.codes ?? []), 'architecte'])] }))
+      saveSettings({ devThemes: on || undefined })
+      return toast(on ? 'Mode test : toutes les apparences sont ouvertes. Thème Architecte débloqué' : 'Mode test désactivé')
+    }
     const secret = themeForCode(code)
     if (secret) {
       // Thème caché : débloqué pour de bon (succès « Mot de passe », synchronisé avec PCTRA) et appliqué.
@@ -32,10 +39,7 @@ export function AppearanceScreen() {
       saveSettings({ theme: secret.id })
       return toast(`Thème ${secret.label} débloqué`)
     }
-    if (codeHash(code) !== DEV_CODE_HASH) return toast('Code inconnu')
-    const on = !data.settings.devThemes
-    saveSettings({ devThemes: on || undefined })
-    toast(on ? 'Mode test : toutes les apparences sont ouvertes' : 'Mode test désactivé')
+    toast('Code inconnu')
   }
   const next = nextLevelTheme(level)
   return (
