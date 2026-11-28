@@ -8,7 +8,7 @@ import { groupLabel } from '../data/catalog'
 import { ScanSheet, ShareSheet } from '../ui/Share'
 import { shareWeek, shareWeeksAB } from '../logic/share'
 import { estimateDuration, formatEstimate } from '../logic/session'
-import { Empty, Header, SectionTitle, Sheet, Toggle } from '../ui/kit'
+import { Empty, Header, SectionTitle, Sheet, Toggle, pressable } from '../ui/kit'
 import { IconQr, IconChevron, IconDumbbell, IconHistory, IconPlus, IconTrophy } from '../ui/icons'
 
 export function ProgramsScreen() {
@@ -103,7 +103,7 @@ export function ProgramsScreen() {
             {data.programs.map((p) => {
               const groups = [...new Set(p.exercises.map((e) => groupLabel(e.group)))].slice(0, 4)
               return (
-                <div key={p.id} className="card clickable" onClick={() => nav.push({ name: 'program', id: p.id })}>
+                <div key={p.id} className="card clickable" {...pressable(() => nav.push({ name: 'program', id: p.id }))}>
                   <div className="row">
                     <div className="icon-box"><IconDumbbell /></div>
                     <div className="grow">

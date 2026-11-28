@@ -125,7 +125,7 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   if (!open) return null
   return (
     <div className="backdrop" onClick={onClose}>
-      <div className="sheet" onClick={(e) => e.stopPropagation()} role="dialog">
+      <div className="sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={typeof title === 'string' ? title : undefined}>
         <div className="grabber" />
         {title && <h2>{title}</h2>}
         {children}
@@ -139,7 +139,7 @@ export function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boo
 }
 
 /** Champ numérique qui accepte la virgule et laisse vide = non renseigné. */
-export function NumInput({ value, onChange, step = 1, placeholder, width }: { value?: number; onChange: (v: number | undefined) => void; step?: number; placeholder?: string; width?: number }) {
+export function NumInput({ value, onChange, step = 1, placeholder, width, label }: { value?: number; onChange: (v: number | undefined) => void; step?: number; placeholder?: string; width?: number; label?: string }) {
   const [text, setText] = useState(value == null ? '' : String(value))
   useEffect(() => {
     setText((t) => (parse(t) === value ? t : value == null ? '' : String(value)))
@@ -151,6 +151,7 @@ export function NumInput({ value, onChange, step = 1, placeholder, width }: { va
       inputMode="decimal"
       step={step}
       placeholder={placeholder}
+      aria-label={label}
       value={text}
       onFocus={(e) => e.target.select()}
       onChange={(e) => {
@@ -187,13 +188,27 @@ export function ToastHost() {
     const h = (e: Event) => {
       setMsg((e as CustomEvent<string>).detail)
       window.clearTimeout(toastTimer)
-      toastTimer = window.setTimeout(() => setMsg(undefined), 2200)
+      toastTimer = window.setTimeout(() => setMsg(undefined), 3500)
     }
     window.addEventListener('petra:toast', h)
     return () => window.removeEventListener('petra:toast', h)
   }, [])
-  return msg ? <div className="toast">{msg}</div> : null
+  // Zone toujours présente : le lecteur d'écran (TalkBack) annonce chaque nouveau message.
+  return <div className="toast-live" role="status" aria-live="polite">{msg && <div className="toast">{msg}</div>}</div>
 }
+
+/** Rend une carte ou une ligne cliquable lisible par TalkBack et le clavier (rôle bouton, Entrée / Espace). */
+export const pressable = (onPress: () => void) => ({
+  role: 'button' as const,
+  tabIndex: 0,
+  onClick: onPress,
+  onKeyDown: (e: { key: string; target: EventTarget; currentTarget: EventTarget; preventDefault: () => void }) => {
+    if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault()
+      onPress()
+    }
+  },
+})
 
 export function confirmAction(message: string): boolean {
   return window.confirm(message)

@@ -7,7 +7,7 @@ import { describeSet, statsOf } from '../logic/session'
 import { formatDuration } from '../logic/util'
 import { overloadSuggestions } from '../logic/progress'
 import { OverloadCard } from '../ui/Overload'
-import { Empty, TopBar, confirmAction } from '../ui/kit'
+import { Empty, TopBar, confirmAction, pressable } from '../ui/kit'
 import { IconChevron, IconFlame, IconHistory, IconTrash } from '../ui/icons'
 import { SessionGains, achievementsOn } from './Achievements'
 
@@ -36,10 +36,10 @@ export function HistoryScreen() {
               {list.map((s) => {
                 const st = statsOf(s)
                 return (
-                  <div key={s.id} className="list-item clickable" onClick={() => nav.push({ name: 'session', id: s.id })}>
+                  <div key={s.id} className="list-item clickable" {...pressable(() => nav.push({ name: 'session', id: s.id }))}>
                     <div className="grow">
                       <div style={{ fontWeight: 600 }}>{s.programName}</div>
-                      <div className="small muted" style={{ textTransform: 'capitalize' }}>
+                      <div className="small muted cap">
                         {new Date(s.startedAt).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })} · {formatDuration(st.durationSec)} · {st.setsDone} séries
                         {st.volumeKg ? ` · ${Math.round(st.volumeKg)} kg` : ''}
                       </div>
@@ -85,11 +85,11 @@ export function SessionDetailScreen({ id }: { id: string }) {
     <div className="screen">
       <div className="screen-inner">
         <TopBar title={s.programName} onBack={nav.pop} />
-        <div className="muted small" style={{ textTransform: 'capitalize', marginTop: -6 }}>
+        <div className="muted small cap" style={{ marginTop: -6 }}>
           {fmtDate(s.startedAt)} · {fmtTime(s.startedAt)}
         </div>
         <div className="stat-grid">
-          <div className="stat"><div className="v">{formatDuration(st.durationSec)}</div><div className="l">Durée</div></div>
+          <div className="stat"><div className="v">{formatDuration(st.durationSec).split(/(\d+)/).map((p, i) => (/\d/.test(p) ? p : <span key={i} className="u">{p}</span>))}</div><div className="l">Durée</div></div>
           <div className="stat"><div className="v">{st.setsDone}</div><div className="l">Séries</div></div>
           <div className="stat"><div className="v">{st.exercisesDone}</div><div className="l">Exercices</div></div>
           <div className="stat"><div className="v">{Math.round(st.volumeKg)}</div><div className="l">Volume (kg)</div></div>
