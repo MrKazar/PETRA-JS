@@ -13,6 +13,8 @@ import { progress } from '../logic/level'
 import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
 import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor, IconDumbbell } from '../ui/icons'
 import { syncNow, unpair } from '../logic/pcsync'
+import { Kranos } from '../ui/Kranos'
+import { replayTour } from '../ui/Guide'
 import { EquipmentSection, equipmentSummary } from './Equipment'
 import { encodePairing } from '../logic/sync'
 import { desktop, isDesktop, lastPhoneSync, onPhoneSync, useUpdateState, useWindowState, type PairingState, type WindowMode } from '../logic/desktop'
@@ -86,6 +88,19 @@ export function SettingsScreen() {
             <span className="grow" style={{ fontWeight: 600 }}>Routines et tâches</span>
             <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
           </div>
+        </div>
+
+        <SectionTitle>Kranos, ton guide</SectionTitle>
+        <div className="card stack">
+          <div className="row">
+            <Kranos mood={s.guide === false ? 'fatigue' : 'salut'} size={52} />
+            <div className="grow">
+              <div style={{ fontWeight: 600 }}>Explications de Kranos</div>
+              <div className="small muted">Une bulle la première fois que tu ouvres un écran, et son casque en haut pour réexpliquer.</div>
+            </div>
+            <Toggle on={s.guide !== false} onChange={(v) => saveSettings({ guide: v })} />
+          </div>
+          <button className="btn block" onClick={() => { replayTour(); nav.reset({ name: 'today' }) }}>Revoir la visite guidée</button>
         </div>
 
         <SectionTitle>Application</SectionTitle>

@@ -201,6 +201,10 @@ export interface Settings {
   feats?: Feats
   /** Mode test (caché, propre à l'appareil) : toutes les apparences ouvertes, sans toucher à l'XP ni aux succès. */
   devThemes?: boolean
+  /** Kranos, la mascotte guide (oui par défaut). Propre à l'appareil. */
+  guide?: boolean
+  /** Bulles de Kranos déjà vues (« tour » = visite guidée, sinon clé d'écran). Propre à l'appareil. */
+  guideSeen?: string[]
 }
 
 export interface Feats {

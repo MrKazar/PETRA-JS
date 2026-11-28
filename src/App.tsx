@@ -9,6 +9,7 @@ import { dateKey } from './logic/util'
 import { ToastHost } from './ui/kit'
 import { StorageAlert } from './ui/StorageAlert'
 import { Splash } from './ui/Splash'
+import { GuideHost } from './ui/Guide'
 import { IconBody, IconBook, IconChart, IconDumbbell, IconFlame, IconSettings, IconToday } from './ui/icons'
 import { TodayScreen } from './screens/Today'
 import { ProgramsScreen } from './screens/Programs'
@@ -136,7 +137,7 @@ export default function App() {
           <nav className="tabbar">
             {isDesktop && <div className="tabbar-brand">PCTRA</div>}
             {TABS.map(({ tab, label, Icon }) => (
-              <button key={tab} className={`tab${rootTab === tab ? ' on' : ''}`} onClick={() => nav.reset({ name: tab })}>
+              <button key={tab} data-tab={tab} className={`tab${rootTab === tab ? ' on' : ''}`} onClick={() => nav.reset({ name: tab })}>
                 <span className="pill">
                   <Icon />
                   {isDesktop && label}
@@ -146,6 +147,7 @@ export default function App() {
             ))}
           </nav>
         )}
+        <GuideHost />
         <StorageAlert />
         <ToastHost />
       </div>

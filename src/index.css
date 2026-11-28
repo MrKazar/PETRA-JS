@@ -1155,3 +1155,49 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 .xp-unlocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 14px; }
 .xp-unlock { display: flex; align-items: center; gap: 10px; }
 .xp-unlock .n { font-weight: 600; font-size: 14px; }
+
+/* ---------- Kranos, la mascotte guide : couleurs du casque par thème (src/ui/Kranos.tsx) ---------- */
+/* Casque dans la matière du thème, contours et yeux dans sa couleur d’accent ; Spartiate garde son bronze (valeurs par défaut). */
+:root { --kr-c1: #e0b471; --kr-c2: #9c6c36; --kr-st: #4d3016; --kr-dark: #120c08; --kr-glow: #ffd27a; --kr-cr: #b03422; --kr-cr2: #6e1a10; }
+:root[data-theme='olympe'] { --kr-c1: #fffefc; --kr-c2: #dcd2bb; --kr-st: #8a6a22; --kr-dark: #171512; --kr-glow: #b38725; --kr-cr: #a8822f; --kr-cr2: #5c481a; }
+:root[data-theme='arene'] { --kr-c1: #774c33; --kr-c2: #39200f; --kr-st: #e5c89b; --kr-dark: #0c0906; --kr-glow: #ffd28a; --kr-cr: #e2c290; --kr-cr2: #7c6b4f; }
+:root[data-theme='acier'] { --kr-c1: #3c576e; --kr-c2: #132331; --kr-st: #a9d8ff; --kr-dark: #060709; --kr-glow: #92dfff; --kr-cr: #9fd4ff; --kr-cr2: #57758c; }
+:root[data-theme='jade'] { --kr-c1: #32594a; --kr-c2: #0c231a; --kr-st: #6fe3af; --kr-dark: #040505; --kr-glow: #54ffbb; --kr-cr: #5fe0a6; --kr-cr2: #347b5b; }
+:root[data-theme='crepuscule'] { --kr-c1: #703b4b; --kr-c2: #33131e; --kr-st: #f3b28c; --kr-dark: #0a0508; --kr-glow: #ffb378; --kr-cr: #f2a97f; --kr-cr2: #855d46; }
+:root[data-theme='abysse'] { --kr-c1: #2a6166; --kr-c2: #07292e; --kr-st: #ff967a; --kr-dark: #03070a; --kr-glow: #ff8e63; --kr-cr: #0f8a8a; --kr-cr2: #084c4c; }
+:root[data-theme='givre'] { --kr-c1: #ffffff; --kr-c2: #c3d6e8; --kr-st: #2b6cb0; --kr-dark: #0f1a23; --kr-glow: #2981de; --kr-cr: #1f4f80; --kr-cr2: #112b46; }
+:root[data-theme='lave'] { --kr-c1: #82432b; --kr-c2: #3a1508; --kr-st: #ffba4e; --kr-dark: #050403; --kr-glow: #ffca1d; --kr-cr: #e2470f; --kr-cr2: #7c2708; }
+:root[data-theme='sakura'] { --kr-c1: #ffffff; --kr-c2: #e9cdd6; --kr-st: #a8456a; --kr-dark: #22181b; --kr-glow: #d04a7c; --kr-cr: #c2557a; --kr-cr2: #6b2f43; }
+:root[data-theme='carbone'] { --kr-c1: #8e7f2a; --kr-c2: #413809; --kr-st: #ffda1a; --kr-dark: #060606; --kr-glow: #ffff00; --kr-cr: #ffd600; --kr-cr2: #8c7600; }
+:root[data-theme='minimal'] { --kr-c1: #fafafa; --kr-c2: #cbcbcb; --kr-st: #121212; --kr-dark: #0e0e0e; --kr-glow: #363636; --kr-cr: #121212; --kr-cr2: #0a0a0a; }
+:root[data-theme='vantablack'] { --kr-c1: #2a2a2a; --kr-c2: #050505; --kr-st: #dddddd; --kr-dark: #000000; --kr-glow: #e1e1e1; --kr-cr: #d9d9d9; --kr-cr2: #777777; }
+:root[data-theme='pompier'] { --kr-c1: #6b3433; --kr-c2: #311010; --kr-st: #d8ab5e; --kr-dark: #090706; --kr-glow: #ffbd41; --kr-cr: #d4a24c; --kr-cr2: #75592a; }
+:root[data-theme='neon'] { --kr-c1: #5f358a; --kr-c2: #260d41; --kr-st: #ff59e0; --kr-dark: #05020a; --kr-glow: #ff24fc; --kr-cr: #ff46dc; --kr-cr2: #8c2779; }
+:root[data-theme='lambda'] { --kr-c1: #722d30; --kr-c2: #320a0c; --kr-st: #eac472; --kr-dark: #070404; --kr-glow: #ffd451; --kr-cr: #e8bd62; --kr-cr2: #806836; }
+:root[data-theme='loup'] { --kr-c1: #3e517f; --kr-c2: #131e3d; --kr-st: #eae0b6; --kr-dark: #03060d; --kr-glow: #fceaa8; --kr-cr: #e8dcae; --kr-cr2: #807960; }
+:root[data-theme='phalange'] { --kr-c1: #6b302d; --kr-c2: #2d0b09; --kr-st: #cda463; --kr-dark: #070303; --kr-glow: #f4b44d; --kr-cr: #c79a52; --kr-cr2: #6d552d; }
+:root[data-theme='phenix'] { --kr-c1: #88492e; --kr-c2: #401809; --kr-st: #ffc859; --kr-dark: #090302; --kr-glow: #ffdb2b; --kr-cr: #e2561a; --kr-cr2: #7c2f0e; }
+:root[data-theme='nuit'] { --kr-c1: #3c4578; --kr-c2: #101639; --kr-st: #d4dcff; --kr-dark: #02030d; --kr-glow: #cddaff; --kr-cr: #cfd8ff; --kr-cr2: #72778c; }
+:root[data-theme='miroir'] { --kr-c1: #696e73; --kr-c2: #2e3134; --kr-st: #f3f6f8; --kr-dark: #08090a; --kr-glow: #f3f7fb; --kr-cr: #9aa3ab; --kr-cr2: #555a5e; }
+:root[data-theme='citrouille'] { --kr-c1: #94583d; --kr-c2: #462317; --kr-st: #ba7bff; --kr-dark: #09050b; --kr-glow: #bf5bff; --kr-cr: #ff7a1a; --kr-cr2: #8c430e; }
+:root[data-theme='leonidas'] { --kr-c1: #70312e; --kr-c2: #320d0b; --kr-st: #e9c887; --kr-dark: #090503; --kr-glow: #ffd56f; --kr-cr: #e6c27a; --kr-cr2: #7f6b43; }
+:root[data-theme='immortel'] { --kr-c1: #ffffff; --kr-c2: #ddd2ba; --kr-st: #8a6512; --kr-dark: #221b10; --kr-glow: #b78414; --kr-cr: #b58a1e; --kr-cr2: #644c11; }
+/* Architecte (thème développeur) : Kranos dessiné comme un plan, axes de construction visibles. */
+:root[data-theme='architecte'] { --kr-c1: #0d2c55; --kr-c2: #0b2547; --kr-st: #9cc3e8; --kr-dark: #04122a; --kr-glow: #f0be50; --kr-cr: #0d2c55; --kr-cr2: #9cc3e8; }
+.kranos .kr-guides { display: none; }
+:root[data-theme='architecte'] .kranos .kr-guides { display: inline; }
+
+/* ---------- Kranos : bulles du guide ---------- */
+.kranos { display: block; flex: none; overflow: visible; }
+.kranos.float { animation: kr-float 3.2s ease-in-out infinite; }
+@keyframes kr-float { 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .kranos.float { animation: none; } }
+.guide { position: fixed; left: 10px; right: 10px; bottom: calc(var(--safe-bottom) + 78px); z-index: 55; display: flex; align-items: flex-end; gap: 6px; max-width: 560px; margin: 0 auto; animation: up 0.22s ease-out; pointer-events: none; }
+.guide.top { bottom: auto; top: calc(var(--safe-top) + 64px); }
+.guide > * { pointer-events: auto; }
+.guide-bubble { flex: 1; background: var(--surface-2); color: var(--text); border: 1px solid var(--khaki); border-radius: 14px 14px 14px 3px; padding: 12px 14px 10px; font-size: 15px; line-height: 1.4; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
+.guide-actions { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.app.desktop .guide { left: 240px; bottom: 24px; }
+.tabbar .tab.guide-focus .pill { outline: 2px solid var(--khaki); outline-offset: 2px; box-shadow: 0 0 14px var(--khaki); }
+.guide-btn { padding: 0; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; }
+.icon-btn.guide-btn svg.kranos { width: 32px; height: 30px; }
