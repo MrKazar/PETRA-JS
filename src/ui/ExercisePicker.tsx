@@ -195,7 +195,7 @@ export function CatalogDetail({ ex, onAdd, addLabel = 'Ajouter', bare = false, m
   )
 }
 
-export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset = false, mode = 'guidee' }: { open: boolean; onClose: () => void; onPick: (ex: ProgramExercise) => void; defaultRest: number; forSuperset?: boolean; mode?: 'guidee' | 'libre' }) {
+export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset = false, block = 'superset', mode = 'guidee' }: { open: boolean; onClose: () => void; onPick: (ex: ProgramExercise) => void; defaultRest: number; forSuperset?: boolean; block?: 'superset' | 'AMRAP'; mode?: 'guidee' | 'libre' }) {
   const search = useCatalogSearch()
   const [detail, setDetail] = useState<CatalogExercise>()
 
@@ -224,13 +224,13 @@ export function ExercisePicker({ open, onClose, onPick, defaultRest, forSuperset
   }
 
   return (
-    <Sheet open={open} onClose={detail ? () => setDetail(undefined) : close} title={detail ? detail.nom : forSuperset ? 'Exercice du superset' : 'Ajouter un exercice'}>
+    <Sheet open={open} onClose={detail ? () => setDetail(undefined) : close} title={detail ? detail.nom : forSuperset ? `Exercice du ${block}` : 'Ajouter un exercice'}>
       {detail ? (
         <CatalogDetail
           ex={detail}
           bare={forSuperset}
           mode={mode}
-          addLabel={forSuperset ? 'Ajouter au superset' : undefined}
+          addLabel={forSuperset ? `Ajouter au ${block}` : undefined}
           onAdd={(p) => {
             setDetail(undefined)
             onPick(p)

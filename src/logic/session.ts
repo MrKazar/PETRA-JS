@@ -1,6 +1,7 @@
 import type { ActiveSession, IntervalStep, IntervalTimer, PartSet, PlannedSet, SupersetPart, Program, ProgramExercise, Session, SessionExercise, SessionSet } from '../data/types'
 import { uid } from './util'
 import { isCardio } from '../data/catalog'
+import { AMRAP_PREP_SEC, commitExercise } from './amrap'
 
 export function startFrom(program: Program | null, now = Date.now()): ActiveSession {
   return {
@@ -201,7 +202,8 @@ export function finalize(s: ActiveSession, now = Date.now()): Session {
     ...rest,
     endedAt: now,
     planned: s.exercises.reduce((n, e) => n + e.sets.length, 0),
-    exercises: s.exercises.map((e) => ({ ...e, sets: e.sets.filter((x) => x.done) })).filter((e) => e.sets.length > 0),
+    // Un AMRAP encore au chrono est enregistré tel quel (tours complets, sans tour entamé).
+    exercises: s.exercises.map((e) => (e.amrap?.run ? commitExercise(e, [], now) : e)).map((e) => ({ ...e, sets: e.sets.filter((x) => x.done) })).filter((e) => e.sets.length > 0),
   }
 }
 
@@ -283,6 +285,11 @@ const MIN_SET_SEC = 25
 export function estimateDuration(program: Pick<Program, 'exercises'>, defaultRestSec: number): number {
   let total = 0
   program.exercises.forEach((ex, e) => {
+    if (ex.amrap) {
+      // AMRAP : sa durée (et le décompte), puis le repos par défaut avant le bloc suivant.
+      total += ex.amrap.capSec + AMRAP_PREP_SEC + (e === program.exercises.length - 1 ? 0 : defaultRestSec)
+      return
+    }
     ex.sets.forEach((set, i) => {
       const work = set.parts
         ? Math.max(MIN_SET_SEC, set.parts.reduce((n, p, k) => n + (p.durationSec ?? (p.reps ?? 10) * SEC_PER_REP * (ex.parts?.[k]?.parCote ? 2 : 1)), 0))
