@@ -228,7 +228,7 @@ describe('mises à jour', () => {
 
 describe('thèmes', () => {
   it('spartiate par défaut, anciens thèmes militaire / police / gendarmerie / forces retirés', () => {
-    expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'abysse', 'givre', 'lave', 'sakura', 'carbone', 'minimal', 'vantablack', 'pompier', 'neon', 'lambda', 'loup', 'phalange', 'phenix', 'nuit', 'miroir', 'citrouille', 'leonidas', 'immortel'])
+    expect(THEMES.map((t) => t.id)).toEqual(['spartiate', 'olympe', 'arene', 'acier', 'jade', 'crepuscule', 'abysse', 'givre', 'lave', 'sakura', 'carbone', 'minimal', 'vantablack', 'pompier', 'neon', 'lambda', 'loup', 'phalange', 'phenix', 'nuit', 'miroir', 'citrouille', 'leonidas', 'immortel', 'architecte'])
     expect(themeOf(undefined).id).toBe('spartiate')
     expect(themeOf('militaire' as never).id).toBe('spartiate')
     expect(themesFor({}).some((t) => t.id === 'neon')).toBe(false)
@@ -285,6 +285,9 @@ describe('thèmes secrets liés aux succès secrets', () => {
     expect(themeForCode('kazar')).toBeUndefined()
     expect(codeHash('sparte300')).toBe(DEV_CODE_HASH)
     expect(themesFor({ devThemes: true }).length).toBe(THEMES.length)
+    expect(themesFor({}).some((t) => t.id === 'architecte')).toBe(false)
+    expect(themesFor({ feats: { codes: ['architecte'] } }).some((t) => t.id === 'architecte')).toBe(true)
+    expect(themeForCode('sparte300')).toBeUndefined() // le code du développeur passe par le mode test
     // Qui avait déjà ce nom garde son thème.
     expect(normalize({ programs: [], settings: { name: 'NéoDyme', theme: 'neon' } } as never).settings.feats?.codes).toEqual(['neon'])
     expect(normalize({ programs: [], settings: { name: 'Kazar' } } as never).settings.feats?.codes).toBeUndefined()

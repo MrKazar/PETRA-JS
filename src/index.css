@@ -956,6 +956,63 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 :root[data-theme='loup'] .tab, :root[data-theme='phalange'] .tab, :root[data-theme='phenix'] .tab, :root[data-theme='nuit'] .tab, :root[data-theme='miroir'] .tab,
 :root[data-theme='citrouille'] .tab, :root[data-theme='leonidas'] .tab, :root[data-theme='immortel'] .tab { font-family: var(--font-body); }
 
+/* ---------- Architecte : thème du développeur (le plan de PETRA) ---------- */
+:root[data-theme='architecte'] {
+  --bg: #061a36; --surface: #0b2547; --surface-2: #10305a; --line: #1f4c80;
+  --text: #e8f4ff; --muted: #9cc3e8; --faint: #5f87b0;
+  --olive: #2f86e0; --olive-light: #5fb0ff; --olive-dark: #154a86;
+  --khaki: #f0be50; --khaki-soft: rgba(240, 190, 80, 0.13);
+  --success: #78d2ff; --success-soft: rgba(120, 210, 255, 0.14);
+  --on-primary: #f4faff; --radius: 2px;
+  --font-body: 'Barlow', sans-serif; --font-head: 'JetBrains Mono', monospace; --head-weight: 700;
+  --bg-image: linear-gradient(rgba(232, 244, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(232, 244, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(232, 244, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(232, 244, 255, 0.025) 1px, transparent 1px);
+}
+/* Quadrillage de plan (grands carreaux de 64 px, petits de 16 px), immobile au défilement. */
+:root[data-theme='architecte'] body {
+  background: var(--bg-image), radial-gradient(ellipse at 50% 0%, #0f3a70, var(--bg) 70%);
+  background-size: 64px 64px, 64px 64px, 16px 16px, 16px 16px, auto;
+  background-attachment: fixed;
+}
+/* Cartes : traits de coupe aux quatre coins, comme sur un tirage de plan. */
+:root[data-theme='architecte'] .card {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(var(--khaki), var(--khaki)) left top / 12px 2px no-repeat, linear-gradient(var(--khaki), var(--khaki)) left top / 2px 12px no-repeat,
+    linear-gradient(var(--khaki), var(--khaki)) right top / 12px 2px no-repeat, linear-gradient(var(--khaki), var(--khaki)) right top / 2px 12px no-repeat,
+    linear-gradient(var(--khaki), var(--khaki)) left bottom / 12px 2px no-repeat, linear-gradient(var(--khaki), var(--khaki)) left bottom / 2px 12px no-repeat,
+    linear-gradient(var(--khaki), var(--khaki)) right bottom / 12px 2px no-repeat, linear-gradient(var(--khaki), var(--khaki)) right bottom / 2px 12px no-repeat,
+    rgba(11, 37, 71, 0.88);
+}
+:root[data-theme='architecte'] .header h1, :root[data-theme='architecte'] .topbar h1 { letter-spacing: 0.04em; }
+/* Le titre se tape comme dans un terminal, curseur qui clignote. */
+:root[data-theme='architecte'] .header h1::after, :root[data-theme='architecte'] .logo-compose .word::after, :root[data-theme='architecte'] .splash .word::after {
+  content: '_'; color: var(--khaki); animation: archi-caret 1.06s steps(1) infinite; margin-left: 0.08em;
+}
+@keyframes archi-caret { 50% { opacity: 0; } }
+:root[data-theme='architecte'] .logo-compose .word { letter-spacing: 0.1em; color: var(--text); text-shadow: 0 0 18px rgba(95, 176, 255, 0.55); }
+:root[data-theme='architecte'] .logo-compose .motto { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--success); }
+/* L'emblème du logo et de l'écran de démarrage se « trace » à l'ouverture. */
+:root[data-theme='architecte'] .logo-compose img, :root[data-theme='architecte'] .splash img { animation: archi-draw 1.4s ease-out both; }
+@keyframes archi-draw {
+  0% { clip-path: inset(0 100% 0 0); filter: brightness(2.2) saturate(0.2); }
+  70% { clip-path: inset(0 0 0 0); filter: brightness(1.4); }
+  100% { clip-path: inset(0 0 0 0); filter: none; }
+}
+/* Ligne de balayage lente sur l'écran de démarrage. */
+:root[data-theme='architecte'] .splash::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 2px; top: 0;
+  background: linear-gradient(90deg, transparent, rgba(120, 210, 255, 0.8), transparent);
+  box-shadow: 0 0 16px rgba(120, 210, 255, 0.6); animation: archi-scan 2.4s linear infinite;
+}
+@keyframes archi-scan { from { transform: translateY(0); } to { transform: translateY(100vh); } }
+:root[data-theme='architecte'] .tab { font-family: var(--font-body); }
+:root[data-theme='architecte'] .btn.primary { box-shadow: 0 0 0 1px rgba(95, 176, 255, 0.4), 0 0 14px rgba(47, 134, 224, 0.35); }
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='architecte'] .header h1::after, :root[data-theme='architecte'] .logo-compose .word::after, :root[data-theme='architecte'] .splash .word::after,
+  :root[data-theme='architecte'] .logo-compose img, :root[data-theme='architecte'] .splash img, :root[data-theme='architecte'] .splash::after { animation: none; }
+}
+
 /* ---------- Exercices animés en 3D (1.4.0) ---------- */
 .ex3d { position: relative; flex: none; overflow: hidden; border-radius: 10px; border: 1px solid var(--line); background: radial-gradient(ellipse at 50% 35%, var(--surface-2), var(--bg) 85%); touch-action: pan-y; }
 .ex3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 0.35s ease; }

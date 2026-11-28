@@ -45,6 +45,8 @@ THEMES = {
     "lave": ("emblem-lave.webp", (10, 7, 6), 0.78),
     "sakura": ("emblem-sakura.webp", (251, 243, 244), 0.78),
     "carbone": ("emblem-carbone.webp", (12, 12, 12), 0.78),
+    # Thème du développeur (scripts/build_architecte.py)
+    "architecte": ("emblem-architecte.webp", (6, 26, 54), 0.96),
 }
 
 ADAPTIVE = """<?xml version="1.0" encoding="utf-8"?>
