@@ -1219,3 +1219,4 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 /* Zoom permis : pas de zoom au double appui sur les boutons (− / + en séance). */
 button, .clickable, .task, .live-banner { touch-action: manipulation; }
 input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; } /* les champs ont déjà leur bord de focus */
+.sheet:focus { outline: none; }

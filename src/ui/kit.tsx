@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useId, useState, type ReactNode } from 'react'
 import { IconBack } from './icons'
 import { useData } from '../data/store'
 import { activeTheme } from './theme'
@@ -113,6 +113,7 @@ export function Progress({ value }: { value: number }) {
 }
 
 export function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title?: ReactNode; children: ReactNode }) {
+  const titleId = useId()
   useEffect(() => {
     if (!open) return
     const h = (e: Event) => {
@@ -125,9 +126,20 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   if (!open) return null
   return (
     <div className="backdrop" onClick={onClose}>
-      <div className="sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={typeof title === 'string' ? title : undefined}>
+      <div
+        className="sheet"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        tabIndex={-1}
+        ref={(el) => {
+          // Le lecteur d'écran et le clavier entrent dans la feuille à son ouverture.
+          if (el && !el.contains(document.activeElement)) el.focus({ preventScroll: true })
+        }}
+      >
         <div className="grabber" />
-        {title && <h2>{title}</h2>}
+        {title && <h2 id={titleId}>{title}</h2>}
         {children}
       </div>
     </div>
