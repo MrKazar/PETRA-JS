@@ -3,6 +3,8 @@ import { IconBack } from './icons'
 import { useData } from '../data/store'
 import { activeTheme } from './theme'
 import { progress } from '../logic/level'
+import { useNav } from '../nav'
+import { GuideButton } from './Guide'
 
 export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: () => void; right?: ReactNode }) {
   return (
@@ -13,6 +15,7 @@ export function TopBar({ title, onBack, right }: { title: ReactNode; onBack?: ()
         </button>
       )}
       <h1 className="ellipsis">{title}</h1>
+      <Help />
       {right}
     </div>
   )
@@ -28,6 +31,12 @@ const useTheme = () => {
 }
 
 export const Emblem = ({ size = 40, onClick }: { size?: number; onClick?: () => void }) => <img className="emblem" src={imgUrl(useTheme().emblem)} width={size} height={size} alt="" onClick={onClick} />
+
+/** Casque d'aide de Kranos (absent si l'écran n'a pas d'explication ou si Kranos est coupé). */
+function Help() {
+  const nav = useNav()
+  return nav ? <GuideButton route={nav.route} /> : null
+}
 
 /** Logo complet : l'image d'origine pour le thème militaire, sinon emblème + PETRA dans la police du thème. */
 export function LogoFull() {
@@ -63,6 +72,7 @@ export function Header({ title, sub, right, onEmblem }: { title: ReactNode; sub?
         <Stripe />
         {sub && <div className="sub">{sub}</div>}
       </div>
+      <Help />
       {right}
     </div>
   )
