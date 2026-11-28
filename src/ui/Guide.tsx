@@ -53,11 +53,19 @@ export function GuideHost() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [on, tourDone, key, route.name, !!data.active, seenKey])
 
-  // Une bulle d'écran se ferme quand on quitte l'écran.
+  // Une bulle d'écran se ferme (et compte comme vue) quand on quitte l'écran.
   useEffect(() => {
     const s = shownRef.current
-    if (s?.kind === 'tip' && s.key !== key) setShown(null)
+    if (s?.kind === 'tip' && s.key !== key) {
+      if (!s.manual) markSeen(s.key)
+      setShown(null)
+    }
   }, [key])
+
+  // Kranos coupé dans Paramètres : la bulle ouverte disparaît aussi.
+  useEffect(() => {
+    if (!on) setShown(null)
+  }, [on])
 
   // Casque d'aide : Kranos réexplique l'écran affiché.
   useEffect(() => {

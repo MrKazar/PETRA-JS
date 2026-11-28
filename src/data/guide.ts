@@ -56,11 +56,12 @@ const TABS = Object.keys(TAB_TIPS)
 /** Clé de la bulle d'un écran (undefined si Kranos n'a rien à en dire). */
 export function tipKey(route: Route): string | undefined {
   const key = route.name === 'settingsSection' ? `settingsSection:${route.section}` : route.name
-  return TABS.includes(key) || SCREEN_TIPS[key] ? key : undefined
+  return TABS.includes(key) || Object.hasOwn(SCREEN_TIPS, key) ? key : undefined
 }
 
 export function tipFor(key: string): GuideTip | undefined {
-  return (TAB_TIPS as Record<string, GuideTip>)[key] ?? SCREEN_TIPS[key]
+  if (Object.hasOwn(TAB_TIPS, key)) return (TAB_TIPS as Record<string, GuideTip>)[key]
+  return Object.hasOwn(SCREEN_TIPS, key) ? SCREEN_TIPS[key] : undefined
 }
 
 export const isTab = (key: string) => TABS.includes(key)
