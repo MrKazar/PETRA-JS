@@ -12,6 +12,8 @@ import { CATALOG, cardioPlanOf, cardioSets, groupLabel, isCardio, isPdc, loadFor
 import { formatDuration, uid } from '../logic/util'
 import { describePart, estimateDuration, formatEstimate } from '../logic/session'
 import { SupersetEditor } from '../ui/SupersetEditor'
+import { AmrapEditor } from '../ui/AmrapEditor'
+import { AmrapSummary } from '../ui/Amrap'
 import { fmtKg, roundForEquipment, stepHint } from '../logic/loads'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { ShareSheet } from '../ui/Share'
@@ -29,7 +31,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
   const [sharing, setSharing] = useState(false)
   const [editingEx, setEditingEx] = useState<string | null>(null)
   const [renaming, setRenaming] = useState(false)
-  const [superset, setSuperset] = useState<'new' | null>(null)
+  const [superset, setSuperset] = useState<'new' | 'amrap' | null>(null)
 
   if (!program) {
     return (
@@ -94,7 +96,7 @@ export function ProgramDetailScreen({ id }: { id: string }) {
         </button>
         {program.exercises.length > 0 && (
           <div className="small muted" style={{ textAlign: 'center', marginTop: -4 }}>
-            Durée estimée {formatEstimate(estimateDuration(program, data.settings.defaultRestSec))} · {program.exercises.reduce((n, e) => n + e.sets.length, 0)} séries
+            Durée estimée {formatEstimate(estimateDuration(program, data.settings.defaultRestSec))} · {program.exercises.filter((e) => !e.amrap).reduce((n, e) => n + e.sets.length, 0)} séries{program.exercises.some((e) => e.amrap) ? ` + ${program.exercises.filter((e) => e.amrap).length} AMRAP` : ''}
           </div>
         )}
         {program.exercises.length > 0 && (
@@ -110,8 +112,10 @@ export function ProgramDetailScreen({ id }: { id: string }) {
                 <div className="row">
                   {!e.parts && <Ex3D id={e.catalogId} size="mini" />}
                   <div className="grow" onClick={() => setEditingEx(e.id)} style={{ cursor: 'pointer' }}>
-                    <div style={{ fontWeight: 600 }}>{e.parts && <span className="ss-tag">Superset</span>}{e.name}</div>
-                    {e.parts ? (
+                    <div style={{ fontWeight: 600 }}>{e.parts && <span className="ss-tag">{e.amrap ? 'AMRAP' : 'Superset'}</span>}{e.name}</div>
+                    {e.amrap ? (
+                      <AmrapSummary ex={e} sessions={data.sessions} />
+                    ) : e.parts ? (
                       <>
                         <div className="small muted">{e.sets.length} tour{e.sets.length > 1 ? 's' : ''} · repos {formatDuration(e.restSec)} entre les tours</div>
                         <ol className="ss-parts">
@@ -152,12 +156,15 @@ export function ProgramDetailScreen({ id }: { id: string }) {
           <Empty icon={<IconDumbbell />}>Ajoute des exercices depuis le catalogue (260 exercices) ou crée les tiens.</Empty>
         )}
 
-        <div className="row">
+        <div className="row add-row">
           <button className="btn grow" onClick={() => setPicking(true)}>
             <IconPlus /> Exercice
           </button>
           <button className="btn grow" onClick={() => setSuperset('new')}>
             <IconPlus /> Superset
+          </button>
+          <button className="btn grow" onClick={() => setSuperset('amrap')}>
+            <IconPlus /> AMRAP
           </button>
         </div>
 
@@ -196,9 +203,29 @@ export function ProgramDetailScreen({ id }: { id: string }) {
         }}
       />
 
-      {(superset === 'new' || editing?.parts) && (
+      {(superset === 'new' || (editing?.parts && !editing.amrap)) && (
         <SupersetEditor
           initial={superset === 'new' ? undefined : editing}
+          defaultRest={data.settings.defaultRestSec}
+          onClose={() => {
+            setSuperset(null)
+            setEditingEx(null)
+          }}
+          onSave={(ex) => {
+            setExercises(program.exercises.some((x) => x.id === ex.id) ? program.exercises.map((x) => (x.id === ex.id ? ex : x)) : [...program.exercises, ex])
+            setSuperset(null)
+            setEditingEx(null)
+          }}
+          onDelete={editing ? () => {
+            setExercises(program.exercises.filter((x) => x.id !== editing.id))
+            setEditingEx(null)
+          } : undefined}
+        />
+      )}
+
+      {(superset === 'amrap' || editing?.amrap) && (
+        <AmrapEditor
+          initial={superset === 'amrap' ? undefined : editing}
           defaultRest={data.settings.defaultRestSec}
           onClose={() => {
             setSuperset(null)

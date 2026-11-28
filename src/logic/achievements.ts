@@ -8,6 +8,7 @@ import { e1rm, liftsOf } from './stats'
 import { exerciseKey } from './progress'
 import { addDays, dateKey, parseKey } from './util'
 import { themesShown } from '../ui/theme'
+import { amrapKey, better, scoreOf, type AmrapScore } from './amrap'
 
 /**
  * Succès et XP (PETRA 1.3.13). Tout se calcule à partir de l'historique déjà enregistré : les
@@ -40,7 +41,7 @@ export const FAMILIES: { id: Family; label: string }[] = [
   { id: 'cardio', label: 'Cardio et minuteur' },
   { id: 'explorateur', label: 'Explorateur' },
   { id: 'corps', label: 'Carte du corps' },
-  { id: 'finishers', label: 'Finishers et supersets' },
+  { id: 'finishers', label: 'Finishers, supersets et AMRAP' },
   { id: 'moments', label: 'Moments' },
   { id: 'outils', label: 'Outils et routines' },
   { id: 'secrets', label: 'Secrets' },
@@ -137,6 +138,9 @@ export interface Facts {
   finisherRun: number
   supersetSessions: number
   circuit: number
+  /** AMRAP enregistrés, et records d'AMRAP battus (1.4.3). */
+  amraps: number
+  amrapRecords: number
   routineDays: number
   early: number
   late: number
@@ -197,7 +201,7 @@ export function factsOf(data: AppData, now = Date.now()): Facts {
     tonnage: 0, sets: 0, reps: 0, bestSessionTonnage: 0, records: 0, bestRecordsInSession: 0, loadIncreases: 0, bestProgressPct: 0,
     best1RM: {}, bestReps: {}, bestSec: {}, cardioMin: 0, timerMin: 0, catalogIds: 0, kinds: 0, zonesWorked: 0, fullWeeks: 0,
     specialists: 0, balanced: 0, finishers: 0, finisherTypes: 0, finisherIdsDone: 0, finisherTotal: 0, finisherRun: 0,
-    supersetSessions: 0, circuit: 0, routineDays: 0, early: 0, late: 0, weekend: 0, monthsOfYear: 0,
+    supersetSessions: 0, circuit: 0, amraps: 0, amrapRecords: 0, routineDays: 0, early: 0, late: 0, weekend: 0, monthsOfYear: 0,
     dates: new Set(), monthDays: new Set(), friday13: false, fullMoon: false, night: false, mirror: false, anniversary: false,
     hundredTen: false, thermopyles: false, perfectRun: 0, phoenix: false, dayAfterRecord: false,
   }
@@ -209,6 +213,7 @@ export function factsOf(data: AppData, now = Date.now()): Facts {
   const finIds = new Set<string>()
   const months = new Set<number>()
   const recordDays = new Set<string>()
+  const amrapBest = new Map<string, AmrapScore>()
   const first1RM: Record<string, number> = {}
   const lastMax: Record<string, number> = {}
   let finRun = 0
@@ -308,7 +313,20 @@ export function factsOf(data: AppData, now = Date.now()): Facts {
         }
       }
     }
-    if (s.exercises.some((e) => e.parts?.length && e.sets.some((x) => x.done))) f.supersetSessions++
+    if (s.exercises.some((e) => e.parts?.length && !e.amrap && e.sets.some((x) => x.done))) f.supersetSessions++
+    // AMRAP : un score meilleur que le précédent record du même AMRAP compte comme un record.
+    for (const e of s.exercises) {
+      const sc = e.amrap && scoreOf(e)
+      if (!sc) continue
+      f.amraps++
+      const key = amrapKey(e)
+      const prev = amrapBest.get(key)
+      if (prev && better(sc, prev)) {
+        f.amrapRecords++
+        sessionRecords++
+      }
+      if (!prev || better(sc, prev)) amrapBest.set(key, sc)
+    }
     for (const [k, m] of Object.entries(sessionMax)) {
       if (lastMax[k] != null && m > lastMax[k]) f.loadIncreases++
       lastMax[k] = m
@@ -494,6 +512,8 @@ export const DEFS: Def[] = [
   D('finishers', 'flame', 'jusquau_bout', 'Jusqu’au bout', 'Finisher fait plusieurs séances d’affilée', [10, 30], (f) => f.finisherRun, (v) => `${v} séances`),
   D('finishers', 'gear', 'enchainement', 'Enchaînement', 'Séances avec un superset, un triset ou un circuit', [1, 10, 50], (f) => f.supersetSessions),
   D('finishers', 'gear', 'circuit', 'Circuit training', 'Un circuit de 4 exercices ou plus terminé', [1], (f) => f.circuit),
+  D('finishers', 'clock', 'amrap', 'Autant que possible', 'AMRAP terminés', [1, 10, 50], (f) => f.amraps),
+  D('finishers', 'trophy', 'un_de_plus', 'Toujours un de plus', 'Records d’AMRAP battus', [1, 5, 15], (f) => f.amrapRecords),
   D('moments', 'clock', 'leve_tot', 'Lève-tôt', 'Séances commencées avant 7 h', [1, 10, 50], (f) => f.early),
   D('moments', 'clock', 'oiseau_nuit', 'Oiseau de nuit', 'Séances commencées après 21 h', [1, 10, 50], (f) => f.late),
   D('moments', 'calendar', 'week_end', 'Week-end', 'Séances le samedi ou le dimanche', [10, 50], (f) => f.weekend),

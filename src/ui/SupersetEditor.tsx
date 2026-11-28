@@ -7,7 +7,7 @@ import { NumInput, Sheet } from './kit'
 import { IconDown, IconPlus, IconTrash, IconUp, IconX } from './icons'
 
 /** Exercice du catalogue → exercice de superset (répétitions de sa série de travail, charge de travail). */
-function toPart(ex: ProgramExercise): SupersetPart {
+export function toPart(ex: ProgramExercise): SupersetPart {
   const work = ex.sets.find((s) => s.phase === 'travail' || s.phase === 'serie' || s.phase === 'cardio') ?? ex.sets[0]
   return {
     ...(ex.catalogId ? { catalogId: ex.catalogId } : {}),

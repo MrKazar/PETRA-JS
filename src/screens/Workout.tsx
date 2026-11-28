@@ -13,6 +13,10 @@ import { buzzRestOver, tap } from '../logic/native'
 import { formatClock, formatDuration } from '../logic/util'
 import { IntervalTimerView } from '../ui/IntervalTimer'
 import { SupersetEditor } from '../ui/SupersetEditor'
+import { AmrapEditor } from '../ui/AmrapEditor'
+import { AmrapCard, AmrapView } from '../ui/Amrap'
+import { addRound, cancelAmrap, commitAmrap, pauseAmrap, resumeAmrap, runningAmrap, startAmrap, stopAmrap, undoRound } from '../logic/amrap'
+import { saveSettings } from '../logic/actions'
 import { ExercisePicker } from '../ui/ExercisePicker'
 import { ReplaceSheet } from '../ui/ReplaceSheet'
 import { stepLoad } from '../logic/loads'
@@ -29,11 +33,13 @@ export function WorkoutScreen() {
   const [finishing, setFinishing] = useState(false)
   const [setupTimer, setSetupTimer] = useState(false)
   const [addingSuperset, setAddingSuperset] = useState(false)
+  const [addingAmrap, setAddingAmrap] = useState(false)
   const [replacing, setReplacing] = useState<SessionExercise>()
   const [undo, setUndo] = useState<{ label: string; prev: ActiveSession }>()
   const undoTimer = useRef<number | undefined>(undefined)
   const cards = useRef(new Map<string, HTMLDivElement>())
-  const upId = s && !s.timer ? nextPending(s)?.exercise.id : undefined
+  const amrapRun = s ? runningAmrap(s) : undefined
+  const upId = s && !s.timer && !amrapRun ? nextPending(s)?.exercise.id : undefined
   // Après chaque série validée, l'exercice en cours remonte en haut de l'écran.
   useEffect(() => {
     if (upId) cards.current.get(upId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -124,6 +130,15 @@ export function WorkoutScreen() {
     nav.pop()
   }
 
+  const startAmrapNow = (exId: string) => {
+    tap()
+    apply((a) => startAmrap(a, exId))
+  }
+  const stopRun = () => {
+    const id = runningAmrap(getData().active ?? { exercises: [] })?.id
+    if (id) apply((a) => stopAmrap(a, id))
+  }
+
   const curEx = up?.exercise
   const curSet = up ? up.exercise.sets[up.index] : undefined
   const step = (patch: { reps?: number; weight?: number; durationSec?: number }) => up && apply((a) => patchSet(a, up.exercise.id, up.index, patch))
@@ -151,7 +166,18 @@ export function WorkoutScreen() {
           <div style={{ width: `${st.setsTotal ? (st.setsDone / st.setsTotal) * 100 : 0}%` }} />
         </div>
 
-        {s.exercises.map((ex) => (
+        {s.exercises.map((ex) => ex.amrap ? (
+          <AmrapCard
+            key={ex.id}
+            ex={ex}
+            sessions={data.sessions}
+            before={s.startedAt}
+            current={up?.exercise.id === ex.id}
+            cardRef={(el) => (el ? cards.current.set(ex.id, el) : cards.current.delete(ex.id))}
+            onStart={() => startAmrapNow(ex.id)}
+            onRemove={() => removeWithUndo(`${ex.name} retiré`, (a) => ({ ...a, exercises: a.exercises.filter((e) => e.id !== ex.id) }))}
+          />
+        ) : (
           <ExerciseCard
             key={ex.id}
             anim={data.settings.anim3d !== false}
@@ -171,12 +197,15 @@ export function WorkoutScreen() {
 
         {!s.exercises.length && <Empty>Séance libre : ajoute les exercices au fur et à mesure.</Empty>}
 
-        <div className="row">
+        <div className="row add-row">
           <button className="btn grow" onClick={() => setPicking(true)}>
             <IconPlus /> Exercice
           </button>
           <button className="btn grow" onClick={() => setAddingSuperset(true)}>
             <IconPlus /> Superset
+          </button>
+          <button className="btn grow" onClick={() => setAddingAmrap(true)}>
+            <IconPlus /> AMRAP
           </button>
         </div>
 
@@ -227,6 +256,17 @@ export function WorkoutScreen() {
         />
       )}
 
+      {addingAmrap && (
+        <AmrapEditor
+          defaultRest={data.settings.defaultRestSec}
+          onClose={() => setAddingAmrap(false)}
+          onSave={(ex) => {
+            apply((a) => ({ ...a, exercises: [...a.exercises, toSessionExercise(ex)] }))
+            setAddingAmrap(false)
+          }}
+        />
+      )}
+
       {setupTimer && (
         <TimerSetupSheet
           session={s}
@@ -255,7 +295,30 @@ export function WorkoutScreen() {
       />
     )}
 
-    {(undo || (curEx && curSet)) && (
+    {amrapRun && (
+      <AmrapView
+        ex={amrapRun}
+        sessions={data.sessions}
+        before={s.startedAt}
+        now={now}
+        sound={data.settings.timerSound}
+        vibrate={data.settings.vibrate}
+        showTip={data.settings.guide !== false && !(data.settings.guideSeen ?? []).includes('amrap')}
+        onTipSeen={() => saveSettings({ guideSeen: [...(getData().settings.guideSeen ?? []), 'amrap'] })}
+        onRound={() => apply((a) => addRound(a, amrapRun.id))}
+        onUndo={() => apply((a) => undoRound(a, amrapRun.id))}
+        onPause={() => apply((a) => pauseAmrap(a, amrapRun.id))}
+        onResume={() => apply((a) => resumeAmrap(a, amrapRun.id))}
+        onStop={stopRun}
+        onCancel={() => {
+          if (amrapRun.amrap?.run?.marks.length && !confirmAction('Ne pas compter cet AMRAP ? Les tours faits seront perdus.')) return
+          apply((a) => cancelAmrap(a, amrapRun.id))
+        }}
+        onSave={(partial) => apply((a) => commitAmrap(a, amrapRun.id, partial))}
+      />
+    )}
+
+    {!amrapRun && (undo || (curEx && curSet)) && (
       <div className="dock">
         {undo && (
           <div className="undo">
@@ -288,9 +351,15 @@ export function WorkoutScreen() {
                 <span className="ellipsis">Minuteur en circuit avec {nextNames.join(', ')} ({chained.length} tours)</span>
               </button>
             )}
+            {curEx.amrap ? (
+              <button className="btn primary block big" onClick={() => startAmrapNow(curEx.id)}>
+                <IconPlay /> <span className="ellipsis">Lancer l’AMRAP · {formatDuration(curEx.amrap.capSec)}</span>
+              </button>
+            ) : (
             <button className="btn primary block big" onClick={() => onCheck(curEx, up.index)}>
               <IconCheck /> <span className="ellipsis">Valider · {curEx.parts ? `superset · tour ${up.index + 1}/${curEx.sets.length}` : setLabels(curEx.sets)[up.index]}</span>
             </button>
+            )}
           </>
         )}
       </div>

@@ -7,6 +7,7 @@ import { describeSet, statsOf } from '../logic/session'
 import { formatDuration } from '../logic/util'
 import { overloadSuggestions } from '../logic/progress'
 import { OverloadCard } from '../ui/Overload'
+import { AmrapResultCard } from '../ui/Amrap'
 import { Empty, TopBar, confirmAction, pressable } from '../ui/kit'
 import { IconChevron, IconFlame, IconHistory, IconTrash } from '../ui/icons'
 import { SessionGains, achievementsOn } from './Achievements'
@@ -124,7 +125,9 @@ export function SessionDetailScreen({ id }: { id: string }) {
           </button>
         )}
 
-        {s.exercises.map((e) => (
+        {s.exercises.map((e) => e.amrap ? (
+          <AmrapResultCard key={e.id} ex={e} session={s} sessions={data.sessions} />
+        ) : (
           <div key={e.id} className="card tight">
             <div style={{ fontWeight: 700, marginBottom: e.parts ? 0 : 6 }}>{e.parts ? `Superset · ${e.name}` : e.name}</div>
             {e.parts && <div className="small muted" style={{ marginBottom: 6 }}>{e.parts.map((p) => p.name).join(" · ")}</div>}

@@ -14,7 +14,7 @@ export const SHARE_PREFIX = 'PETRA1:'
 export const MAX_QR_CHARS = 2300
 
 type PlainSet = Partial<PlannedSet>
-type PlainExercise = { c?: string; n?: string; g?: string; pc?: 1; pdc?: 1; l?: number; r: number; s: PlainSet[]; no?: string; p?: SupersetPart[] }
+type PlainExercise = { c?: string; n?: string; g?: string; pc?: 1; pdc?: 1; l?: number; r: number; s: PlainSet[]; no?: string; p?: SupersetPart[]; /** AMRAP : durée en secondes. */ am?: number }
 type PlainProgram = { n: string; no?: string; e: PlainExercise[] }
 type PlainFinisher = { t: Finisher['type']; n: string; i: FinisherItem[] }
 /** Planning : 7 cases (lundi → dimanche), numéro de séance dans `p` ou -1 pour repos. */
@@ -48,6 +48,7 @@ function plainExercise(e: ProgramExercise): PlainExercise {
   if (e.usesLoad === false) out.pdc = 1
   if (e.note) out.no = e.note
   if (e.parts) out.p = e.parts.map(({ weight: _w, ...p }) => p)
+  if (e.amrap) out.am = e.amrap.capSec
   return out
 }
 
@@ -67,6 +68,7 @@ function toExercise(x: PlainExercise): ProgramExercise {
     sets: (x.s ?? []).map((s) => ({ ...s, phase: s.phase ?? 'travail' }) as PlannedSet),
     ...(x.no ? { note: x.no } : {}),
     ...(x.p ? { parts: x.p } : {}),
+    ...(x.am ? { amrap: { capSec: x.am } } : {}),
   }
 }
 

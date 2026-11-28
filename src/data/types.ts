@@ -66,6 +66,35 @@ export interface ProgramExercise {
   note?: string
   /** Présent pour un superset : les exercices du combiné ; chaque série est un tour. */
   parts?: SupersetPart[]
+  /** Bloc AMRAP (1.4.3) : le circuit `parts` en boucle pendant capSec. Au programme, une seule série = un tour type. */
+  amrap?: Amrap
+}
+
+/**
+ * AMRAP (autant de tours que possible) : durée, puis en séance le chrono en cours et le résultat.
+ * Une fois enregistré, chaque tour complet devient une série faite (et le tour entamé une série de plus).
+ */
+export interface Amrap {
+  capSec: number
+  /** Chrono en cours (séance active) : départ après le décompte, pauses déduites. */
+  run?: AmrapRun
+  /** Résultat : tours complets. */
+  rounds?: number
+  /** Répétitions faites dans le tour entamé, par exercice du circuit. */
+  partial?: number[]
+  /** Durée de chaque tour complet, en secondes. */
+  roundSec?: number[]
+}
+
+export interface AmrapRun {
+  /** Fin du décompte de préparation (le chrono démarre là). */
+  startedAt: number
+  pausedMs: number
+  pausedAt?: number
+  /** Temps écoulé (s, pauses déduites) à la fin de chaque tour complet. */
+  marks: number[]
+  /** Arrêté (temps écoulé ou arrêt à la main) : il reste à saisir le tour entamé. */
+  stoppedAt?: number
 }
 
 export interface Program {
