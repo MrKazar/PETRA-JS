@@ -145,7 +145,7 @@ export function WorkoutScreen() {
           <span>
             {st.setsDone}/{st.setsTotal} séries
           </span>
-          {up && !s.rest && <span className="ellipsis" style={{ maxWidth: '65%' }}>Suivant : {up.exercise.name}</span>}
+          {up && !s.rest && <span className="ellipsis" style={{ maxWidth: '65%' }}>À faire : {up.exercise.name}</span>}
         </div>
         <div className="progress">
           <div style={{ width: `${st.setsTotal ? (st.setsDone / st.setsTotal) * 100 : 0}%` }} />
@@ -269,7 +269,7 @@ export function WorkoutScreen() {
               {curSet.durationSec != null ? (
                 <Stepper label="durée" value={curSet.durationSec} unit="s" step={curSet.durationSec >= 180 ? 60 : 5} onChange={(v) => step({ durationSec: v })} />
               ) : (
-                <Stepper label={curSet.unit ?? (curEx.parCote ? 'reps / côté' : 'reps')} value={curSet.reps} step={1} onChange={(v) => step({ reps: v })} />
+                <Stepper label={curSet.unit ?? (curEx.parCote ? 'rép. / côté' : 'rép.')} value={curSet.reps} step={1} onChange={(v) => step({ reps: v })} />
               )}
               {curEx.usesLoad !== false && !isCardio(curEx) && <Stepper label="kg" value={curSet.weight} step={2.5} next={(v, dir) => stepLoad(curEx, v, dir)} onChange={(v) => step({ weight: v })} />}
             </div>}
@@ -497,26 +497,27 @@ function ExerciseCard({
                 <NumInput
                   value={inSeconds ? set.durationSec : set.durationSec! / 60}
                   width={56}
+                  label={`Durée en ${inSeconds ? 'secondes' : 'minutes'}, ${labels[i]}`}
                   onChange={(v) => onPatch(i, { durationSec: Math.round((v ?? 0) * (inSeconds ? 1 : 60)) })}
                 />
                 <span className="unit">{inSeconds ? 's' : 'min'}</span>
               </span>
             ) : (
               <span className="row" style={{ gap: 2 }}>
-                <NumInput value={set.reps} width={48} placeholder={set.toFailure ? 'max' : '—'} onChange={(v) => onPatch(i, { reps: v })} />
-                <span className="unit">{set.unit ?? (ex.parCote ? '/côté' : 'rép')}</span>
+                <NumInput value={set.reps} width={48} label={`Répétitions, ${labels[i]}`} placeholder={set.toFailure ? 'max' : '—'} onChange={(v) => onPatch(i, { reps: v })} />
+                <span className="unit">{set.unit ?? (ex.parCote ? '/côté' : 'rép.')}</span>
               </span>
             )}
             {(timed || isCardio(ex)) && ex.usesLoad === false ? (
               <span />
             ) : (
               <span className="row" style={{ gap: 2 }}>
-                <NumInput value={set.weight} width={58} placeholder={ex.usesLoad === false ? 'PDC' : '—'} onChange={(v) => onPatch(i, { weight: v })} />
+                <NumInput value={set.weight} width={58} label={`Charge en kilos, ${labels[i]}`} placeholder={ex.usesLoad === false ? 'PDC' : '—'} onChange={(v) => onPatch(i, { weight: v })} />
                 <span className="unit">kg</span>
               </span>
             )}
             {editing ? (
-              <button className="icon-btn" style={{ width: 40, height: 40 }} aria-label="Retirer la série" onClick={() => onRemoveSet(i)}>
+              <button className="icon-btn" style={{ width: 48, height: 48 }} aria-label="Retirer la série" onClick={() => onRemoveSet(i)}>
                 <IconX />
               </button>
             ) : (
@@ -599,19 +600,19 @@ function SupersetCard({
                   <span className="ss-dot" />
                   <span className="grow ellipsis small">{p.name}</span>
                   {v.durationSec != null ? (
-                    <><NumInput value={v.durationSec} width={48} onChange={(n) => setPart(i, k, { durationSec: n ?? 0 })} /><span className="unit">s</span></>
+                    <><NumInput value={v.durationSec} width={48} label={`Durée en secondes, ${p.name ?? ''}`} onChange={(n) => setPart(i, k, { durationSec: n ?? 0 })} /><span className="unit">s</span></>
                   ) : (
-                    <><NumInput value={v.reps} width={44} onChange={(n) => setPart(i, k, { reps: n })} /><span className="unit">{p.parCote ? '/côté' : 'rép'}</span></>
+                    <><NumInput value={v.reps} width={44} label={`Répétitions, ${p.name ?? ''}`} onChange={(n) => setPart(i, k, { reps: n })} /><span className="unit">{p.parCote ? '/côté' : 'rép.'}</span></>
                   )}
                   {p.usesLoad !== false && v.durationSec == null && (
-                    <><NumInput value={v.weight} width={52} placeholder="—" onChange={(n) => setPart(i, k, { weight: n })} /><span className="unit">kg</span></>
+                    <><NumInput value={v.weight} width={52} label={`Charge en kilos, ${p.name ?? ''}`} placeholder="—" onChange={(n) => setPart(i, k, { weight: n })} /><span className="unit">kg</span></>
                   )}
                 </div>
               )
             })}
           </div>
           {editing ? (
-            <button className="icon-btn" style={{ width: 40, height: 40 }} aria-label="Retirer le tour" onClick={() => onRemoveSet(i)}><IconX /></button>
+            <button className="icon-btn" style={{ width: 48, height: 48 }} aria-label="Retirer le tour" onClick={() => onRemoveSet(i)}><IconX /></button>
           ) : (
             <button className={`check${set.done ? ' on' : ''}`} aria-label={set.done ? 'Annuler le tour' : 'Valider le tour'} onClick={() => onCheck(i)}><IconCheck /></button>
           )}

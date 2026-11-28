@@ -10,7 +10,7 @@ import { UpdateBody } from '../ui/UpdateCard'
 import { ScanSheet } from '../ui/Share'
 import { activeTheme } from '../ui/theme'
 import { progress } from '../logic/level'
-import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast } from '../ui/kit'
+import { Header, LogoFull, TopBar, imgUrl, NumInput, SectionTitle, Sheet, Toggle, confirmAction, toast, pressable } from '../ui/kit'
 import { IconBell, IconBook, IconQr, IconCheckList, IconChevron, IconClock, IconHistory, IconTrophy, IconUser, IconMonitor, IconDumbbell } from '../ui/icons'
 import { syncNow, unpair } from '../logic/pcsync'
 import { Kranos } from '../ui/Kranos'
@@ -28,7 +28,7 @@ export function SettingsScreen() {
   const s = data.settings
   const totalSec = data.sessions.reduce((n, x) => n + ((x.endedAt ?? x.startedAt) - x.startedAt) / 1000, 0)
   const row = (label: string, sub: string, icon: React.ReactNode, onClick: () => void) => (
-    <div className="list-item clickable" onClick={onClick}>
+    <div className="list-item clickable" {...pressable(onClick)}>
       <div className="icon-box">{icon}</div>
       <div className="grow">
         <div style={{ fontWeight: 600 }}>{label}</div>
@@ -73,17 +73,17 @@ export function SettingsScreen() {
         </div>
 
         <div className="list">
-          <div className="list-item clickable" onClick={() => nav.push({ name: 'history' })}>
+          <div className="list-item clickable" {...pressable(() => nav.push({ name: 'history' }))}>
             <div className="icon-box"><IconHistory /></div>
             <span className="grow" style={{ fontWeight: 600 }}>Historique des séances</span>
             <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
           </div>
-          <div className="list-item clickable" onClick={() => nav.push({ name: 'records' })}>
+          <div className="list-item clickable" {...pressable(() => nav.push({ name: 'records' }))}>
             <div className="icon-box"><IconTrophy /></div>
             <span className="grow" style={{ fontWeight: 600 }}>Records personnels</span>
             <IconChevron style={{ width: 18, color: 'var(--faint)' }} />
           </div>
-          <div className="list-item clickable" onClick={() => nav.push({ name: 'routines' })}>
+          <div className="list-item clickable" {...pressable(() => nav.push({ name: 'routines' }))}>
             <div className="icon-box"><IconCheckList /></div>
             <span className="grow" style={{ fontWeight: 600 }}>Routines et tâches</span>
             <IconChevron style={{ width: 18, color: 'var(--faint)' }} />

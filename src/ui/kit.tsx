@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useId, useState, type ReactNode } from 'react'
 import { IconBack } from './icons'
 import { useData } from '../data/store'
 import { activeTheme } from './theme'
@@ -113,6 +113,7 @@ export function Progress({ value }: { value: number }) {
 }
 
 export function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title?: ReactNode; children: ReactNode }) {
+  const titleId = useId()
   useEffect(() => {
     if (!open) return
     const h = (e: Event) => {
@@ -125,9 +126,20 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   if (!open) return null
   return (
     <div className="backdrop" onClick={onClose}>
-      <div className="sheet" onClick={(e) => e.stopPropagation()} role="dialog">
+      <div
+        className="sheet"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        tabIndex={-1}
+        ref={(el) => {
+          // Le lecteur d'écran et le clavier entrent dans la feuille à son ouverture.
+          if (el && !el.contains(document.activeElement)) el.focus({ preventScroll: true })
+        }}
+      >
         <div className="grabber" />
-        {title && <h2>{title}</h2>}
+        {title && <h2 id={titleId}>{title}</h2>}
         {children}
       </div>
     </div>
@@ -139,7 +151,7 @@ export function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boo
 }
 
 /** Champ numérique qui accepte la virgule et laisse vide = non renseigné. */
-export function NumInput({ value, onChange, step = 1, placeholder, width }: { value?: number; onChange: (v: number | undefined) => void; step?: number; placeholder?: string; width?: number }) {
+export function NumInput({ value, onChange, step = 1, placeholder, width, label }: { value?: number; onChange: (v: number | undefined) => void; step?: number; placeholder?: string; width?: number; label?: string }) {
   const [text, setText] = useState(value == null ? '' : String(value))
   useEffect(() => {
     setText((t) => (parse(t) === value ? t : value == null ? '' : String(value)))
@@ -151,6 +163,7 @@ export function NumInput({ value, onChange, step = 1, placeholder, width }: { va
       inputMode="decimal"
       step={step}
       placeholder={placeholder}
+      aria-label={label}
       value={text}
       onFocus={(e) => e.target.select()}
       onChange={(e) => {
@@ -187,13 +200,27 @@ export function ToastHost() {
     const h = (e: Event) => {
       setMsg((e as CustomEvent<string>).detail)
       window.clearTimeout(toastTimer)
-      toastTimer = window.setTimeout(() => setMsg(undefined), 2200)
+      toastTimer = window.setTimeout(() => setMsg(undefined), 3500)
     }
     window.addEventListener('petra:toast', h)
     return () => window.removeEventListener('petra:toast', h)
   }, [])
-  return msg ? <div className="toast">{msg}</div> : null
+  // Zone toujours présente : le lecteur d'écran (TalkBack) annonce chaque nouveau message.
+  return <div className="toast-live" role="status" aria-live="polite">{msg && <div className="toast">{msg}</div>}</div>
 }
+
+/** Rend une carte ou une ligne cliquable lisible par TalkBack et le clavier (rôle bouton, Entrée / Espace). */
+export const pressable = (onPress: () => void) => ({
+  role: 'button' as const,
+  tabIndex: 0,
+  onClick: onPress,
+  onKeyDown: (e: { key: string; target: EventTarget; currentTarget: EventTarget; preventDefault: () => void }) => {
+    if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault()
+      onPress()
+    }
+  },
+})
 
 export function confirmAction(message: string): boolean {
   return window.confirm(message)

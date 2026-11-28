@@ -6,7 +6,7 @@ import { beginSession, setRoutineStatus } from '../logic/actions'
 import { programFor, routinesFor, weekLetter } from '../logic/planner'
 import { estimateDuration, formatEstimate, statsOf } from '../logic/session'
 import { addDays, dateKey, formatDay, formatDuration, uid, WEEKDAYS_SHORT, weekday } from '../logic/util'
-import { Empty, Header, Progress, Ring, SectionTitle, Sheet, imgUrl } from '../ui/kit'
+import { Empty, Header, Progress, Ring, SectionTitle, Sheet, imgUrl, pressable } from '../ui/kit'
 import { IconChevron, IconDumbbell, IconHistory, IconPlay, IconPlus } from '../ui/icons'
 import { RoutineEditor, TaskRow } from './Routines'
 import { UpdateBanner } from '../ui/UpdateCard'
@@ -230,7 +230,7 @@ export function TodayScreen() {
         {last && (
           <>
             <SectionTitle right={<button className="btn ghost sm" onClick={() => nav.push({ name: 'history' })}>Historique</button>}>Dernière séance</SectionTitle>
-            <div className="list-item clickable" onClick={() => nav.push({ name: 'session', id: last.id })}>
+            <div className="list-item clickable" {...pressable(() => nav.push({ name: 'session', id: last.id }))}>
               <div className="icon-box"><IconHistory /></div>
               <div className="grow">
                 <div style={{ fontWeight: 600 }}>{last.programName}</div>

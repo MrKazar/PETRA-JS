@@ -6,7 +6,7 @@ import { describeRecurrence, routinesFor } from '../logic/planner'
 import { dateKey, formatShortDay, uid, WEEKDAYS } from '../logic/util'
 import { useNav } from '../nav'
 import { tap } from '../logic/native'
-import { Empty, SectionTitle, Sheet, TopBar, confirmAction } from '../ui/kit'
+import { Empty, SectionTitle, Sheet, TopBar, confirmAction, pressable } from '../ui/kit'
 import { IconCheck, IconCheckList, IconChevron, IconDots, IconPlus, IconTrash } from '../ui/icons'
 
 /** Ligne de tâche cochable en un appui ; le menu « ⋮ » donne Reporter / Sauter / Modifier. */
@@ -72,7 +72,7 @@ export function RoutinesScreen() {
         {data.routines.length ? (
           <div className="list">
             {data.routines.map((r) => (
-              <div key={r.id} className="list-item clickable" onClick={() => setEditing(r)}>
+              <div key={r.id} className="list-item clickable" {...pressable(() => setEditing(r))}>
                 <div className="grow">
                   <div style={{ fontWeight: 600 }}>{r.name}</div>
                   <div className="small muted">

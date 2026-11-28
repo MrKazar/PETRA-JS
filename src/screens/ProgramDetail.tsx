@@ -330,7 +330,7 @@ export function ExerciseEditor({ exercise, onChange, onClose, onDelete }: { exer
         ) : (
           <>
         <div className="row between">
-          <span className="small muted">Séries en {timed ? 'durée' : 'répétitions'} · reps × kg · repos</span>
+          <span className="small muted">Séries en {timed ? 'durée' : 'répétitions'} · rép. × kg · repos</span>
           <button className="btn sm" onClick={switchMode}>Passer en {timed ? 'répétitions' : 'durée'}</button>
         </div>
         <div>

@@ -6,7 +6,7 @@ import { getData, useData } from './data/store'
 import { computeReminders } from './logic/reminders'
 import { scheduleReminders, setNotifVibration } from './logic/native'
 import { dateKey } from './logic/util'
-import { ToastHost } from './ui/kit'
+import { ToastHost, pressable } from './ui/kit'
 import { StorageAlert } from './ui/StorageAlert'
 import { Splash } from './ui/Splash'
 import { GuideHost } from './ui/Guide'
@@ -171,7 +171,7 @@ function LiveBanner({ name, startedAt, restEnd, onOpen }: { name: string; starte
   const now = useNow(1000)
   const resting = restEnd != null && restEnd > now
   return (
-    <div className="live-banner" onClick={onOpen}>
+    <div className="live-banner" {...pressable(onOpen)}>
       <span className="dot" />
       <span className="grow ellipsis">{name}</span>
       <span style={{ fontVariantNumeric: 'tabular-nums' }}>{resting ? `Repos ${formatClock((restEnd - now) / 1000)}` : formatClock((now - startedAt) / 1000)}</span>

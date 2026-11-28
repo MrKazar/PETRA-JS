@@ -79,7 +79,7 @@ export function SupersetEditor({
                     {p.durationSec != null ? (
                       <><NumInput value={p.durationSec} width={52} onChange={(v) => patch(i, { durationSec: v ?? 0 })} /><span className="small faint">s</span></>
                     ) : (
-                      <><NumInput value={p.reps} width={48} onChange={(v) => patch(i, { reps: v })} /><span className="small faint">{p.parCote ? 'reps/côté' : 'reps'}</span></>
+                      <><NumInput value={p.reps} width={48} label="Répétitions" onChange={(v) => patch(i, { reps: v })} /><span className="small faint">{p.parCote ? 'rép. / côté' : 'rép.'}</span></>
                     )}
                     {p.usesLoad !== false && p.durationSec == null && (
                       <><NumInput value={p.weight} width={56} placeholder="kg" onChange={(v) => patch(i, { weight: v })} /><span className="small faint">kg</span></>
