@@ -1009,7 +1009,7 @@ input.input.st-date { width: auto; min-height: 40px; padding: 6px 10px; }
 :root[data-theme='architecte'] .tab { font-family: var(--font-body); }
 :root[data-theme='architecte'] .btn.primary { box-shadow: 0 0 0 1px rgba(95, 176, 255, 0.4), 0 0 14px rgba(47, 134, 224, 0.35); }
 @media (prefers-reduced-motion: reduce) {
-  :root[data-theme='architecte'] .header h1::after, :root[data-theme='architecte'] .logo-compose .word::after,
+  :root[data-theme='architecte'] .header h1::after, :root[data-theme='architecte'] .logo-compose .word::after, :root[data-theme='architecte'] .splash .word::after,
   :root[data-theme='architecte'] .logo-compose img, :root[data-theme='architecte'] .splash img, :root[data-theme='architecte'] .splash::after { animation: none; }
 }
 
